@@ -1,0 +1,1713 @@
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  AI 阅读须知                                                   ║
+  ║                                                                ║
+  ║  1. 这是一个参考模板，不是固定模板。                            ║
+  ║  2. 请根据课程特点自主增减模块、调整顺序。                       ║
+  ║  3. 必选模块：新手引导区、知识关系图、概念精讲区、自测清单。     ║
+  ║  4. 可选模块按需选用，不要全部加上。                            ║
+  ║  5. 贯彻费曼学习法：白话版+生活类比+常见误区+速记口诀。          ║
+  ║  6. 知识关系图要体现知识点间的逻辑关系，不是章节罗列。            ║
+  ║  7. 面向基础薄弱+短时间复习的学生。                             ║
+  ║  8. 生成单个自包含HTML文件，无外部依赖。                         ║
+  ║                                                                ║
+  ║  详见 README.md 的"给AI的阅读指南"                              ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{COURSE_NAME}} - 交互式复习方案</title>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #dbeafe;
+      --text: #111827;
+      --muted: #6b7280;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    body.dark {
+      --primary: #60a5fa;
+      --primary-light: #1e3a8a;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --bg: #0f172a;
+      --card: #111827;
+      --border: #334155;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    header {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff;
+      padding: 56px 20px 48px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      letter-spacing: -1px;
+    }
+
+    header p {
+      max-width: 760px;
+      margin: 16px auto 0;
+      opacity: 0.94;
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    button,
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    button:hover,
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .btn-light {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    body.dark .sticky-nav {
+      background: rgba(15, 23, 42, 0.92);
+    }
+
+    .sticky-nav-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .sticky-nav a {
+      white-space: nowrap;
+      text-decoration: none;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    main {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 26px 20px 60px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 26px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 26px;
+      color: var(--text);
+    }
+
+    h3 {
+      margin: 20px 0 10px;
+      font-size: 19px;
+    }
+
+    p {
+      margin: 8px 0 14px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (max-width: 900px) {
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, var(--card), rgba(37, 99, 235, 0.06));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .stat-number {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 4px;
+    }
+
+    body.dark .progress-wrap {
+      background: #334155;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #16a34a, #86efac);
+      transition: width 0.25s ease;
+    }
+
+    .flow {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-top: 16px;
+    }
+
+    .flow-step {
+      min-width: 150px;
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+      position: relative;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -13px;
+      top: 42%;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .flow-step strong {
+      display: block;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    /* ===== 知识关系图样式 ===== */
+    .relation-chain {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+      padding: 16px;
+      background: rgba(37, 99, 235, 0.04);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .relation-node {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 16px;
+      text-align: center;
+      min-width: 100px;
+      position: relative;
+    }
+
+    .relation-node.highlight {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .relation-node .node-tag {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .relation-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 60px;
+    }
+
+    .relation-arrow .arrow-label {
+      font-size: 11px;
+      color: var(--warning);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2px;
+    }
+
+    .relation-arrow .arrow-symbol {
+      font-size: 24px;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .relation-compare {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 16px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .compare-side {
+      flex: 1;
+      background: var(--card);
+      padding: 16px;
+    }
+
+    .compare-side h4 {
+      margin: 0 0 10px;
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    .compare-side ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .compare-vs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 0 16px;
+      min-width: 50px;
+    }
+
+    .relation-tree {
+      margin: 16px 0;
+      text-align: center;
+    }
+
+    .tree-root {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 14px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .tree-branches {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tree-branch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .branch-node {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .branch-children {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .leaf {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .feedback-loop {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+      padding: 16px;
+      background: rgba(245, 158, 11, 0.06);
+      border-radius: 16px;
+      border: 1px dashed var(--warning);
+    }
+
+    .loop-node {
+      background: var(--card);
+      border: 2px solid var(--warning);
+      border-radius: 14px;
+      padding: 10px 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .loop-arrow {
+      font-size: 13px;
+      color: var(--warning);
+      font-weight: 700;
+    }
+
+    @media (max-width: 720px) {
+      .relation-chain,
+      .relation-compare,
+      .tree-branches {
+        flex-direction: column;
+      }
+
+      .compare-vs {
+        padding: 8px;
+      }
+    }
+
+    .chart-card,
+    .filter-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .formula {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 14px;
+      padding: 12px;
+      font-weight: 800;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .model-svg {
+      width: 100%;
+      max-width: 420px;
+      display: block;
+      margin: 0 auto;
+      background: #f8fafc;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+
+    body.dark .model-svg {
+      background: #1e293b;
+    }
+
+    .model-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
+
+    .model-actions button {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .policy-grid {
+      display: grid;
+      grid-template-columns: 1.1fr repeat(4, 1fr);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: visible;
+      margin-top: 16px;
+    }
+
+    .policy-grid div {
+      padding: 12px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      font-size: 14px;
+    }
+
+    .policy-grid div:nth-child(5n) {
+      border-right: none;
+    }
+
+    .policy-head {
+      background: var(--primary-light) !important;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .up {
+      color: #dc2626;
+      font-weight: 800;
+    }
+
+    .down {
+      color: #2563eb;
+      font-weight: 800;
+    }
+
+    .same {
+      color: #6b7280;
+      font-weight: 800;
+    }
+
+    .warning,
+    .success,
+    .info {
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+
+    .warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .success {
+      background: #ecfdf5;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .info {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    body.dark .warning {
+      background: rgba(245, 158, 11, 0.12);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    body.dark .success {
+      background: rgba(22, 163, 74, 0.12);
+      color: #86efac;
+      border-color: rgba(22, 163, 74, 0.35);
+    }
+
+    body.dark .info {
+      background: rgba(37, 99, 235, 0.15);
+      color: #93c5fd;
+      border-color: rgba(37, 99, 235, 0.35);
+    }
+
+    .accordion {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: visible;
+      background: var(--card);
+    }
+
+    .accordion-item + .accordion-item {
+      border-top: 1px solid var(--border);
+    }
+
+    .accordion-btn {
+      width: 100%;
+      border: 0;
+      background: var(--card);
+      color: var(--text);
+      padding: 16px 18px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    .accordion-btn:hover {
+      transform: none;
+      filter: none;
+      background: rgba(37, 99, 235, 0.06);
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 0 18px 16px;
+      color: var(--muted);
+    }
+
+    .accordion-item.active .accordion-content {
+      display: block;
+    }
+
+    .filter-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0 18px;
+    }
+
+    .filter-actions button {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 8px 13px;
+    }
+
+    .filter-actions button.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .chapter-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .chapter-item {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      background: var(--card);
+    }
+
+    .chapter-item strong {
+      color: var(--primary);
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 4px 4px 0 0;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .quiz-box {
+      border: 1px dashed var(--primary);
+      border-radius: 18px;
+      padding: 18px;
+      background: rgba(37, 99, 235, 0.06);
+      margin-top: 14px;
+    }
+
+    .quiz-question {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .checklist label {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: var(--card);
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      margin-top: 6px;
+      transform: scale(1.15);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px 20px 50px;
+    }
+
+    @media (max-width: 720px) {
+      header {
+        padding: 42px 16px 36px;
+      }
+
+      main {
+        padding: 20px 14px 44px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .policy-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .policy-grid div {
+        border-right: none;
+      }
+
+      .policy-head {
+        display: none;
+      }
+    }
+
+    /* ===== 题库样式 ===== */
+    .qb-mode-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .qb-mode-tab {
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .qb-mode-tab:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .qb-mode-tab.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .qb-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .qb-stat {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .qb-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    .qb-question-type {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .qb-type-choice { background: #dbeafe; color: #1d4ed8; }
+    .qb-type-tf { background: #fef3c7; color: #92400e; }
+    .qb-type-short { background: #d1fae5; color: #166534; }
+    .qb-type-calc { background: #ede9fe; color: #6d28d9; }
+
+    body.dark .qb-type-choice { background: #1e3a8a; color: #93c5fd; }
+    body.dark .qb-type-tf { background: #78350f; color: #fcd34d; }
+    body.dark .qb-type-short { background: #064e3b; color: #6ee7b7; }
+    body.dark .qb-type-calc { background: #4c1d95; color: #c4b5fd; }
+
+    .qb-question-text {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    .qb-options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .qb-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      background: var(--card);
+      cursor: pointer;
+      transition: 0.18s ease;
+      font-size: 15px;
+    }
+
+    .qb-option:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .qb-option.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .qb-option.correct {
+      border-color: var(--success);
+      background: #ecfdf5;
+    }
+
+    .qb-option.wrong {
+      border-color: var(--danger);
+      background: #fef2f2;
+    }
+
+    body.dark .qb-option.correct { background: rgba(22,163,74,0.18); }
+    body.dark .qb-option.wrong { background: rgba(220,38,38,0.18); }
+
+    .qb-option-marker {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .qb-option.selected .qb-option-marker {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .qb-option.correct .qb-option-marker {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    .qb-option.wrong .qb-option-marker {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+    }
+
+    .qb-tf-btns {
+      display: flex;
+      gap: 14px;
+    }
+
+    .qb-tf-btn {
+      flex: 1;
+      max-width: 140px;
+      padding: 14px 20px;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .qb-tf-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .qb-tf-btn.selected-true {
+      border-color: var(--success);
+      background: #ecfdf5;
+      color: #16a34a;
+      box-shadow: 0 2px 8px rgba(22,163,74,0.15);
+    }
+    .qb-tf-btn.selected-false {
+      border-color: var(--danger);
+      background: #fef2f2;
+      color: #dc2626;
+      box-shadow: 0 2px 8px rgba(220,38,38,0.15);
+    }
+    body.dark .qb-tf-btn.selected-true {
+      background: rgba(22,163,74,0.2);
+      color: #4ade80;
+      box-shadow: 0 2px 12px rgba(22,163,74,0.25);
+    }
+    body.dark .qb-tf-btn.selected-false {
+      background: rgba(220,38,38,0.2);
+      color: #f87171;
+      box-shadow: 0 2px 12px rgba(220,38,38,0.25);
+    }
+
+    .qb-feedback {
+      padding: 14px;
+      border-radius: 14px;
+      margin-top: 14px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .qb-feedback.correct { background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; }
+    .qb-feedback.wrong { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    body.dark .qb-feedback.correct { background: rgba(22,163,74,0.15); color: #86efac; }
+    body.dark .qb-feedback.wrong { background: rgba(220,38,38,0.15); color: #fca5a5; }
+
+    .qb-navigation {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .qb-nav-btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .qb-nav-btn.primary { background: var(--primary); color: #fff; }
+    .qb-nav-btn.secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .qb-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .qb-progress-mini {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .qb-answer-reveal {
+      background: var(--primary-light);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--primary);
+    }
+
+    .concept-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .concept-card h3 {
+      margin: 0 0 10px;
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 8px;
+    }
+
+    .concept-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--primary-light);
+      color: var(--primary);
+      margin: 4px 4px 0 0;
+    }
+
+    .key-point {
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 0;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    body.dark .key-point {
+      background: rgba(245,158,11,0.12);
+      border-left-color: #f59e0b;
+    }
+
+    .plain-explain {
+      background: #f0fdf4;
+      border-left: 3px solid #16a34a;
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 0;
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    body.dark .plain-explain {
+      background: rgba(22,163,74,0.08);
+      border-left-color: #16a34a;
+    }
+
+    .common-mistake {
+      background: #fef2f2;
+      border-left: 3px solid #dc2626;
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 0;
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    body.dark .common-mistake {
+      background: rgba(220,38,38,0.08);
+      border-left-color: #dc2626;
+    }
+
+    .formula-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .formula-card h4 {
+      margin: 0 0 8px;
+      color: var(--primary);
+      font-size: 15px;
+    }
+
+    .formula-card .formula-main {
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 10px 14px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 8px 0;
+    }
+
+    .formula-card .formula-explain {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .beginner-guide {
+      background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+      border: 2px solid #86efac;
+      border-radius: 22px;
+      padding: 26px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    body.dark .beginner-guide {
+      background: linear-gradient(135deg, rgba(22,163,74,0.08), rgba(37,99,235,0.08));
+      border-color: rgba(22,163,74,0.4);
+    }
+
+    .beginner-guide::before {
+      content: "🌱";
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      font-size: 80px;
+      opacity: 0.08;
+    }
+
+    .beginner-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .badge-easy {
+      background: #d1fae5;
+      color: #166534;
+    }
+
+    .badge-medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-hard {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    body.dark .badge-easy { background: #064e3b; color: #6ee7b7; }
+    body.dark .badge-medium { background: #78350f; color: #fcd34d; }
+    body.dark .badge-hard { background: #7f1d1d; color: #fca5a5; }
+
+    .learning-path {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .path-step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      position: relative;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .path-step:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.12);
+    }
+
+    .path-step .step-num {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .path-step .step-title {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .path-step .step-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .mnemonic-box {
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 14px 0;
+    }
+
+    body.dark .mnemonic-box {
+      background: rgba(245,158,11,0.08);
+      border-color: rgba(245,158,11,0.3);
+    }
+
+    .mnemonic-box h4 {
+      margin: 0 0 10px;
+      color: #92400e;
+      font-size: 15px;
+    }
+
+    body.dark .mnemonic-box h4 { color: #fbbf24; }
+
+    .mnemonic-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin: 8px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .mnemonic-item .emoji {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .tooltip-term {
+      border-bottom: 1.5px dashed var(--primary);
+      cursor: help;
+      position: relative;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .tooltip-term:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 400;
+      white-space: normal;
+      width: max-content;
+      max-width: 280px;
+      line-height: 1.5;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      pointer-events: none;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+      }
+
+      header,
+      .sticky-nav,
+      .hero-actions,
+      .model-actions,
+      .filter-actions,
+      button,
+      footer,
+      .beginner-guide {
+        display: none !important;
+      }
+
+      .card {
+        box-shadow: none;
+        break-inside: avoid;
+        border: 1px solid #ddd;
+      }
+
+      .accordion-content {
+        display: block !important;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===================== HEADER ===================== -->
+  <header>
+    <h1>{{COURSE_NAME}}</h1>
+    <p>
+      {{COURSE_DESCRIPTION}}<br>
+      <span style="font-size:15px;opacity:0.9;">🌱 新手请先点击下方"零基础入口"，从学习路线开始 →</span>
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn-light btn" href="#beginner">🌱 零基础入口</a>
+      <button class="btn-light" id="darkModeBtn">切换夜间模式</button>
+      <button class="btn-light" onclick="window.print()">打印 A4 速记版</button>
+      <a class="btn-light btn" href="#check">开始自测</a>
+    </div>
+  </header>
+
+  <!-- ===================== NAVIGATION ===================== -->
+  <nav class="sticky-nav">
+    <div class="sticky-nav-inner">
+      <a href="#beginner" style="background:#d1fae5;color:#166534;">🌱 新手入口</a>
+      <a href="#dashboard">复习仪表盘</a>
+      <a href="#logic">知识关系</a>
+      <a href="#concepts">概念精讲</a>
+      <a href="#quiz">题库系统</a>
+      <a href="#check">考前自测</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ===================== 新手引导区 ===================== -->
+    <section class="beginner-guide" id="beginner">
+      <h2 style="margin-top:0;">🌱 零基础？从这里开始！</h2>
+      <p style="font-size:15px;line-height:1.8;">
+        {{BEGINNER_INTRO}}
+      </p>
+
+      <div class="learning-path">
+        {{LEARNING_PATH_STEPS}}
+      </div>
+
+      <div class="mnemonic-box">
+        <h4>💡 速记口诀——记住这个框架，考试不慌</h4>
+        {{MNEMONIC_ITEMS}}
+      </div>
+
+      <div class="info">
+        <strong>看不懂术语？</strong>
+        页面中带有虚线下划线的蓝色文字，鼠标悬停会弹出通俗解释。
+      </div>
+    </section>
+
+    <!-- ===================== 复习仪表盘 ===================== -->
+    <section class="card" id="dashboard">
+      <h2>复习仪表盘</h2>
+      <p class="small">
+        {{DASHBOARD_DESCRIPTION}}
+      </p>
+
+      <div class="dashboard">
+        {{STAT_CARDS}}
+      </div>
+
+      <h3>今日完成度</h3>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="studyProgress"></div>
+      </div>
+      <p class="small">
+        勾选页面底部的自测清单后，这里会自动显示完成进度。
+      </p>
+
+      <div class="info">
+        <strong>建议顺序：</strong>
+        {{STUDY_SUGGESTION}}
+      </div>
+    </section>
+
+    <!-- ===================== 知识关系图 ===================== -->
+    <!-- AI注意：这个模块不是简单的章节罗列，要展示知识点之间的逻辑关系 -->
+    <!-- 请分析课程内容，选择合适的关系类型：因果/前提依赖/对比/递进/总分/应用/循环反馈 -->
+    <!-- 可以组合多种关系类型，但不要全部使用，选1-2种最主要的 -->
+    <section class="card" id="logic">
+      <h2>知识关系图</h2>
+      <p class="small">
+        下图展示本课程核心知识点之间的逻辑关系。理解了关系，就不需要死记每个概念。
+      </p>
+
+      <!-- ========== 关系类型1：因果链（适合经济学/物理/化学） ========== -->
+      <!-- AI说明：如果课程有因果链条，使用这个结构。标注每个箭头的因果关系 -->
+      <h3>因果链条：核心机制的传导路径</h3>
+      <div class="relation-chain">
+        <div class="relation-node highlight">
+          <strong>{{KNOWLEDGE_NODE_1}}</strong>
+          <span class="node-tag">起点</span>
+        </div>
+        <div class="relation-arrow">
+          <span class="arrow-label">{{CAUSAL_RELATION_1}}</span>
+          <span class="arrow-symbol">→</span>
+        </div>
+        <div class="relation-node">
+          <strong>{{KNOWLEDGE_NODE_2}}</strong>
+        </div>
+        <div class="relation-arrow">
+          <span class="arrow-label">{{CAUSAL_RELATION_2}}</span>
+          <span class="arrow-symbol">→</span>
+        </div>
+        <div class="relation-node">
+          <strong>{{KNOWLEDGE_NODE_3}}</strong>
+        </div>
+        <div class="relation-arrow">
+          <span class="arrow-label">{{CAUSAL_RELATION_3}}</span>
+          <span class="arrow-symbol">→</span>
+        </div>
+        <div class="relation-node highlight">
+          <strong>{{KNOWLEDGE_NODE_4}}</strong>
+          <span class="node-tag">结果</span>
+        </div>
+      </div>
+
+      <!-- ========== 关系类型2：对比关系（适合任何有对立概念的课） ========== -->
+      <!-- AI说明：如果课程有需要对比的概念对，使用这个结构 -->
+      <h3>核心概念对比</h3>
+      <div class="relation-compare">
+        <div class="compare-side">
+          <h4>{{CONCEPT_A_NAME}}</h4>
+          <ul>
+            <li><strong>工具：</strong>{{CONCEPT_A_TOOL}}</li>
+            <li><strong>主体：</strong>{{CONCEPT_A_SUBJECT}}</li>
+            <li><strong>特点：</strong>{{CONCEPT_A_FEATURE}}</li>
+            <li><strong>局限：</strong>{{CONCEPT_A_LIMIT}}</li>
+          </ul>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-side">
+          <h4>{{CONCEPT_B_NAME}}</h4>
+          <ul>
+            <li><strong>工具：</strong>{{CONCEPT_B_TOOL}}</li>
+            <li><strong>主体：</strong>{{CONCEPT_B_SUBJECT}}</li>
+            <li><strong>特点：</strong>{{CONCEPT_B_FEATURE}}</li>
+            <li><strong>局限：</strong>{{CONCEPT_B_LIMIT}}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ========== 关系类型3：总分层级（适合有层级结构的课） ========== -->
+      <!-- AI说明：如果课程有"一个大概念包含多个子概念"的结构，使用这个 -->
+      <h3>知识层级：从总到分的结构</h3>
+      <div class="relation-tree">
+        <div class="tree-root">
+          <strong>{{ROOT_CONCEPT}}</strong>
+        </div>
+        <div class="tree-branches">
+          <div class="tree-branch">
+            <div class="branch-node">{{BRANCH_1}}</div>
+            <div class="branch-children">
+              <span class="leaf">{{LEAF_1A}}</span>
+              <span class="leaf">{{LEAF_1B}}</span>
+            </div>
+          </div>
+          <div class="tree-branch">
+            <div class="branch-node">{{BRANCH_2}}</div>
+            <div class="branch-children">
+              <span class="leaf">{{LEAF_2A}}</span>
+              <span class="leaf">{{LEAF_2B}}</span>
+            </div>
+          </div>
+          <div class="tree-branch">
+            <div class="branch-node">{{BRANCH_3}}</div>
+            <div class="branch-children">
+              <span class="leaf">{{LEAF_3A}}</span>
+              <span class="leaf">{{LEAF_3B}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 关系类型4：循环反馈（适合经济学/生态学） ========== -->
+      <!-- AI说明：如果课程有"A影响B，B反过来影响A"的反馈机制，使用这个 -->
+      <!-- 
+      <h3>循环反馈机制</h3>
+      <div class="feedback-loop">
+        <div class="loop-node">{{LOOP_NODE_A}}</div>
+        <div class="loop-arrow">→ {{LOOP_EFFECT_1}}</div>
+        <div class="loop-node">{{LOOP_NODE_B}}</div>
+        <div class="loop-arrow">→ {{LOOP_EFFECT_2}}</div>
+        <div class="loop-node">{{LOOP_NODE_C}}</div>
+        <div class="loop-arrow">→ {{LOOP_EFFECT_3}}（回到起点）</div>
+      </div>
+      -->
+
+      <div class="info">
+        <strong>费曼提示：</strong>
+        理解知识关系图后，尝试不看图，用自己的话把这条链讲一遍。讲不出来就说明还有盲区。
+      </div>
+    </section>
+
+    <!-- ===================== 核心概念精讲区 ===================== -->
+    <section class="card" id="concepts">
+      <h2>核心概念精讲（不翻书搞定全章）</h2>
+      <p class="small">
+        按章节顺序逐层展开，每一块都包含定义、公式、图示和应试要点。折叠展开即可快速查阅。
+      </p>
+
+      <div class="accordion">
+        {{CONCEPT_ACCORDIONS}}
+      </div>
+    </section>
+
+    <!-- ===================== 章节优先级筛选 ===================== -->
+    <section class="card" id="filter">
+      <h2>章节优先级筛选</h2>
+      <p class="small">
+        可以按题型快速筛选章节，冲刺时建议优先看"高频"和"画图"。
+      </p>
+
+      <div class="filter-actions">
+        <button class="active" data-filter="all">全部</button>
+        <button data-filter="high">高频</button>
+        <button data-filter="calc">计算</button>
+        <button data-filter="graph">画图</button>
+        <button data-filter="essay">简答论述</button>
+      </div>
+
+      <div class="chapter-list">
+        {{CHAPTER_FILTER_ITEMS}}
+      </div>
+    </section>
+
+    <!-- ===================== 题库系统 ===================== -->
+    <section class="card" id="quiz">
+      <h2>题库系统 <span class="beginner-badge badge-easy">零基础可看</span></h2>
+      <p class="small">
+        练习模式可即时查看答案与解析；考试模式完成全部题目后统一出分；快速抽题模式随机刷题。<br>
+        <strong style="color:#f59e0b;">💡 新功能：</strong>每道题都有"看提示"按钮，不会做时可以先看提示再答题，不扣分！
+      </p>
+
+      <div class="qb-mode-tabs">
+        <button class="qb-mode-tab active" data-qmode="practice">练习模式</button>
+        <button class="qb-mode-tab" data-qmode="exam">考试模式</button>
+        <button class="qb-mode-tab" data-qmode="random">快速抽题</button>
+      </div>
+
+      <div class="filter-actions" style="margin-top:0;">
+        <button class="active" data-qfilter="all">全部题目</button>
+        {{QUESTION_TYPE_FILTERS}}
+      </div>
+
+      <div class="qb-stats">
+        <span class="qb-stat">📊 进度：<b id="qbProgress">0/0</b></span>
+        <span class="qb-stat">✅ 正确：<b id="qbCorrect">0/0</b></span>
+        <span class="qb-stat">⭐ 得分率：<b id="qbScore">—</b></span>
+      </div>
+
+      <div class="qb-card" id="qbCard">
+        <div class="qb-question-type qb-type-choice" id="qbTypeTag">选择题</div>
+        <div class="qb-question-text" id="qbText">请选择题型和模式，点击"开始"按钮。</div>
+        <div id="qbContent"></div>
+        <div id="qbFeedback"></div>
+      </div>
+
+      <div class="qb-navigation">
+        <button class="qb-nav-btn secondary" id="qbPrev" disabled>← 上一题</button>
+        <button class="qb-nav-btn primary" id="qbSubmit">开始答题</button>
+        <button class="qb-nav-btn secondary" id="qbNext" disabled>下一题 →</button>
+        <button class="qb-nav-btn secondary" id="qbRestart">🔄 重选模式</button>
+      </div>
+
+      <div id="qbSummary"></div>
+    </section>
+
+    <!-- ===================== 考前自测清单 ===================== -->
+    <section class="card" id="check">
+      <h2>考前自测清单 <span class="beginner-badge badge-easy">零基础可看</span></h2>
+      <p class="small">
+        如果下面 {{CHECKLIST_COUNT}} 项能完成 6 项以上，说明已经具备应试框架；如果低于 4 项，应优先回看核心概念。<br>
+        <strong>建议：</strong>先完成左侧导航"🌱 新手入口"的学习路线，再来自测效果更好。
+      </p>
+
+      <div class="checklist">
+        {{CHECKLIST_ITEMS}}
+      </div>
+
+      <div class="success" id="checkResult">
+        当前完成度：0%。先完成最核心的概念。
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    {{COURSE_NAME}}交互式复习方案｜建议结合教材例题和真题使用
+  </footer>
+
+  <!-- ===================== JAVASCRIPT ===================== -->
+  <script>
+    // ==================== 基础配置 ====================
+    const CHECKLIST_COUNT = {{CHECKLIST_COUNT}};
+    
+    // ==================== 自测清单 ====================
+    const checks = document.querySelectorAll(".study-check");
+    const progressBar = document.getElementById("studyProgress");
+    const checkResult = document.getElementById("checkResult");
+
+    var LS_CHECK = '{{COURSE_SLUG}}_checks';
+    var LS_QUIZ = '{{COURSE_SLUG}}_quiz';
+
+    function updateProgress() {
+      const total = checks.length;
+      const done = Array.from(checks).filter(item => item.checked).length;
+      const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+
+      if (progressBar) {
+        progressBar.style.width = percent + "%";
+      }
+
+      if (checkResult) {
+        let text = "当前完成度：" + percent + "%。";
+
+        if (percent < 40) {
+          text += " 建议先回看核心概念。";
+        } else if (percent < 75) {
+          text += " 已经有基础，继续补重点内容。";
+        } else {
+          text += " 状态不错，可以进入闭卷默写和真题训练。";
+        }
+
+        checkResult.textContent = text;
+      }
+
+      try {
+        var states = Array.from(checks).map(function(c){ return c.checked; });
+        localStorage.setItem(LS_CHECK, JSON.stringify(states));
+      } catch(e) {}
+    }
+
+    // 恢复自测清单
+    try {
+      var savedChecks = JSON.parse(localStorage.getItem(LS_CHECK));
+      if (savedChecks && savedChecks.length === checks.length) {
+        checks.forEach(function(c, i){ c.checked = !!savedChecks[i]; });
+      }
+    } catch(e) {}
+
+    checks.forEach(item => {
+      item.addEventListener("change", updateProgress);
+    });
+
+    updateProgress();
+
+    // ==================== 手风琴组件 ====================
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.parentElement.classList.toggle("active");
+      });
+    });
+
+    // ==================== 暗色模式 ====================
+    const darkModeBtn = document.getElementById("darkModeBtn");
+    darkModeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      const isDark = document.body.classList.contains("dark");
+      darkModeBtn.textContent = isDark ? "切换日间模式" : "切换夜间模式";
+      localStorage.setItem('{{COURSE_SLUG}}_dark', isDark);
+    });
+
+    // 恢复暗色模式
+    try {
+      if (localStorage.getItem('{{COURSE_SLUG}}_dark') === 'true') {
+        document.body.classList.add("dark");
+        darkModeBtn.textContent = "切换日间模式";
+      }
+    } catch(e) {}
+
+    // ==================== 章节筛选 ====================
+    const filterBtns = document.querySelectorAll('[data-filter]');
+    const chapterItems = document.querySelectorAll('.chapter-item');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const filter = btn.dataset.filter;
+        chapterItems.forEach(item => {
+          if (filter === 'all' || item.dataset.tags.includes(filter)) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // ==================== 题库系统 ====================
+    {{QUIZ_SYSTEM_CODE}}
+  </script>
+</body>
+</html>

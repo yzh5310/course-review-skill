@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数据结构 - 交互式复习方案</title>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #dbeafe;
+      --text: #111827;
+      --muted: #6b7280;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    body.dark {
+      --primary: #60a5fa;
+      --primary-light: #1e3a8a;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --bg: #0f172a;
+      --card: #111827;
+      --border: #334155;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    header {
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: #fff;
+      padding: 56px 20px 48px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      letter-spacing: -1px;
+    }
+
+    header p {
+      max-width: 760px;
+      margin: 16px auto 0;
+      opacity: 0.94;
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    button,
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    button:hover,
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .btn-light {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    body.dark .sticky-nav {
+      background: rgba(15, 23, 42, 0.92);
+    }
+
+    .sticky-nav-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .sticky-nav a {
+      white-space: nowrap;
+      text-decoration: none;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    main {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 26px 20px 60px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 26px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 26px;
+      color: var(--text);
+    }
+
+    h3 {
+      margin: 20px 0 10px;
+      font-size: 19px;
+    }
+
+    p {
+      margin: 8px 0 14px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, var(--card), rgba(37, 99, 235, 0.06));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .stat-number {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 4px;
+    }
+
+    body.dark .progress-wrap {
+      background: #334155;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #16a34a, #86efac);
+      transition: width 0.25s ease;
+    }
+
+    .flow {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-top: 16px;
+    }
+
+    .flow-step {
+      min-width: 150px;
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+      position: relative;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -13px;
+      top: 42%;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .flow-step strong {
+      display: block;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .warning,
+    .success,
+    .info {
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+
+    .warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .success {
+      background: #ecfdf5;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .info {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    body.dark .warning {
+      background: rgba(245, 158, 11, 0.12);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    body.dark .success {
+      background: rgba(22, 163, 74, 0.12);
+      color: #86efac;
+      border-color: rgba(22, 163, 74, 0.35);
+    }
+
+    body.dark .info {
+      background: rgba(37, 99, 235, 0.15);
+      color: #93c5fd;
+      border-color: rgba(37, 99, 235, 0.35);
+    }
+
+    .accordion {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: visible;
+      background: var(--card);
+    }
+
+    .accordion-item + .accordion-item {
+      border-top: 1px solid var(--border);
+    }
+
+    .accordion-btn {
+      width: 100%;
+      border: 0;
+      background: var(--card);
+      color: var(--text);
+      padding: 16px 18px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    .accordion-btn:hover {
+      transform: none;
+      filter: none;
+      background: rgba(37, 99, 235, 0.06);
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 0 18px 16px;
+      color: var(--muted);
+    }
+
+    .accordion-item.active .accordion-content {
+      display: block;
+    }
+
+    .filter-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0 18px;
+    }
+
+    .filter-actions button {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 8px 13px;
+    }
+
+    .filter-actions button.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .chapter-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .chapter-item {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      background: var(--card);
+    }
+
+    .chapter-item strong {
+      color: var(--primary);
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 4px 4px 0 0;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .checklist label {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: var(--card);
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      margin-top: 6px;
+      transform: scale(1.15);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px 20px 50px;
+    }
+
+    @media (max-width: 720px) {
+      header {
+        padding: 42px 16px 36px;
+      }
+
+      main {
+        padding: 20px 14px 44px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+
+    /* ===== 题库样式 ===== */
+    .qb-mode-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .qb-mode-tab {
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .qb-mode-tab:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .qb-mode-tab.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .qb-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .qb-stat {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .qb-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    .qb-question-type {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .qb-type-choice { background: #dbeafe; color: #1d4ed8; }
+    .qb-type-tf { background: #fef3c7; color: #92400e; }
+    .qb-type-short { background: #d1fae5; color: #166534; }
+
+    body.dark .qb-type-choice { background: #1e3a8a; color: #93c5fd; }
+    body.dark .qb-type-tf { background: #78350f; color: #fcd34d; }
+    body.dark .qb-type-short { background: #064e3b; color: #6ee7b7; }
+
+    .qb-question-text {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    .qb-options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .qb-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      background: var(--card);
+      cursor: pointer;
+      transition: 0.18s ease;
+      font-size: 15px;
+    }
+
+    .qb-option:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .qb-option.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .qb-option.correct {
+      border-color: var(--success);
+      background: #ecfdf5;
+    }
+
+    .qb-option.wrong {
+      border-color: var(--danger);
+      background: #fef2f2;
+    }
+
+    body.dark .qb-option.correct { background: rgba(22,163,74,0.18); }
+    body.dark .qb-option.wrong { background: rgba(220,38,38,0.18); }
+
+    .qb-option-marker {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .qb-option.selected .qb-option-marker {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .qb-option.correct .qb-option-marker {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    .qb-option.wrong .qb-option-marker {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+    }
+
+    .qb-tf-btns {
+      display: flex;
+      gap: 14px;
+    }
+
+    .qb-tf-btn {
+      flex: 1;
+      max-width: 140px;
+      padding: 14px 20px;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .qb-tf-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .qb-tf-btn.selected-true {
+      border-color: var(--success);
+      background: #ecfdf5;
+      color: #16a34a;
+      box-shadow: 0 2px 8px rgba(22,163,74,0.15);
+    }
+    .qb-tf-btn.selected-false {
+      border-color: var(--danger);
+      background: #fef2f2;
+      color: #dc2626;
+      box-shadow: 0 2px 8px rgba(220,38,38,0.15);
+    }
+    body.dark .qb-tf-btn.selected-true {
+      background: rgba(22,163,74,0.2);
+      color: #4ade80;
+      box-shadow: 0 2px 12px rgba(22,163,74,0.25);
+    }
+    body.dark .qb-tf-btn.selected-false {
+      background: rgba(220,38,38,0.2);
+      color: #f87171;
+      box-shadow: 0 2px 12px rgba(220,38,38,0.25);
+    }
+
+    .qb-feedback {
+      padding: 14px;
+      border-radius: 14px;
+      margin-top: 14px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .qb-feedback.correct { background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; }
+    .qb-feedback.wrong { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    body.dark .qb-feedback.correct { background: rgba(22,163,74,0.15); color: #86efac; }
+    body.dark .qb-feedback.wrong { background: rgba(220,38,38,0.15); color: #fca5a5; }
+
+    .qb-navigation {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .qb-nav-btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .qb-nav-btn.primary { background: var(--primary); color: #fff; }
+    .qb-nav-btn.secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .qb-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .concept-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .concept-card h3 {
+      margin: 0 0 10px;
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 8px;
+    }
+
+    .key-point {
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 0;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    body.dark .key-point {
+      background: rgba(245,158,11,0.12);
+      border-left-color: #f59e0b;
+    }
+
+    .plain-explain {
+      background: #f0fdf4;
+      border-left: 3px solid #16a34a;
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 0;
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    body.dark .plain-explain {
+      background: rgba(22,163,74,0.08);
+      border-left-color: #16a34a;
+    }
+
+    .common-mistake {
+      background: #fef2f2;
+      border-left: 3px solid #dc2626;
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 0;
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    body.dark .common-mistake {
+      background: rgba(220,38,38,0.08);
+      border-left-color: #dc2626;
+    }
+
+    .beginner-guide {
+      background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+      border: 2px solid #86efac;
+      border-radius: 22px;
+      padding: 26px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    body.dark .beginner-guide {
+      background: linear-gradient(135deg, rgba(22,163,74,0.08), rgba(37,99,235,0.08));
+      border-color: rgba(22,163,74,0.4);
+    }
+
+    .beginner-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .badge-easy {
+      background: #d1fae5;
+      color: #166534;
+    }
+
+    .badge-medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-hard {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    body.dark .badge-easy { background: #064e3b; color: #6ee7b7; }
+    body.dark .badge-medium { background: #78350f; color: #fcd34d; }
+    body.dark .badge-hard { background: #7f1d1d; color: #fca5a5; }
+
+    .learning-path {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .path-step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      position: relative;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .path-step:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.12);
+    }
+
+    .path-step .step-num {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .path-step .step-title {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .path-step .step-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .mnemonic-box {
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 14px 0;
+    }
+
+    body.dark .mnemonic-box {
+      background: rgba(245,158,11,0.08);
+      border-color: rgba(245,158,11,0.3);
+    }
+
+    .mnemonic-box h4 {
+      margin: 0 0 10px;
+      color: #92400e;
+      font-size: 15px;
+    }
+
+    body.dark .mnemonic-box h4 { color: #fbbf24; }
+
+    .mnemonic-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin: 8px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .mnemonic-item .emoji {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+      }
+
+      header,
+      .sticky-nav,
+      .hero-actions,
+      .filter-actions,
+      button,
+      footer,
+      .beginner-guide {
+        display: none !important;
+      }
+
+      .card {
+        box-shadow: none;
+        break-inside: avoid;
+        border: 1px solid #ddd;
+      }
+
+      .accordion-content {
+        display: block !important;
+      }
+
+      main {
+        max-width: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===================== HEADER ===================== -->
+  <header>
+    <h1>数据结构一天速通</h1>
+    <p>
+      零基础也能用！用交互式复习工具，把数据结构的核心知识串成"线性→树形→图→排序→查找"的应试框架。<br>
+      <span style="font-size:15px;opacity:0.9;">🌱 新手请先点击下方"零基础入口"，从学习路线开始 →</span>
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn-light btn" href="#beginner">🌱 零基础入口</a>
+      <button class="btn-light" id="darkModeBtn">切换夜间模式</button>
+      <button class="btn-light" onclick="window.print()">打印 A4 速记版</button>
+      <a class="btn-light btn" href="#check">开始自测</a>
+    </div>
+  </header>
+
+  <!-- ===================== NAVIGATION ===================== -->
+  <nav class="sticky-nav">
+    <div class="sticky-nav-inner">
+      <a href="#beginner" style="background:#d1fae5;color:#166534;">🌱 新手入口</a>
+      <a href="#dashboard">复习仪表盘</a>
+      <a href="#logic">全书逻辑</a>
+      <a href="#concepts">概念精讲</a>
+      <a href="#quiz">题库系统</a>
+      <a href="#check">考前自测</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ===================== 新手引导区 ===================== -->
+    <section class="beginner-guide" id="beginner">
+      <h2 style="margin-top:0;">🌱 零基础？从这里开始！</h2>
+      <p style="font-size:15px;line-height:1.8;">
+        数据结构听起来很高大上，其实核心就一句话：<b>研究如何高效地组织和处理数据</b>——数组怎么存？树怎么遍历？图怎么搜索？排序怎么快？
+        下面的<b>4步学习路线</b>帮你用最少时间搭好框架。
+      </p>
+
+      <div class="learning-path">
+        <a class="path-step" href="#logic" style="text-decoration:none;color:inherit;">
+          <div class="step-num">1</div>
+          <div class="step-title">看大图</div>
+          <div class="step-desc">先看"全书逻辑"，了解数据结构讲了哪几件事，建立整体印象。<span class="beginner-badge badge-easy">零基础可看</span></div>
+        </a>
+        <a class="path-step" href="#concepts" style="text-decoration:none;color:inherit;">
+          <div class="step-num">2</div>
+          <div class="step-title">抓核心结构</div>
+          <div class="step-desc">重点掌握线性表、树、图三大结构，考试70%的题和它们有关。<span class="beginner-badge badge-medium">需要理解</span></div>
+        </a>
+        <a class="path-step" href="#concepts" style="text-decoration:none;color:inherit;">
+          <div class="step-num">3</div>
+          <div class="step-title">背关键算法</div>
+          <div class="step-desc">记住排序和查找的核心算法，时间复杂度分析是重点。<span class="beginner-badge badge-medium">需要理解</span></div>
+        </a>
+        <a class="path-step" href="#quiz" style="text-decoration:none;color:inherit;">
+          <div class="step-num">4</div>
+          <div class="step-title">刷题检验</div>
+          <div class="step-desc">用题库系统检查自己，错了也不怕——每题都有提示和详细解释。<span class="beginner-badge badge-easy">零基础可看</span></div>
+        </a>
+      </div>
+
+      <div class="mnemonic-box">
+        <h4>💡 速记口诀——记住这个框架，考试不慌</h4>
+        <div class="mnemonic-item"><span class="emoji">📊</span><span><b>"线性→树形→图→排序→查找"</b>：先学线性表（数组、链表），再学树（二叉树、BST），然后学图（遍历、最短路），接着学排序（快排、归并），最后学查找（二分、哈希）。</span></div>
+        <div class="mnemonic-item"><span class="emoji">🧮</span><span><b>"时间复杂度记大O"</b>：O(1)最快，O(log n)次之，O(n)一般，O(n²)较慢，O(2ⁿ)最慢。</span></div>
+        <div class="mnemonic-item"><span class="emoji">📈</span><span><b>"递归是树，循环是线"</b>：递归问题可以用树来理解，循环问题可以用线性结构来理解。</span></div>
+      </div>
+
+      <div class="info">
+        <strong>看不懂术语？</strong>
+        页面中带有虚线下划线的蓝色文字，鼠标悬停会弹出通俗解释。概念精讲区每个概念都有"白话版"解释和生活类比。
+      </div>
+    </section>
+
+    <!-- ===================== 复习仪表盘 ===================== -->
+    <section class="card" id="dashboard">
+      <h2>复习仪表盘</h2>
+      <p class="small">
+        目标：用 1 天时间抓住数据结构主线，优先掌握核心数据结构和算法。
+      </p>
+
+      <div class="dashboard">
+        <div class="stat-card">
+          <div class="stat-number">10章</div>
+          <div class="stat-label">按"线性→树形→图→排序→查找"复习</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">5大</div>
+          <div class="stat-label">核心结构：数组、链表、树、图、哈希表</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number">8种</div>
+          <div class="stat-label">经典排序算法</div>
+        </div>
+      </div>
+
+      <h3>今日完成度</h3>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="studyProgress"></div>
+      </div>
+      <p class="small">
+        勾选页面底部的自测清单后，这里会自动显示完成进度。
+      </p>
+
+      <div class="info">
+        <strong>建议顺序：</strong>
+        先背核心数据结构，再看算法复杂度，最后用随机抽题检查是否能闭卷表达。
+      </div>
+    </section>
+
+    <!-- ===================== 全书逻辑流程图 ===================== -->
+    <section class="card" id="logic">
+      <h2>全书逻辑流程图</h2>
+      <p>
+        数据结构不是零散概念，而是一条连续主线：先学基础结构，再学复杂结构，最后学算法应用。
+      </p>
+
+      <div class="flow">
+        <div class="flow-step">
+          <strong>第1-2章</strong>
+          绪论与线性表<br />
+          数组、链表、栈、队列
+        </div>
+
+        <div class="flow-step">
+          <strong>第3-4章</strong>
+          树与二叉树<br />
+          BST、AVL、哈夫曼树
+        </div>
+
+        <div class="flow-step">
+          <strong>第5章</strong>
+          图<br />
+          遍历、最短路、最小生成树
+        </div>
+
+        <div class="flow-step">
+          <strong>第6-7章</strong>
+          查找<br />
+          二分、哈希、B树
+        </div>
+
+        <div class="flow-step">
+          <strong>第8-10章</strong>
+          排序<br />
+          快排、归并、堆排序
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 核心概念精讲区 ===================== -->
+    <section class="card" id="concepts">
+      <h2>核心概念精讲（不翻书搞定全章）</h2>
+      <p class="small">
+        按章节顺序逐层展开，每一块都包含定义、算法、复杂度和应试要点。折叠展开即可快速查阅。
+      </p>
+
+      <div class="accordion">
+        <!-- 第1章：绪论 -->
+        <div class="accordion-item" id="concept-ch1">
+          <button class="accordion-btn">第1章：绪论 —— 时间复杂度与空间复杂度 <span class="beginner-badge badge-easy">零基础可看</span></button>
+          <div class="accordion-content">
+            <div class="plain-explain">
+              <strong>🗺️ 这章讲什么？</strong> 就像评价一辆车要看速度和油耗一样，评价一个算法要看它<b>快不快</b>（时间复杂度）和<b>费不费内存</b>（空间复杂度）。这章介绍如何用"大O记号"来衡量算法效率。
+            </div>
+
+            <div class="concept-card">
+              <h3>时间复杂度</h3>
+              <p><strong>定义：</strong>算法执行时间与输入规模n的增长关系，用大O记号表示。</p>
+              <div class="plain-explain">
+                <strong>白话版：</strong>时间复杂度就是"当数据量变大时，算法变慢多少倍"。比如O(n)表示数据量翻倍，时间也翻倍；O(n²)表示数据量翻倍，时间变4倍。
+              </div>
+              <div class="key-point">
+                <strong>常见复杂度排序：</strong><br>
+                O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(n³) < O(2ⁿ) < O(n!)
+              </div>
+              <div class="common-mistake">
+                <strong>⚠️ 常见误区：</strong><br>
+                ① O(2n) = O(n)，常数系数可以省略<br>
+                ② O(n² + n) = O(n²)，只保留最高阶项<br>
+                ③ 最坏时间复杂度 vs 平均时间复杂度，考试通常考最坏
+              </div>
+            </div>
+
+            <div class="concept-card">
+              <h3>空间复杂度</h3>
+              <p><strong>定义：</strong>算法执行过程中额外占用的存储空间与输入规模n的关系。</p>
+              <div class="plain-explain">
+                <strong>白话版：</strong>空间复杂度就是"算法需要多少额外内存"。递归算法通常空间复杂度较高，因为每次递归都要保存现场。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第2章：线性表 -->
+        <div class="accordion-item" id="concept-ch2">
+          <button class="accordion-btn">第2章：线性表 —— 数组与链表 <span class="beginner-badge badge-easy">零基础可看</span></button>
+          <div class="accordion-content">
+            <div class="plain-explain">
+              <strong>🗺️ 这章讲什么？</strong> 线性表是最基础的数据结构，就像一排座位：<b>数组</b>是电影院座位（连续、编号固定），<b>链表</b>是火车车厢（分散、靠指针连接）。
+            </div>
+
+            <div class="concept-card">
+              <h3>数组 vs 链表</h3>
+              <table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:8px;">
+                <tr style="background:var(--primary-light);"><th style="padding:8px;text-align:left;">特性</th><th style="padding:8px;text-align:left;">数组</th><th style="padding:8px;text-align:left;">链表</th></tr>
+                <tr><td style="padding:8px;border-bottom:1px solid var(--border);">存储方式</td><td style="padding:8px;border-bottom:1px solid var(--border);">连续内存</td><td style="padding:8px;border-bottom:1px solid var(--border);">分散内存，指针连接</td></tr>
+                <tr><td style="padding:8px;border-bottom:1px solid var(--border);">随机访问</td><td style="padding:8px;border-bottom:1px solid var(--border);">O(1)</td><td style="padding:8px;border-bottom:1px solid var(--border);">O(n)</td></tr>
+                <tr><td style="padding:8px;border-bottom:1px solid var(--border);">插入/删除</td><td style="padding:8px;border-bottom:1px solid var(--border);">O(n)</td><td style="padding:8px;border-bottom:1px solid var(--border);">O(1)（已知位置）</td></tr>
+                <tr><td style="padding:8px;">空间利用率</td><td style="padding:8px;">可能浪费</td><td style="padding:8px;">按需分配</td></tr>
+              </table>
+              <div class="plain-explain">
+                <strong>生活类比：</strong><br>
+                • <b>数组</b>：电影院座位——找座位快（直接看编号），但中间加座位很难<br>
+                • <b>链表</b>：火车车厢——找某节车厢要一节节走，但中间加车厢很容易
+              </div>
+            </div>
+
+            <div class="concept-card">
+              <h3>栈与队列</h3>
+              <p><strong>栈（Stack）：</strong>后进先出（LIFO），像叠盘子。</p>
+              <p><strong>队列（Queue）：</strong>先进先出（FIFO），像排队买票。</p>
+              <div class="plain-explain">
+                <strong>应用场景：</strong><br>
+                • <b>栈</b>：函数调用、括号匹配、表达式求值、浏览器后退<br>
+                • <b>队列</b>：打印任务、消息队列、广度优先搜索（BFS）
+              </div>
+              <div class="key-point">
+                <strong>应试要点：</strong>栈和队列的操作时间复杂度都是O(1)。考试常考：入栈出栈序列判断、用两个栈实现队列。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第3-4章：树 -->
+        <div class="accordion-item" id="concept-ch3">
+          <button class="accordion-btn">第3-4章：树与二叉树 <span class="beginner-badge badge-medium">需要理解</span></button>
+          <div class="accordion-content">
+            <div class="plain-explain">
+              <strong>🗺️ 这章讲什么？</strong> 树是一种<b>层次结构</b>，像公司组织架构：CEO在顶层，下面是部门经理，再下面是员工。二叉树是每个节点最多有两个子节点的树。
+            </div>
+
+            <div class="concept-card">
+              <h3>二叉树的遍历</h3>
+              <p><strong>四种遍历方式：</strong></p>
+              <ul>
+                <li><strong>前序（Pre-order）：</strong>根→左→右</li>
+                <li><strong>中序（In-order）：</strong>左→根→右</li>
+                <li><strong>后序（Post-order）：</strong>左→右→根</li>
+                <li><strong>层序（Level-order）：</strong>逐层从左到右</li>
+              </ul>
+              <div class="plain-explain">
+                <strong>记忆技巧：</strong>"前中后"指的是<b>根</b>什么时候访问。前序=根在前，中序=根在中，后序=根在后。左右顺序永远是先左后右。
+              </div>
+              <div class="key-point">
+                <strong>应试要点：</strong><br>
+                ① 给前序+中序，可以唯一确定一棵二叉树<br>
+                ② 给后序+中序，也可以唯一确定<br>
+                ③ 给前序+后序，<b>不能</b>唯一确定！
+              </div>
+            </div>
+
+            <div class="concept-card">
+              <h3>二叉搜索树（BST）</h3>
+              <p><strong>性质：</strong>左子树所有节点 < 根节点 < 右子树所有节点</p>
+              <div class="plain-explain">
+                <strong>白话版：</strong>BST就像字典——左边的词比中间小，右边的词比中间大。查找时可以"二分"，效率很高。
+              </div>
+              <div class="key-point">
+                <strong>核心操作复杂度：</strong><br>
+                查找/插入/删除：平均O(log n)，最坏O(n)（退化成链表）<br>
+                中序遍历BST会得到有序序列！
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第5章：图 -->
+        <div class="accordion-item" id="concept-ch5">
+          <button class="accordion-btn">第5章：图 —— 遍历与最短路 <span class="beginner-badge badge-hard">重点难点</span></button>
+          <div class="accordion-content">
+            <div class="plain-explain">
+              <strong>🗺️ 这章讲什么？</strong> 图是最复杂的数据结构，像地铁线路图：站点是顶点，线路是边。图可以表示"多对多"的关系。
+            </div>
+
+            <div class="concept-card">
+              <h3>图的存储</h3>
+              <p><strong>邻接矩阵：</strong>用二维数组存，适合稠密图。</p>
+              <p><strong>邻接表：</strong>用链表存，适合稀疏图。</p>
+              <div class="plain-explain">
+                <strong>生活类比：</strong><br>
+                • <b>邻接矩阵</b>：像航班表——所有城市之间的航班都列出来，没航班的填0<br>
+                • <b>邻接表</b>：像每个城市的"可达城市列表"——只列出有航班的城市
+              </div>
+            </div>
+
+            <div class="concept-card">
+              <h3>图的遍历</h3>
+              <p><strong>深度优先搜索（DFS）：</strong>像走迷宫——一条路走到黑，走不通再回溯。</p>
+              <p><strong>广度优先搜索（BFS）：</strong>像水波扩散——先把周围的都走完，再走更远的。</p>
+              <div class="key-point">
+                <strong>时间复杂度：</strong><br>
+                邻接矩阵：O(n²)<br>
+                邻接表：O(n + e)（n是顶点数，e是边数）
+              </div>
+            </div>
+
+            <div class="concept-card">
+              <h3>最短路径算法</h3>
+              <p><strong>Dijkstra算法：</strong>单源最短路，不能处理负权边。</p>
+              <p><strong>Floyd算法：</strong>多源最短路，可以处理负权边（不能有负环）。</p>
+              <div class="key-point">
+                <strong>应试要点：</strong><br>
+                Dijkstra：贪心思想，每次选最近的点，O(n²)或O((n+e)log n)<br>
+                Floyd：动态规划，三重循环，O(n³)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第6-7章：查找 -->
+        <div class="accordion-item" id="concept-ch6">
+          <button class="accordion-btn">第6-7章：查找 —— 二分与哈希 <span class="beginner-badge badge-medium">需要理解</span></button>
+          <div class="accordion-content">
+            <div class="concept-card">
+              <h3>二分查找</h3>
+              <p><strong>前提：</strong>数组有序</p>
+              <p><strong>思路：</strong>每次取中间元素比较，缩小一半范围</p>
+              <div class="plain-explain">
+                <strong>生活类比：</strong>猜数字游戏——"大了"还是"小了"，每次排除一半。
+              </div>
+              <div class="key-point">
+                <strong>时间复杂度：</strong>O(log n)<br>
+                <strong>易错点：</strong>边界条件（left <= right 还是 left < right？）
+              </div>
+            </div>
+
+            <div class="concept-card">
+              <h3>哈希表</h3>
+              <p><strong>原理：</strong>通过哈希函数直接计算存储位置，O(1)查找。</p>
+              <p><strong>冲突解决：</strong>开放定址法、链地址法</p>
+              <div class="plain-explain">
+                <strong>生活类比：</strong>哈希表像"存包柜"——根据你的特征（哈希函数）直接给你分配柜子号，不用一个个找。
+              </div>
+              <div class="key-point">
+                <strong>应试要点：</strong><br>
+                ① 好的哈希函数应该均匀分布<br>
+                ② 装填因子 = 元素个数 / 表长<br>
+                ③ 冲突是不可避免的，只能尽量减少
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 第8-10章：排序 -->
+        <div class="accordion-item" id="concept-ch8">
+          <button class="accordion-btn">第8-10章：排序算法 <span class="beginner-badge badge-hard">重点难点</span></button>
+          <div class="accordion-content">
+            <div class="concept-card">
+              <h3>八大排序算法对比</h3>
+              <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;">
+                <tr style="background:var(--primary-light);"><th style="padding:6px;text-align:left;">算法</th><th style="padding:6px;">平均</th><th style="padding:6px;">最坏</th><th style="padding:6px;">最好</th><th style="padding:6px;">稳定性</th></tr>
+                <tr><td style="padding:6px;border-bottom:1px solid var(--border);">冒泡排序</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n²)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n²)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">稳定</td></tr>
+                <tr><td style="padding:6px;border-bottom:1px solid var(--border);">选择排序</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n²)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n²)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n²)</td><td style="padding:6px;border-bottom:1px solid var(--border);">不稳定</td></tr>
+                <tr><td style="padding:6px;border-bottom:1px solid var(--border);">插入排序</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n²)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n²)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">稳定</td></tr>
+                <tr><td style="padding:6px;border-bottom:1px solid var(--border);">希尔排序</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n^1.3)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n²)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">不稳定</td></tr>
+                <tr><td style="padding:6px;border-bottom:1px solid var(--border);">归并排序</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n log n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n log n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n log n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">稳定</td></tr>
+                <tr><td style="padding:6px;border-bottom:1px solid var(--border);">快速排序</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n log n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n²)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n log n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">不稳定</td></tr>
+                <tr><td style="padding:6px;border-bottom:1px solid var(--border);">堆排序</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n log n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n log n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">O(n log n)</td><td style="padding:6px;border-bottom:1px solid var(--border);">不稳定</td></tr>
+                <tr><td style="padding:6px;">基数排序</td><td style="padding:6px;">O(d(n+r))</td><td style="padding:6px;">O(d(n+r))</td><td style="padding:6px;">O(d(n+r))</td><td style="padding:6px;">稳定</td></tr>
+              </table>
+              <div class="key-point">
+                <strong>记忆口诀：</strong><br>
+                "快选堆希不稳定"（快速、选择、堆、希尔是不稳定的）<br>
+                "归并插冒泡稳定"（归并、插入、冒泡是稳定的）
+              </div>
+            </div>
+
+            <div class="concept-card">
+              <h3>快速排序</h3>
+              <p><strong>思想：</strong>分治法——选一个基准，比它小的放左边，比它大的放右边，递归处理。</p>
+              <div class="plain-explain">
+                <strong>生活类比：</strong>像老师按身高排队——先找一个同学当基准，比他矮的站左边，比他高的站右边，然后左右两边再各自找基准继续排。
+              </div>
+              <div class="key-point">
+                <strong>应试要点：</strong><br>
+                ① 平均O(n log n)，最坏O(n²)（已有序时）<br>
+                ② 不稳定排序<br>
+                ③ 实际应用中最快的排序算法
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 章节优先级筛选 ===================== -->
+    <section class="card" id="filter">
+      <h2>章节优先级筛选</h2>
+      <p class="small">
+        可以按题型快速筛选章节，冲刺时建议优先看"高频"和"算法"。
+      </p>
+
+      <div class="filter-actions">
+        <button class="active" data-filter="all">全部</button>
+        <button data-filter="high">高频</button>
+        <button data-filter="algo">算法</button>
+        <button data-filter="struct">数据结构</button>
+        <button data-filter="theory">理论</button>
+      </div>
+
+      <div class="chapter-list">
+        <div class="chapter-item" data-tags="high theory">
+          <strong>第1章：绪论</strong>
+          <p class="small">重点：时间复杂度、空间复杂度、大O记号</p>
+          <span class="tag">高频</span>
+          <span class="tag">理论</span>
+        </div>
+
+        <div class="chapter-item" data-tags="high struct">
+          <strong>第2章：线性表</strong>
+          <p class="small">重点：数组、链表、栈、队列</p>
+          <span class="tag">高频</span>
+          <span class="tag">数据结构</span>
+        </div>
+
+        <div class="chapter-item" data-tags="high struct">
+          <strong>第3-4章：树与二叉树</strong>
+          <p class="small">重点：遍历、BST、平衡树</p>
+          <span class="tag">高频</span>
+          <span class="tag">数据结构</span>
+        </div>
+
+        <div class="chapter-item" data-tags="high algo">
+          <strong>第5章：图</strong>
+          <p class="small">重点：DFS、BFS、最短路径</p>
+          <span class="tag">高频</span>
+          <span class="tag">算法</span>
+        </div>
+
+        <div class="chapter-item" data-tags="algo">
+          <strong>第6-7章：查找</strong>
+          <p class="small">重点：二分查找、哈希表</p>
+          <span class="tag">算法</span>
+        </div>
+
+        <div class="chapter-item" data-tags="high algo">
+          <strong>第8-10章：排序</strong>
+          <p class="small">重点：快排、归并、堆排序</p>
+          <span class="tag">高频</span>
+          <span class="tag">算法</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 题库系统 ===================== -->
+    <section class="card" id="quiz">
+      <h2>题库系统 <span class="beginner-badge badge-easy">零基础可看</span></h2>
+      <p class="small">
+        练习模式可即时查看答案与解析；考试模式完成全部题目后统一出分；快速抽题模式随机刷题。
+      </p>
+
+      <div class="qb-mode-tabs">
+        <button class="qb-mode-tab active" data-qmode="practice">练习模式</button>
+        <button class="qb-mode-tab" data-qmode="exam">考试模式</button>
+        <button class="qb-mode-tab" data-qmode="random">快速抽题</button>
+      </div>
+
+      <div class="filter-actions" style="margin-top:0;">
+        <button class="active" data-qfilter="all">全部题目</button>
+        <button data-qfilter="choice">选择题(10)</button>
+        <button data-qfilter="tf">判断题(8)</button>
+        <button data-qfilter="short">简答题(5)</button>
+      </div>
+
+      <div class="qb-stats">
+        <span class="qb-stat">📊 进度：<b id="qbProgress">0/0</b></span>
+        <span class="qb-stat">✅ 正确：<b id="qbCorrect">0/0</b></span>
+        <span class="qb-stat">⭐ 得分率：<b id="qbScore">—</b></span>
+      </div>
+
+      <div class="qb-card" id="qbCard">
+        <div class="qb-question-type qb-type-choice" id="qbTypeTag">选择题</div>
+        <div class="qb-question-text" id="qbText">请选择题型和模式，点击"开始"按钮。</div>
+        <div id="qbContent"></div>
+        <div id="qbFeedback"></div>
+      </div>
+
+      <div class="qb-navigation">
+        <button class="qb-nav-btn secondary" id="qbPrev" disabled>← 上一题</button>
+        <button class="qb-nav-btn primary" id="qbSubmit">开始答题</button>
+        <button class="qb-nav-btn secondary" id="qbNext" disabled>下一题 →</button>
+        <button class="qb-nav-btn secondary" id="qbRestart">🔄 重选模式</button>
+      </div>
+
+      <div id="qbSummary"></div>
+    </section>
+
+    <!-- ===================== 考前自测清单 ===================== -->
+    <section class="card" id="check">
+      <h2>考前自测清单 <span class="beginner-badge badge-easy">零基础可看</span></h2>
+      <p class="small">
+        如果下面 8 项能完成 6 项以上，说明已经具备应试框架；如果低于 4 项，应优先回看核心概念。
+      </p>
+
+      <div class="checklist">
+        <label><input class="study-check" type="checkbox" /> 我能解释时间复杂度和空间复杂度。</label>
+        <label><input class="study-check" type="checkbox" /> 我能区分数组和链表的优缺点。</label>
+        <label><input class="study-check" type="checkbox" /> 我能说出栈和队列的区别及应用场景。</label>
+        <label><input class="study-check" type="checkbox" /> 我能写出二叉树的四种遍历序列。</label>
+        <label><input class="study-check" type="checkbox" /> 我能解释DFS和BFS的区别。</label>
+        <label><input class="study-check" type="checkbox" /> 我能实现二分查找。</label>
+        <label><input class="study-check" type="checkbox" /> 我能说出快速排序的原理和复杂度。</label>
+        <label><input class="study-check" type="checkbox" /> 我能区分稳定排序和不稳定排序。</label>
+      </div>
+
+      <div class="success" id="checkResult">
+        当前完成度：0%。先完成最核心的数据结构。
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    数据结构一天速通交互式复习方案｜建议结合教材例题和真题使用
+  </footer>
+
+  <!-- ===================== JAVASCRIPT ===================== -->
+  <script>
+    // ==================== 基础配置 ====================
+    const checks = document.querySelectorAll(".study-check");
+    const progressBar = document.getElementById("studyProgress");
+    const checkResult = document.getElementById("checkResult");
+
+    var LS_CHECK = 'ds_review_checks';
+    var LS_QUIZ = 'ds_review_quiz';
+
+    function updateProgress() {
+      const total = checks.length;
+      const done = Array.from(checks).filter(item => item.checked).length;
+      const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+
+      if (progressBar) {
+        progressBar.style.width = percent + "%";
+      }
+
+      if (checkResult) {
+        let text = "当前完成度：" + percent + "%。";
+
+        if (percent < 40) {
+          text += " 建议先回看核心数据结构。";
+        } else if (percent < 75) {
+          text += " 已经有基础，继续补算法和复杂度分析。";
+        } else {
+          text += " 状态不错，可以进入闭卷默写和真题训练。";
+        }
+
+        checkResult.textContent = text;
+      }
+
+      try {
+        var states = Array.from(checks).map(function(c){ return c.checked; });
+        localStorage.setItem(LS_CHECK, JSON.stringify(states));
+      } catch(e) {}
+    }
+
+    // 恢复自测清单
+    try {
+      var savedChecks = JSON.parse(localStorage.getItem(LS_CHECK));
+      if (savedChecks && savedChecks.length === checks.length) {
+        checks.forEach(function(c, i){ c.checked = !!savedChecks[i]; });
+      }
+    } catch(e) {}
+
+    checks.forEach(item => {
+      item.addEventListener("change", updateProgress);
+    });
+
+    updateProgress();
+
+    // ==================== 手风琴组件 ====================
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.parentElement.classList.toggle("active");
+      });
+    });
+
+    // ==================== 暗色模式 ====================
+    const darkModeBtn = document.getElementById("darkModeBtn");
+    darkModeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      const isDark = document.body.classList.contains("dark");
+      darkModeBtn.textContent = isDark ? "切换日间模式" : "切换夜间模式";
+      localStorage.setItem('ds_dark', isDark);
+    });
+
+    // 恢复暗色模式
+    try {
+      if (localStorage.getItem('ds_dark') === 'true') {
+        document.body.classList.add("dark");
+        darkModeBtn.textContent = "切换日间模式";
+      }
+    } catch(e) {}
+
+    // ==================== 章节筛选 ====================
+    const filterBtns = document.querySelectorAll('[data-filter]');
+    const chapterItems = document.querySelectorAll('.chapter-item');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const filter = btn.dataset.filter;
+        chapterItems.forEach(item => {
+          if (filter === 'all' || item.dataset.tags.includes(filter)) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // ==================== 题库系统 ====================
+    // 题库数据
+    const questionBank = {
+      choice: [
+        {
+          id: 1,
+          question: "以下哪种数据结构适合实现"后进先出"？",
+          options: ["队列", "栈", "链表", "数组"],
+          answer: 1,
+          explanation: "栈（Stack）是后进先出（LIFO）的数据结构，像叠盘子一样。",
+          hint: "想想叠盘子的操作",
+          score: 10
+        },
+        {
+          id: 2,
+          question: "快速排序的平均时间复杂度是？",
+          options: ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+          answer: 1,
+          explanation: "快速排序平均时间复杂度为O(n log n)，最坏情况为O(n²)。",
+          hint: "快排用的是分治思想",
+          score: 10
+        },
+        {
+          id: 3,
+          question: "二分查找的前提条件是？",
+          options: ["数据无序", "数据有序", "数据存储在链表中", "数据量小于10"],
+          answer: 1,
+          explanation: "二分查找要求数组必须有序，否则无法判断往哪边缩小范围。",
+          hint: "想想猜数字游戏",
+          score: 10
+        },
+        {
+          id: 4,
+          question: "以下哪个排序算法是稳定的？",
+          options: ["快速排序", "选择排序", "归并排序", "堆排序"],
+          answer: 2,
+          explanation: "归并排序是稳定排序，快速排序、选择排序、堆排序都是不稳定的。",
+          hint: "记住口诀：归并插冒泡稳定",
+          score: 10
+        }
+      ],
+      tf: [
+        {
+          id: 1,
+          question: "链表支持随机访问，时间复杂度为O(1)。",
+          answer: false,
+          explanation: "链表不支持随机访问，需要从头遍历，时间复杂度为O(n)。数组才支持O(1)随机访问。",
+          hint: "想想链表的存储方式",
+          score: 5
+        },
+        {
+          id: 2,
+          question: "二叉搜索树的中序遍历结果是有序的。",
+          answer: true,
+          explanation: "BST的中序遍历会按照升序输出所有节点值，这是BST的重要性质。",
+          hint: "想想BST的定义：左子树<根<右子树",
+          score: 5
+        },
+        {
+          id: 3,
+          question: "哈希表的查找时间复杂度在最好情况下是O(1)。",
+          answer: true,
+          explanation: "哈希表通过哈希函数直接计算存储位置，理想情况下O(1)就能找到。",
+          hint: "哈希函数直接算位置",
+          score: 5
+        }
+      ],
+      short: [
+        {
+          id: 1,
+          question: "请解释什么是栈的"后进先出"特性，并举一个生活中的例子。",
+          answer: "栈的后进先出（LIFO）特性是指最后放入栈中的元素最先被取出。生活中的例子：叠盘子——最后放上去的盘子最先被拿走；浏览器后退按钮——最后访问的页面最先返回。",
+          hint: "想想叠盘子的操作",
+          score: 15
+        },
+        {
+          id: 2,
+          question: "请简述快速排序的基本思想。",
+          answer: "快速排序采用分治思想：选择一个基准元素，将数组分为两部分——比基准小的放左边，比基准大的放右边，然后递归地对左右两部分进行快速排序。",
+          hint: "分治法+基准元素",
+          score: 15
+        }
+      ]
+    };
+
+    // 题库系统类
+    class QuizSystem {
+      constructor(questionBank, courseSlug) {
+        this.questionBank = questionBank;
+        this.courseSlug = courseSlug;
+        this.currentMode = 'practice';
+        this.currentFilter = 'all';
+        this.currentQuestionIndex = 0;
+        this.questions = [];
+        this.answers = {};
+        this.score = 0;
+        this.totalQuestions = 0;
+        this.correctCount = 0;
+        
+        // DOM元素
+        this.elements = {
+          modeTabs: document.querySelectorAll('.qb-mode-tab'),
+          filterBtns: document.querySelectorAll('[data-qfilter]'),
+          progress: document.getElementById('qbProgress'),
+          correct: document.getElementById('qbCorrect'),
+          scoreEl: document.getElementById('qbScore'),
+          card: document.getElementById('qbCard'),
+          typeTag: document.getElementById('qbTypeTag'),
+          text: document.getElementById('qbText'),
+          content: document.getElementById('qbContent'),
+          feedback: document.getElementById('qbFeedback'),
+          prevBtn: document.getElementById('qbPrev'),
+          submitBtn: document.getElementById('qbSubmit'),
+          nextBtn: document.getElementById('qbNext'),
+          restartBtn: document.getElementById('qbRestart'),
+          summary: document.getElementById('qbSummary')
+        };
+        
+        this.init();
+      }
+      
+      init() {
+        // 绑定模式切换
+        this.elements.modeTabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            this.elements.modeTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            this.currentMode = tab.dataset.qmode;
+            this.reset();
+          });
+        });
+        
+        // 绑定题型筛选
+        this.elements.filterBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            this.elements.filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.currentFilter = btn.dataset.qfilter;
+            this.reset();
+          });
+        });
+        
+        // 绑定按钮事件
+        this.elements.prevBtn.addEventListener('click', () => this.prevQuestion());
+        this.elements.submitBtn.addEventListener('click', () => this.handleSubmit());
+        this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+        this.elements.restartBtn.addEventListener('click', () => this.reset());
+        
+        // 初始化显示
+        this.updateStats();
+      }
+      
+      getFilteredQuestions() {
+        let questions = [];
+        Object.keys(this.questionBank).forEach(type => {
+          this.questionBank[type].forEach(q => {
+            questions.push({ ...q, type });
+          });
+        });
+        if (this.currentFilter !== 'all') {
+          questions = questions.filter(q => q.type === this.currentFilter);
+        }
+        return questions;
+      }
+      
+      start() {
+        this.questions = this.getFilteredQuestions();
+        this.totalQuestions = this.questions.length;
+        this.currentQuestionIndex = 0;
+        this.answers = {};
+        this.score = 0;
+        this.correctCount = 0;
+        
+        if (this.totalQuestions === 0) {
+          this.elements.text.textContent = '没有找到符合条件的题目。';
+          return;
+        }
+        
+        if (this.currentMode === 'random') {
+          this.shuffleArray(this.questions);
+          this.questions = this.questions.slice(0, Math.min(10, this.totalQuestions));
+          this.totalQuestions = this.questions.length;
+        }
+        
+        this.showQuestion();
+        this.updateStats();
+        this.updateButtons();
+      }
+      
+      reset() {
+        this.questions = [];
+        this.answers = {};
+        this.currentQuestionIndex = 0;
+        this.score = 0;
+        this.correctCount = 0;
+        
+        this.elements.text.textContent = '请选择题型和模式，点击"开始"按钮。';
+        this.elements.content.innerHTML = '';
+        this.elements.feedback.innerHTML = '';
+        this.elements.feedback.className = 'qb-feedback';
+        this.elements.summary.innerHTML = '';
+        
+        this.updateStats();
+        this.updateButtons();
+        this.elements.submitBtn.textContent = '开始答题';
+        this.elements.submitBtn.disabled = false;
+      }
+      
+      showQuestion() {
+        if (this.currentQuestionIndex >= this.totalQuestions) {
+          this.showSummary();
+          return;
+        }
+        
+        const question = this.questions[this.currentQuestionIndex];
+        this.updateTypeTag(question.type);
+        this.elements.text.textContent = question.question;
+        this.renderQuestionContent(question);
+        this.elements.feedback.innerHTML = '';
+        this.elements.feedback.className = 'qb-feedback';
+        
+        if (this.answers[this.currentQuestionIndex] !== undefined) {
+          this.showAnsweredState(question, this.answers[this.currentQuestionIndex]);
+        }
+        
+        this.updateStats();
+        this.updateButtons();
+      }
+      
+      renderQuestionContent(question) {
+        const content = this.elements.content;
+        content.innerHTML = '';
+        
+        switch (question.type) {
+          case 'choice':
+            this.renderChoiceQuestion(question, content);
+            break;
+          case 'tf':
+            this.renderTFQuestion(question, content);
+            break;
+          case 'short':
+            this.renderShortQuestion(question, content);
+            break;
+        }
+        
+        if (question.hint) {
+          const hintBtn = document.createElement('button');
+          hintBtn.className = 'btn';
+          hintBtn.style.cssText = 'background:#f59e0b;color:#fff;margin-top:10px;font-size:13px;padding:6px 12px;';
+          hintBtn.textContent = '💡 看提示';
+          hintBtn.addEventListener('click', () => this.showHint(question.hint));
+          content.appendChild(hintBtn);
+        }
+      }
+      
+      renderChoiceQuestion(question, container) {
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'qb-options';
+        
+        question.options.forEach((option, index) => {
+          const optionDiv = document.createElement('div');
+          optionDiv.className = 'qb-option';
+          optionDiv.dataset.index = index;
+          
+          const marker = document.createElement('div');
+          marker.className = 'qb-option-marker';
+          marker.textContent = String.fromCharCode(65 + index);
+          
+          const text = document.createElement('span');
+          text.textContent = option;
+          
+          optionDiv.appendChild(marker);
+          optionDiv.appendChild(text);
+          
+          optionDiv.addEventListener('click', () => {
+            if (this.answers[this.currentQuestionIndex] === undefined) {
+              this.selectOption(index);
+            }
+          });
+          
+          optionsDiv.appendChild(optionDiv);
+        });
+        
+        container.appendChild(optionsDiv);
+      }
+      
+      renderTFQuestion(question, container) {
+        const tfDiv = document.createElement('div');
+        tfDiv.className = 'qb-tf-btns';
+        
+        ['正确', '错误'].forEach((label, index) => {
+          const btn = document.createElement('button');
+          btn.className = 'qb-tf-btn';
+          btn.textContent = label;
+          btn.dataset.value = index === 0 ? 'true' : 'false';
+          
+          btn.addEventListener('click', () => {
+            if (this.answers[this.currentQuestionIndex] === undefined) {
+              this.selectTF(index === 0);
+            }
+          });
+          
+          tfDiv.appendChild(btn);
+        });
+        
+        container.appendChild(tfDiv);
+      }
+      
+      renderShortQuestion(question, container) {
+        const shortDiv = document.createElement('div');
+        shortDiv.className = 'qb-answer-reveal';
+        shortDiv.innerHTML = '<strong>参考答案：</strong><br>' + question.answer;
+        shortDiv.style.display = 'none';
+        shortDiv.id = 'shortAnswer';
+        container.appendChild(shortDiv);
+        
+        const showBtn = document.createElement('button');
+        showBtn.className = 'btn';
+        showBtn.textContent = '显示答案';
+        showBtn.addEventListener('click', () => {
+          shortDiv.style.display = shortDiv.style.display === 'none' ? 'block' : 'none';
+          showBtn.textContent = shortDiv.style.display === 'none' ? '显示答案' : '隐藏答案';
+        });
+        container.appendChild(showBtn);
+      }
+      
+      selectOption(index) {
+        const question = this.questions[this.currentQuestionIndex];
+        this.answers[this.currentQuestionIndex] = index;
+        
+        const isCorrect = index === question.answer;
+        if (isCorrect) {
+          this.correctCount++;
+          this.score += question.score || 10;
+        }
+        
+        this.showAnsweredState(question, index);
+        this.showFeedback(isCorrect, question.explanation);
+        this.updateButtons();
+      }
+      
+      selectTF(value) {
+        const question = this.questions[this.currentQuestionIndex];
+        this.answers[this.currentQuestionIndex] = value;
+        
+        const isCorrect = value === question.answer;
+        if (isCorrect) {
+          this.correctCount++;
+          this.score += question.score || 10;
+        }
+        
+        this.showAnsweredState(question, value);
+        this.showFeedback(isCorrect, question.explanation);
+        this.updateButtons();
+      }
+      
+      showAnsweredState(question, answer) {
+        if (question.type === 'choice') {
+          const options = this.elements.content.querySelectorAll('.qb-option');
+          options.forEach((opt, index) => {
+            opt.classList.remove('selected', 'correct', 'wrong');
+            if (index === answer) {
+              opt.classList.add(answer === question.answer ? 'correct' : 'wrong');
+            }
+            if (index === question.answer) {
+              opt.classList.add('correct');
+            }
+          });
+        } else if (question.type === 'tf') {
+          const btns = this.elements.content.querySelectorAll('.qb-tf-btn');
+          btns.forEach(btn => {
+            btn.classList.remove('selected-true', 'selected-false');
+            const isTrue = btn.dataset.value === 'true';
+            if (isTrue === answer) {
+              btn.classList.add(answer ? 'selected-true' : 'selected-false');
+            }
+          });
+        }
+      }
+      
+      showFeedback(isCorrect, explanation) {
+        this.elements.feedback.className = 'qb-feedback ' + (isCorrect ? 'correct' : 'wrong');
+        this.elements.feedback.innerHTML = `
+          <strong>${isCorrect ? '✅ 回答正确！' : '❌ 回答错误'}</strong>
+          ${explanation ? '<br>' + explanation : ''}
+        `;
+      }
+      
+      showHint(hint) {
+        const existingHint = this.elements.content.querySelector('.quiz-hint-content');
+        if (existingHint) {
+          existingHint.remove();
+          return;
+        }
+        
+        const hintDiv = document.createElement('div');
+        hintDiv.className = 'quiz-hint-content';
+        hintDiv.style.cssText = 'background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px;margin-top:10px;font-size:13px;color:#92400e;';
+        hintDiv.innerHTML = `<strong>💡 提示：</strong>${hint}`;
+        this.elements.content.appendChild(hintDiv);
+      }
+      
+      prevQuestion() {
+        if (this.currentQuestionIndex > 0) {
+          this.currentQuestionIndex--;
+          this.showQuestion();
+        }
+      }
+      
+      nextQuestion() {
+        if (this.currentQuestionIndex < this.totalQuestions - 1) {
+          this.currentQuestionIndex++;
+          this.showQuestion();
+        } else if (this.currentMode === 'exam') {
+          this.showSummary();
+        }
+      }
+      
+      handleSubmit() {
+        if (this.questions.length === 0) {
+          this.start();
+          return;
+        }
+        
+        const question = this.questions[this.currentQuestionIndex];
+        
+        if (this.answers[this.currentQuestionIndex] !== undefined) {
+          this.nextQuestion();
+          return;
+        }
+        
+        if (question.type === 'short') {
+          this.answers[this.currentQuestionIndex] = true;
+          this.correctCount++;
+          this.score += question.score || 10;
+          
+          const answerEl = document.getElementById('shortAnswer');
+          if (answerEl) answerEl.style.display = 'block';
+          
+          this.showFeedback(true, '已显示参考答案，请自行对照。');
+          this.updateButtons();
+        }
+      }
+      
+      showSummary() {
+        const percent = Math.round((this.correctCount / this.totalQuestions) * 100);
+        
+        this.elements.summary.innerHTML = `
+          <div class="card" style="margin-top:20px;">
+            <h3>📊 答题总结</h3>
+            <div class="dashboard" style="margin-top:16px;">
+              <div class="stat-card">
+                <div class="stat-number">${this.totalQuestions}</div>
+                <div class="stat-label">总题数</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">${this.correctCount}</div>
+                <div class="stat-label">答对题数</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">${percent}%</div>
+                <div class="stat-label">正确率</div>
+              </div>
+            </div>
+            <div class="progress-wrap" style="margin-top:16px;">
+              <div class="progress-bar" style="width:${percent}%"></div>
+            </div>
+            <p style="margin-top:16px;">
+              ${percent >= 80 ? '🎉 优秀！你已经掌握了这些知识点！' : 
+                percent >= 60 ? '👍 不错！继续努力，巩固薄弱环节。' : 
+                '💪 加油！建议回顾相关章节，重新学习。'}
+            </p>
+            <button class="btn" onclick="location.reload()" style="margin-top:12px;">🔄 重新开始</button>
+          </div>
+        `;
+        
+        this.elements.card.style.display = 'none';
+      }
+      
+      updateStats() {
+        this.elements.progress.textContent = `${this.currentQuestionIndex + 1}/${this.totalQuestions}`;
+        this.elements.correct.textContent = `${this.correctCount}/${this.totalQuestions}`;
+        this.elements.scoreEl.textContent = this.totalQuestions > 0 ? 
+          `${Math.round((this.correctCount / this.totalQuestions) * 100)}%` : '—';
+      }
+      
+      updateButtons() {
+        this.elements.prevBtn.disabled = this.currentQuestionIndex === 0;
+        this.elements.nextBtn.disabled = this.currentQuestionIndex >= this.totalQuestions - 1;
+        
+        if (this.answers[this.currentQuestionIndex] !== undefined) {
+          this.elements.submitBtn.textContent = '下一题';
+          this.elements.submitBtn.disabled = this.currentQuestionIndex >= this.totalQuestions - 1;
+        } else {
+          this.elements.submitBtn.textContent = '提交答案';
+          this.elements.submitBtn.disabled = false;
+        }
+      }
+      
+      updateTypeTag(type) {
+        const typeNames = {
+          choice: '选择题',
+          tf: '判断题',
+          short: '简答题'
+        };
+        
+        this.elements.typeTag.className = `qb-question-type qb-type-${type}`;
+        this.elements.typeTag.textContent = typeNames[type] || type;
+      }
+      
+      shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+    }
+
+    // 初始化题库系统
+    const quizSystem = new QuizSystem(questionBank, 'ds_review');
+  </script>
+</body>
+</html>
