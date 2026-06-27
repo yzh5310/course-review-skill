@@ -1279,6 +1279,176 @@
       pointer-events: none;
     }
 
+    /* ===== 搜索面板样式 ===== */
+    .search-panel {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 280px;
+      max-height: 70vh;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .search-panel.collapsed .search-panel-body {
+      display: none;
+    }
+
+    .search-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .search-panel-toggle {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-panel-body {
+      padding: 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .search-input-wrap {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    #searchInput {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+
+    #searchInput:focus {
+      border-color: var(--primary);
+    }
+
+    #searchBackBtn {
+      padding: 6px 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #searchBackBtn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .search-results {
+      flex: 1;
+      overflow-y: auto;
+      max-height: calc(70vh - 100px);
+    }
+
+    .search-hint {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      padding: 20px 10px;
+    }
+
+    .search-result-item {
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      transition: background 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .search-result-item:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .search-result-term {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    .search-result-desc {
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .search-result-item mark {
+      background: #fef08a;
+      color: inherit;
+      padding: 0 1px;
+      border-radius: 2px;
+    }
+
+    body.dark .search-result-item mark {
+      background: #854d0e;
+      color: #fef9c3;
+    }
+
+    .search-stats {
+      font-size: 11px;
+      color: var(--muted);
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .search-panel {
+        right: 10px;
+        width: 240px;
+        top: auto;
+        bottom: 20px;
+        transform: none;
+        max-height: 50vh;
+      }
+    }
+
     @media print {
       body {
         background: #fff;
@@ -1292,7 +1462,8 @@
       .filter-actions,
       button,
       footer,
-      .beginner-guide {
+      .beginner-guide,
+      .search-panel {
         display: none !important;
       }
 
@@ -1602,6 +1773,25 @@
     </section>
   </main>
 
+  <!-- ===================== 搜索面板 ===================== -->
+  <!-- AI说明：这是概念搜索面板，可选模块。如果课程概念较多（超过10个），建议启用 -->
+  <div class="search-panel" id="searchPanel">
+    <div class="search-panel-header">
+      <span>🔍 概念搜索</span>
+      <button class="search-panel-toggle" id="searchPanelToggle">−</button>
+    </div>
+    <div class="search-panel-body">
+      <div class="search-input-wrap">
+        <input type="text" id="searchInput" placeholder="搜索概念术语..." autocomplete="off">
+        <button id="searchBackBtn" disabled title="返回上一位置">← 返回</button>
+      </div>
+      <div class="search-results" id="searchResults">
+        <div class="search-hint">输入关键词搜索虚线下划线标注的概念</div>
+      </div>
+      <div class="search-stats" id="searchStats"></div>
+    </div>
+  </div>
+
   <footer>
     {{COURSE_NAME}}交互式复习方案｜建议结合教材例题和真题使用
   </footer>
@@ -1708,6 +1898,145 @@
 
     // ==================== 题库系统 ====================
     {{QUIZ_SYSTEM_CODE}}
+
+    // ==================== 概念搜索 ====================
+    // AI说明：这是概念搜索面板的实现，可选模块
+    (function() {
+      var searchHistory = [];
+      var allTerms = [];
+
+      function collectTerms() {
+        var terms = document.querySelectorAll('.tooltip-term');
+        var seen = {};
+        allTerms = [];
+        terms.forEach(function(el) {
+          var text = el.textContent.trim();
+          var tip = el.getAttribute('data-tip') || '';
+          var key = text + '|' + tip;
+          if (!seen[key]) {
+            seen[key] = true;
+            allTerms.push({ element: el, text: text, tip: tip });
+          }
+        });
+      }
+
+      function highlight(text, keyword) {
+        if (!keyword) return text;
+        var idx = text.toLowerCase().indexOf(keyword.toLowerCase());
+        if (idx < 0) return text;
+        return text.substring(0, idx) + '<mark>' + text.substring(idx, idx + keyword.length) + '</mark>' + text.substring(idx + keyword.length);
+      }
+
+      function doSearch(keyword) {
+        var resultsEl = document.getElementById('searchResults');
+        var statsEl = document.getElementById('searchStats');
+        keyword = keyword.trim();
+
+        if (!keyword) {
+          resultsEl.innerHTML = '<div class="search-hint">输入关键词搜索虚线下划线标注的概念</div>';
+          statsEl.textContent = '';
+          return;
+        }
+
+        var results = allTerms.filter(function(t) {
+          return t.text.toLowerCase().indexOf(keyword.toLowerCase()) >= 0
+              || t.tip.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+        });
+
+        if (results.length === 0) {
+          resultsEl.innerHTML = '<div class="search-hint">未找到匹配的概念</div>';
+          statsEl.textContent = '0 个结果';
+          return;
+        }
+
+        var html = '';
+        results.forEach(function(t, i) {
+          html += '<div class="search-result-item" data-idx="' + i + '">'
+               +   '<div class="search-result-term">' + highlight(t.text, keyword) + '</div>'
+               +   '<div class="search-result-desc">' + highlight(t.tip, keyword) + '</div>'
+               + '</div>';
+        });
+        resultsEl.innerHTML = html;
+        statsEl.textContent = results.length + ' 个结果';
+
+        resultsEl.querySelectorAll('.search-result-item').forEach(function(item) {
+          item.addEventListener('click', function() {
+            var idx = +this.getAttribute('data-idx');
+            jumpToTerm(results[idx]);
+          });
+        });
+      }
+
+      function jumpToTerm(termObj) {
+        searchHistory.push({
+          scrollY: window.scrollY,
+          keyword: document.getElementById('searchInput').value
+        });
+        document.getElementById('searchBackBtn').disabled = false;
+
+        var el = termObj.element;
+        var accordionItem = el.closest('.accordion-item');
+        if (accordionItem && !accordionItem.classList.contains('active')) {
+          accordionItem.classList.add('active');
+        }
+
+        el.style.transition = 'background-color 0.3s, color 0.3s';
+        el.style.backgroundColor = 'rgba(37, 99, 235, 0.25)';
+        el.style.color = 'var(--primary)';
+        el.style.borderRadius = '4px';
+        el.style.padding = '2px 4px';
+        setTimeout(function() {
+          el.style.backgroundColor = '';
+          el.style.color = '';
+          el.style.borderRadius = '';
+          el.style.padding = '';
+        }, 2000);
+
+        requestAnimationFrame(function() {
+          var rect = el.getBoundingClientRect();
+          var scrollTop = window.scrollY + rect.top - window.innerHeight / 3;
+          window.scrollTo({ top: Math.max(0, scrollTop), behavior: 'smooth' });
+        });
+      }
+
+      function goBack() {
+        if (searchHistory.length === 0) return;
+        var last = searchHistory.pop();
+        window.scrollTo({ top: last.scrollY, behavior: 'smooth' });
+        if (searchHistory.length === 0) {
+          document.getElementById('searchBackBtn').disabled = true;
+        }
+      }
+
+      function togglePanel() {
+        var panel = document.getElementById('searchPanel');
+        var btn = document.getElementById('searchPanelToggle');
+        panel.classList.toggle('collapsed');
+        btn.textContent = panel.classList.contains('collapsed') ? '+' : '−';
+      }
+
+      function debounce(fn, delay) {
+        var timer = null;
+        return function() {
+          var args = arguments;
+          var ctx = this;
+          clearTimeout(timer);
+          timer = setTimeout(function() { fn.apply(ctx, args); }, delay);
+        };
+      }
+
+      window.addEventListener('load', function() {
+        setTimeout(collectTerms, 500);
+
+        var searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', debounce(function() {
+          doSearch(this.value);
+        }, 200));
+
+        document.getElementById('searchBackBtn').addEventListener('click', goBack);
+        document.getElementById('searchPanelToggle').addEventListener('click', togglePanel);
+      });
+    })();
   </script>
 </body>
 </html>

@@ -331,6 +331,8 @@ AI根据课程特点选择，**不要全部加上**：
 
 | 模块 | 适用课程 | 不适用课程 |
 |------|---------|-----------|
+| 💬 悬浮解释框 | 有专业术语的课程 | 概念极少的课程 |
+| 🔍 概念搜索面板 | 概念多、需快速定位 | 概念少（5个以内） |
 | 📊 复习仪表盘 | 内容多、需进度管理 | 内容少（3章以内） |
 | 📋 公式速查 | 理科、计算类 | 纯文科、概念类 |
 | 📈 概念图表化 | 有图形/模型/流程 | 纯文字概念 |
@@ -469,6 +471,448 @@ AI根据课程特点选择，**不要全部加上**：
 ```
 
 **关键**：检查点要用**可验证的行为**描述，而非"我理解了XX"这种模糊表述。
+
+---
+
+## 悬浮解释框设计指南
+
+### 作用
+
+在页面中遇到专业术语时，鼠标悬停即可看到通俗解释，**不需要跳转到其他位置**。这是费曼学习法的即时实践——让学生在阅读过程中随时获得"白话翻译"。
+
+### 使用场景
+
+- 任何有专业术语的课程都建议使用
+- 特别适合：经济学、法学、医学、计算机等术语密集的学科
+
+### HTML实现
+
+```html
+<!-- 在任何文本中嵌入术语解释 -->
+<p>
+  GDP = <span class="tooltip-term" data-tip="消费C：家庭购买商品和服务的支出，如吃饭、买衣服。">消费</span> 
+  + <span class="tooltip-term" data-tip="投资I：企业购买资本品（厂房、设备）及增加存货的支出。">投资</span> 
+  + <span class="tooltip-term" data-tip="政府购买G：各级政府购买商品和服务的支出，如修路、办公支出。">政府支出</span> 
+  + <span class="tooltip-term" data-tip="净出口NX：出口减进口的差额。">净出口</span>
+</p>
+```
+
+### CSS实现
+
+```css
+.tooltip-term {
+  border-bottom: 1.5px dashed var(--primary);
+  cursor: help;
+  position: relative;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.tooltip-term:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  white-space: normal;
+  width: max-content;
+  max-width: 280px;
+  line-height: 1.5;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  pointer-events: none;
+}
+
+/* 边缘智能定位：避免解释框被遮挡 */
+.tooltip-term.tip-flip-down:hover::after { bottom: auto; top: 100%; }
+.tooltip-term.tip-shift-left:hover::after { left: 0; transform: translateX(0); }
+.tooltip-term.tip-shift-right:hover::after { left: auto; right: 0; transform: translateX(0); }
+```
+
+### JavaScript（边缘智能定位）
+
+```javascript
+// 避免解释框被屏幕边缘遮挡
+document.querySelectorAll('.tooltip-term').forEach(function(term) {
+  term.addEventListener('mouseenter', function() {
+    term.classList.remove('tip-flip-down', 'tip-shift-left', 'tip-shift-right');
+    var rect = term.getBoundingClientRect();
+    var tipW = 280;
+    var margin = 8;
+    
+    // 右边缘溢出 → 左移贴右
+    if (rect.left + tipW/2 + margin > window.innerWidth) {
+      term.classList.add('tip-shift-right');
+    } else if (rect.left - tipW/2 - margin < 0) {
+      // 左边缘溢出 → 右移贴左
+      term.classList.add('tip-shift-left');
+    }
+    // 顶部空间不足 → 翻转到下方
+    if (rect.top < 120) {
+      term.classList.add('tip-flip-down');
+    }
+  });
+});
+```
+
+### 费曼法结合
+
+悬浮解释框是费曼学习法的**即时实践**：
+- 每个 `data-tip` 的内容必须用**白话**写，禁止用术语解释术语
+- 解释要包含**具体场景**或**生活类比**
+- 例如：`"消费C：家庭购买商品和服务的支出，如吃饭、买衣服。"`
+
+---
+
+## 概念搜索面板设计指南
+
+### 作用
+
+当课程概念较多时，学生需要快速定位某个概念在哪里。搜索面板提供：
+- **实时搜索**：输入关键词即时过滤
+- **高亮匹配**：搜索结果中高亮显示匹配文字
+- **点击跳转**：点击结果自动滚动到对应位置
+- **智能展开**：如果概念在折叠面板中，自动展开
+- **返回功能**：跳转后可以返回上一位置
+
+### 使用场景
+
+- 概念数量超过10个的课程
+- 术语密集、需要反复查阅的课程
+- 适合：经济学、法学、医学、计算机科学等
+
+### HTML结构
+
+```html
+<!-- 搜索面板（固定在页面右侧） -->
+<div class="search-panel" id="searchPanel">
+  <div class="search-panel-header">
+    <span class="search-panel-title">🔍 概念搜索</span>
+    <button class="search-panel-toggle" id="searchPanelToggle">−</button>
+  </div>
+  <div class="search-panel-body">
+    <div class="search-input-wrap">
+      <input type="text" id="searchInput" placeholder="搜索概念术语..." autocomplete="off">
+      <button id="searchBackBtn" disabled title="返回上一位置">← 返回</button>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div class="search-hint">输入关键词搜索虚线下划线标注的概念</div>
+    </div>
+    <div class="search-stats" id="searchStats"></div>
+  </div>
+</div>
+```
+
+### CSS实现
+
+```css
+.search-panel {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 280px;
+  max-height: 70vh;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.search-panel.collapsed .search-panel-body {
+  display: none;
+}
+
+.search-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: grab;
+  user-select: none;
+}
+
+.search-panel-body {
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.search-input-wrap {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+#searchInput {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+}
+
+#searchInput:focus {
+  border-color: var(--primary);
+}
+
+.search-results {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(70vh - 100px);
+}
+
+.search-hint {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.search-result-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+  border: 1px solid transparent;
+}
+
+.search-result-item:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.search-result-term {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--primary);
+  margin-bottom: 2px;
+}
+
+.search-result-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.search-result-item mark {
+  background: #fef08a;
+  color: inherit;
+  padding: 0 1px;
+  border-radius: 2px;
+}
+
+body.dark .search-result-item mark {
+  background: #854d0e;
+  color: #fef9c3;
+}
+
+.search-stats {
+  font-size: 11px;
+  color: var(--muted);
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* 移动端适配 */
+@media (max-width: 900px) {
+  .search-panel {
+    right: 10px;
+    width: 240px;
+    top: auto;
+    bottom: 20px;
+    transform: none;
+    max-height: 50vh;
+  }
+}
+```
+
+### JavaScript实现
+
+```javascript
+(function() {
+  var searchHistory = [];
+  var allTerms = [];
+
+  // 初始化：收集所有 tooltip-term
+  function collectTerms() {
+    var terms = document.querySelectorAll('.tooltip-term');
+    var seen = {};
+    allTerms = [];
+    terms.forEach(function(el) {
+      var text = el.textContent.trim();
+      var tip = el.getAttribute('data-tip') || '';
+      var key = text + '|' + tip;
+      if (!seen[key]) {
+        seen[key] = true;
+        allTerms.push({ element: el, text: text, tip: tip });
+      }
+    });
+  }
+
+  // 高亮匹配文字
+  function highlight(text, keyword) {
+    if (!keyword) return text;
+    var idx = text.toLowerCase().indexOf(keyword.toLowerCase());
+    if (idx < 0) return text;
+    return text.substring(0, idx) + '<mark>' + text.substring(idx, idx + keyword.length) + '</mark>' + text.substring(idx + keyword.length);
+  }
+
+  // 执行搜索
+  function doSearch(keyword) {
+    var resultsEl = document.getElementById('searchResults');
+    var statsEl = document.getElementById('searchStats');
+    keyword = keyword.trim();
+
+    if (!keyword) {
+      resultsEl.innerHTML = '<div class="search-hint">输入关键词搜索虚线下划线标注的概念</div>';
+      statsEl.textContent = '';
+      return;
+    }
+
+    var results = allTerms.filter(function(t) {
+      return t.text.toLowerCase().indexOf(keyword.toLowerCase()) >= 0
+          || t.tip.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+    });
+
+    if (results.length === 0) {
+      resultsEl.innerHTML = '<div class="search-hint">未找到匹配的概念</div>';
+      statsEl.textContent = '0 个结果';
+      return;
+    }
+
+    var html = '';
+    results.forEach(function(t, i) {
+      html += '<div class="search-result-item" data-idx="' + i + '">'
+           +   '<div class="search-result-term">' + highlight(t.text, keyword) + '</div>'
+           +   '<div class="search-result-desc">' + highlight(t.tip, keyword) + '</div>'
+           + '</div>';
+    });
+    resultsEl.innerHTML = html;
+    statsEl.textContent = results.length + ' 个结果';
+
+    // 绑定点击事件
+    resultsEl.querySelectorAll('.search-result-item').forEach(function(item) {
+      item.addEventListener('click', function() {
+        var idx = +this.getAttribute('data-idx');
+        jumpToTerm(results[idx]);
+      });
+    });
+  }
+
+  // 跳转到某个术语
+  function jumpToTerm(termObj) {
+    searchHistory.push({
+      scrollY: window.scrollY,
+      keyword: document.getElementById('searchInput').value
+    });
+    document.getElementById('searchBackBtn').disabled = false;
+
+    var el = termObj.element;
+
+    // 如果在折叠面板里，先展开
+    var accordionItem = el.closest('.accordion-item');
+    if (accordionItem && !accordionItem.classList.contains('active')) {
+      accordionItem.classList.add('active');
+    }
+
+    // 高亮闪烁
+    el.style.transition = 'background-color 0.3s, color 0.3s';
+    el.style.backgroundColor = 'rgba(37, 99, 235, 0.25)';
+    el.style.color = 'var(--primary)';
+    el.style.borderRadius = '4px';
+    el.style.padding = '2px 4px';
+    setTimeout(function() {
+      el.style.backgroundColor = '';
+      el.style.color = '';
+      el.style.borderRadius = '';
+      el.style.padding = '';
+    }, 2000);
+
+    // 滚动定位
+    requestAnimationFrame(function() {
+      var rect = el.getBoundingClientRect();
+      var scrollTop = window.scrollY + rect.top - window.innerHeight / 3;
+      window.scrollTo({ top: Math.max(0, scrollTop), behavior: 'smooth' });
+    });
+  }
+
+  // 返回上一位置
+  function goBack() {
+    if (searchHistory.length === 0) return;
+    var last = searchHistory.pop();
+    window.scrollTo({ top: last.scrollY, behavior: 'smooth' });
+    if (searchHistory.length === 0) {
+      document.getElementById('searchBackBtn').disabled = true;
+    }
+  }
+
+  // 折叠/展开面板
+  function togglePanel() {
+    var panel = document.getElementById('searchPanel');
+    var btn = document.getElementById('searchPanelToggle');
+    panel.classList.toggle('collapsed');
+    btn.textContent = panel.classList.contains('collapsed') ? '+' : '−';
+  }
+
+  // 防抖
+  function debounce(fn, delay) {
+    var timer = null;
+    return function() {
+      var args = arguments;
+      var ctx = this;
+      clearTimeout(timer);
+      timer = setTimeout(function() { fn.apply(ctx, args); }, delay);
+    };
+  }
+
+  // 初始化
+  window.addEventListener('load', function() {
+    setTimeout(collectTerms, 500);
+
+    var searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', debounce(function() {
+      doSearch(this.value);
+    }, 200));
+
+    document.getElementById('searchBackBtn').addEventListener('click', goBack);
+    document.getElementById('searchPanelToggle').addEventListener('click', togglePanel);
+  });
+})();
+```
+
+### 费曼法结合
+
+概念搜索面板是费曼学习法的**快速查阅工具**：
+- 学生在做题或复习时，遇到不懂的术语可以即时搜索
+- 搜索结果同时显示术语名称和通俗解释
+- 点击跳转后，概念会高亮闪烁2秒，帮助定位
 
 ---
 
