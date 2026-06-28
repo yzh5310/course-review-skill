@@ -1237,6 +1237,53 @@
     body.dark .ex-variant-toggle { background: rgba(37,99,235,0.1); }
     .ex-variant-body { display: none; padding: 14px 16px; font-size: 14px; line-height: 1.8; }
     .ex-variant-body.show { display: block; }
+
+    /* ===== 配套小测（v2.4新增·每道例题后2-3道练习题） ===== */
+    .ex-practice {
+      border-top: 1px dashed var(--border);
+      margin-top: 4px;
+    }
+    .ex-practice-toggle {
+      width: 100%;
+      text-align: left;
+      background: #ecfdf5;
+      color: #065f46;
+      border: none;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .ex-practice-toggle:hover { background: #d1fae5; }
+    body.dark .ex-practice-toggle { background: rgba(16,185,129,0.1); color: #34d399; }
+    body.dark .ex-practice-toggle:hover { background: rgba(16,185,129,0.18); }
+    .ex-practice-body { display: none; padding: 14px 16px; font-size: 14px; line-height: 1.8; background: #f0fdf4; }
+    body.dark .ex-practice-body { background: rgba(16,185,129,0.06); }
+    .ex-practice-body.show { display: block; }
+    .ex-practice-item {
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed #a7f3d0;
+    }
+    body.dark .ex-practice-item { border-bottom-color: rgba(16,185,129,0.2); }
+    .ex-practice-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .ex-practice-q { font-weight: 700; color: #065f46; margin-bottom: 6px; }
+    body.dark .ex-practice-q { color: #6ee7b7; }
+    .ex-practice-a-toggle {
+      display: inline-block;
+      margin-top: 4px;
+      background: transparent;
+      border: 1px solid #10b981;
+      color: #059669;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    body.dark .ex-practice-a-toggle { border-color: #34d399; color: #6ee7b7; }
+    .ex-practice-a { display: none; margin-top: 8px; padding: 8px 12px; background: #fff; border-radius: 8px; font-size: 13px; }
+    body.dark .ex-practice-a { background: rgba(0,0,0,0.2); }
+    .ex-practice-a.show { display: block; }
     .ex-tag {
       display: inline-block;
       padding: 2px 8px;
@@ -2103,6 +2150,36 @@
         if(btn) btn.textContent = '收起变式练习';
         // 如果有KaTeX，展开后重新渲染公式
         if(typeof renderMath === 'function') setTimeout(renderMath, 50);
+      }
+    }
+
+    // ==================== 配套小测展开/收起（v2.4新增·例题驱动用） ====================
+    function togglePractice(id){
+      var el = document.getElementById(id);
+      if(!el) return;
+      var btn = el.previousElementSibling;
+      if(el.classList.contains('show')){
+        el.classList.remove('show');
+        if(btn) btn.textContent = '📝 点击展开配套小测';
+      } else {
+        el.classList.add('show');
+        if(btn) btn.textContent = '收起配套小测';
+        if(typeof renderMath === 'function') setTimeout(renderMath, 50);
+      }
+    }
+
+    // ==================== 小测答案展开/收起（v2.4新增·例题驱动用） ====================
+    function toggleAnswer(id){
+      var el = document.getElementById(id);
+      if(!el) return;
+      var btn = el.previousElementSibling;
+      if(el.classList.contains('show')){
+        el.classList.remove('show');
+        if(btn) btn.textContent = '👀 查看答案';
+      } else {
+        el.classList.add('show');
+        if(btn) btn.textContent = '收起答案';
+        if(typeof renderMath === 'function') setTimeout(renderMath, 30);
       }
     }
 

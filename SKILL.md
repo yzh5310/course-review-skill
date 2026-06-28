@@ -661,6 +661,30 @@ Stokes公式（边界环量 = 曲面旋度的积分）
 - 给出答案和简要提示，不要长篇大论
 - 变式的目的是检验，不是再讲一道新题
 
+#### 6. 配套小测（ex-practice，v2.4新增）
+
+这是**巩固记忆**的部分——学完一道例题，马上做2-3道相关练习题，强化知识点的留存。
+
+**配套小测与变式练习的区别**：
+
+| 维度 | 变式练习 | 配套小测 |
+|------|---------|---------|
+| 位置 | 例题内部第五步 | 例题末尾独立模块 |
+| 数量 | 1道（改变条件的同类题） | 2-3道（覆盖各知识点） |
+| 目的 | 检验"这道题会不会" | 巩固"这些知识点懂没懂" |
+| 难度 | 与例题接近 | 从基础到综合递进 |
+| 答案 | 直接给出 | 每题独立折叠，做完一道看一道 |
+
+**配套小测的设计原则**：
+
+1. **紧扣例题知识点**：每道小题都要能从例题的知识提炼中找到对应
+2. **2-3道为宜**：第1题基础（直接套用），第2题变形（换条件/换角度），第3题（可选）综合（结合其他知识点）
+3. **答案独立折叠**：每题都有单独的"查看答案"按钮，避免一次看到所有答案
+4. **详解不跳步**：答案要有完整解题过程，不能只给最终结果
+5. **难度标注**：可用 ⭐ 标注难度，让学生心中有数
+
+**配套小测的HTML结构**见下方模板示例。
+
 ### 选题原则
 
 1. **真题优先**：从往年试卷/模拟卷中选，标注来源和分值
@@ -677,11 +701,11 @@ Stokes公式（边界环量 = 曲面旋度的积分）
 第X章 · 章节名称（分值/重要性标签）
 ├── 本章核心：一句话概括本章考什么
 ├── 例题1：最基础/最高频的题型
-│   └── 题目 → 思路 → 分步解 → 知识提炼 → 变式
+│   └── 题目 → 思路 → 分步解 → 知识提炼 → 变式 → 配套小测
 ├── 例题2：次重要/稍难的题型
-│   └── 题目 → 思路 → 分步解 → 知识提炼 → 变式
+│   └── 题目 → 思路 → 分步解 → 知识提炼 → 变式 → 配套小测
 └── （可选）例题3：综合题/难题
-    └── 题目 → 思路 → 分步解 → 知识提炼 → 变式
+    └── 题目 → 思路 → 分步解 → 知识提炼 → 变式 → 配套小测
 ```
 
 **与手风琴的配合**：章节标题仍是手风琴按钮，展开后里面是2-3张例题卡片，而不是概念卡片。
@@ -699,7 +723,7 @@ Stokes公式（边界环量 = 曲面旋度的积分）
 
 ### HTML结构示例
 
-详见 `template.html` 中的 `.example-card` 系列样式和 `toggleVariant()` 函数。
+详见 `template.html` 中的 `.example-card` 系列样式、`toggleVariant()`、`togglePractice()`、`toggleAnswer()` 函数。
 
 ```html
 <div class="example-card">
@@ -733,12 +757,42 @@ Stokes公式（边界环量 = 曲面旋度的积分）
       <strong>答案：</strong>...
     </div>
   </div>
+
+  <!-- 配套小测（v2.4新增） -->
+  <div class="ex-practice">
+    <button class="ex-practice-toggle" onclick="togglePractice('p1')">
+      📝 点击展开配套小测
+    </button>
+    <div class="ex-practice-body" id="p1">
+      <div class="ex-practice-item">
+        <div class="ex-practice-q">1. 基础题：...</div>
+        <button class="ex-practice-a-toggle" onclick="toggleAnswer('a1_1')">
+          👀 查看答案
+        </button>
+        <div class="ex-practice-a" id="a1_1">
+          <strong>答案：</strong>...<br><br>
+          <strong>过程：</strong>...
+        </div>
+      </div>
+      <div class="ex-practice-item">
+        <div class="ex-practice-q">2. 提高题：...</div>
+        <button class="ex-practice-a-toggle" onclick="toggleAnswer('a1_2')">
+          👀 查看答案
+        </button>
+        <div class="ex-practice-a" id="a1_2">
+          <strong>答案：</strong>...<br><br>
+          <strong>过程：</strong>...
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 ```
 
 ### JavaScript函数
 
 ```javascript
+// 变式练习展开/收起
 function toggleVariant(id){
   var el = document.getElementById(id);
   if(!el) return;
@@ -750,6 +804,36 @@ function toggleVariant(id){
     el.classList.add('show');
     if(btn) btn.textContent = '收起变式练习';
     setTimeout(renderMath, 50); // 展开后重新渲染公式
+  }
+}
+
+// 配套小测展开/收起（v2.4新增）
+function togglePractice(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var btn = el.previousElementSibling;
+  if(el.classList.contains('show')){
+    el.classList.remove('show');
+    if(btn) btn.textContent = '📝 点击展开配套小测';
+  } else {
+    el.classList.add('show');
+    if(btn) btn.textContent = '收起配套小测';
+    setTimeout(renderMath, 50);
+  }
+}
+
+// 小测答案展开/收起（v2.4新增）
+function toggleAnswer(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var btn = el.previousElementSibling;
+  if(el.classList.contains('show')){
+    el.classList.remove('show');
+    if(btn) btn.textContent = '👀 查看答案';
+  } else {
+    el.classList.add('show');
+    if(btn) btn.textContent = '收起答案';
+    setTimeout(renderMath, 30);
   }
 }
 ```
