@@ -1012,6 +1012,134 @@
       color: var(--primary);
     }
 
+    /* ===== 知识点跳转按钮样式 ===== */
+    .jump-btn-inline {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-light);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      text-decoration: none;
+      line-height: 1.4;
+    }
+
+    .jump-btn-inline:hover {
+      background: var(--primary);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    body.dark .jump-btn-inline {
+      background: rgba(37, 99, 235, 0.2);
+      border-color: rgba(37, 99, 235, 0.3);
+    }
+
+    body.dark .jump-btn-inline:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .qb-material-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .qb-material-title {
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .qb-material-content {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .qb-material-questions {
+      margin-top: 14px;
+    }
+
+    .qb-material-subq {
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .qb-material-subq:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .qb-material-subq-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .qb-material-answer {
+      background: var(--primary-light);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--primary);
+      margin-top: 8px;
+    }
+
+    .qb-material-toggle {
+      display: inline-block;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+      text-decoration: underline;
+    }
+
+    .qb-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .qb-summary-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .qb-summary-num {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .qb-summary-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .qb-summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     .concept-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -1690,6 +1818,8 @@
 
       <div class="accordion">
         {{CONCEPT_ACCORDIONS}}
+        <!-- AI注意：每个 accordion-item 必须添加 id="concept-ch{N}" 以便题库跳转定位
+             例如：<div class="accordion-item" id="concept-ch1"> -->
       </div>
     </section>
 
@@ -1896,7 +2026,92 @@
       });
     });
 
+    // ==================== 跨模块跳转函数（题库→知识点） ====================
+    // AI说明：这是题库关联知识点的核心功能。每道题通过 chapter 字段关联主章节，
+    // 通过 relatedChapters 字段关联多个相关章节。点击跳转按钮可直接定位到概念精讲区的对应章节。
+    // 使用前需要：1) 在概念精讲区的每个 accordion-item 上添加 id="concept-ch{N}"
+    //           2) 在题库数据的每道题中添加 chapter 字段（主章节号）
+    //           3) 可选：添加 relatedChapters 字段（数组，多章节综合题）
+
+    // 章节名称映射 —— AI根据课程实际章节填写
+    var chapterNames = {
+      {{CHAPTER_NAMES_MAP}}
+    };
+
+    // 跳转到指定章节的概念精讲
+    function jumpToConcept(chapter) {
+      var target = document.getElementById('concept-ch' + chapter);
+      if (!target) return;
+      // 展开章节
+      var wasClosed = !target.classList.contains('active');
+      if (wasClosed) {
+        target.classList.add('active');
+      }
+      // 高亮闪烁效果：先亮蓝，再渐隐，帮助用户快速定位
+      var btn = target.querySelector('.accordion-btn');
+      if (btn) {
+        btn.style.transition = 'background-color 0.5s, box-shadow 0.3s';
+        btn.style.backgroundColor = 'rgba(37, 99, 235, 0.2)';
+        btn.style.boxShadow = 'inset 4px 0 0 var(--primary)';
+        setTimeout(function() {
+          btn.style.backgroundColor = '';
+          btn.style.boxShadow = '';
+        }, 2200);
+      }
+      // 如果之前是关闭的，等一帧让浏览器渲染展开后的高度，再滚动
+      if (wasClosed) {
+        requestAnimationFrame(function() {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // 生成题目相关的知识点跳转按钮HTML
+    // 支持单章节（chapter字段）和多章节（relatedChapters数组）
+    // options: { prefix, suffix, wrapStyle, showLabel }
+    function renderConceptJumpButtons(q, options) {
+      options = options || {};
+      var prefix = options.prefix || '';
+      var suffix = options.suffix || '';
+      var wrapStyle = options.wrapStyle || '';
+      var showLabel = options.showLabel !== false;
+
+      // 收集所有相关章节
+      var chapters = [];
+      if (q.relatedChapters && Array.isArray(q.relatedChapters) && q.relatedChapters.length > 0) {
+        chapters = q.relatedChapters.slice();
+      } else if (q.chapter) {
+        chapters = [q.chapter];
+      }
+
+      if (chapters.length === 0) return '';
+
+      var html = '';
+      if (chapters.length > 1 && showLabel) {
+        html += '<span style="font-size:12px;color:var(--muted);margin-right:6px;">📚 相关概念：</span>';
+      }
+
+      chapters.forEach(function(ch, idx) {
+        var chName = chapterNames[ch] || ('第' + ch + '章');
+        var label = (chapters.length > 1 ? '' : prefix) + chName + (chapters.length > 1 ? '' : suffix);
+        var title = '跳转到' + chName + '概念精讲';
+        html += '<button class="jump-btn-inline" style="' + (idx > 0 ? 'margin-left:4px;' : '') + '" onclick="jumpToConcept(' + ch + ')" title="' + title + '">📖 ' + label + '</button>';
+      });
+
+      if (wrapStyle) {
+        html = '<div style="' + wrapStyle + '">' + html + '</div>';
+      }
+
+      return html;
+    }
+
     // ==================== 题库系统 ====================
+    // AI说明：题库系统应在以下位置调用 renderConceptJumpButtons：
+    // 1. 题目展示区（题目下方，prefix: '查看', showLabel: false）
+    // 2. 错题反馈区（答错时，prefix: '回看', suffix: '概念精讲 →', wrapStyle: 'margin-top:8px;', showLabel: false）
+    // 3. 错题回顾列表（考试总结中的错题，prefix: '查看', suffix: '概念精讲 →', wrapStyle: 'margin-top:8px;', showLabel: true）
     {{QUIZ_SYSTEM_CODE}}
 
     // ==================== 概念搜索 ====================
