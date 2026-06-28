@@ -1140,6 +1140,114 @@
       }
     }
 
+    /* ===== 例题驱动卡片（v2.3新增） ===== */
+    .example-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 0;
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    body.dark .example-card { box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .example-header {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      padding: 14px 18px;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .ex-problem {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 14px 16px;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    body.dark .ex-problem { background: rgba(245,158,11,0.1); }
+    .ex-thinking {
+      background: #eff6ff;
+      border-left: 4px solid var(--accent);
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    body.dark .ex-thinking { background: rgba(37,99,235,0.08); }
+    .ex-steps { padding: 14px 16px; }
+    .ex-step {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+    .ex-step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .ex-step-content { flex: 1; font-size: 14px; line-height: 1.8; }
+    .ex-step-result {
+      background: #ecfdf5;
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-top: 4px;
+      font-weight: 700;
+      color: #166534;
+      font-size: 13px;
+    }
+    body.dark .ex-step-result { background: rgba(22,163,74,0.1); }
+    .ex-knowledge {
+      background: linear-gradient(135deg, #ede9fe, #eff6ff);
+      border: 1px solid #c4b5fd;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 0 16px 14px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    body.dark .ex-knowledge { background: rgba(124,58,237,0.08); border-color: rgba(124,58,237,0.3); }
+    .ex-variant {
+      border: 2px dashed var(--accent);
+      border-radius: 12px;
+      margin: 0 16px 16px;
+      overflow: hidden;
+    }
+    .ex-variant-toggle {
+      width: 100%;
+      border: 0;
+      background: rgba(37,99,235,0.06);
+      padding: 10px 14px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .ex-variant-toggle:hover { background: rgba(37,99,235,0.12); }
+    body.dark .ex-variant-toggle { background: rgba(37,99,235,0.1); }
+    .ex-variant-body { display: none; padding: 14px 16px; font-size: 14px; line-height: 1.8; }
+    .ex-variant-body.show { display: block; }
+    .ex-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .ex-tag.exam { background: rgba(255,255,255,0.25); color: #fff; }
+
     .concept-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -1981,6 +2089,22 @@
     });
 
     updateProgress();
+
+    // ==================== 变式练习展开/收起（v2.3新增·例题驱动用） ====================
+    function toggleVariant(id){
+      var el = document.getElementById(id);
+      if(!el) return;
+      var btn = el.previousElementSibling;
+      if(el.classList.contains('show')){
+        el.classList.remove('show');
+        if(btn) btn.textContent = '🔍 点击展开变式练习';
+      } else {
+        el.classList.add('show');
+        if(btn) btn.textContent = '收起变式练习';
+        // 如果有KaTeX，展开后重新渲染公式
+        if(typeof renderMath === 'function') setTimeout(renderMath, 50);
+      }
+    }
 
     // ==================== 手风琴组件 ====================
     document.querySelectorAll(".accordion-btn").forEach(btn => {
