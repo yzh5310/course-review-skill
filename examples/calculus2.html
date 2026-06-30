@@ -2585,7 +2585,7 @@ var TermDictionary = {
     if(terms.length === 0) return;
     var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode: function(n){
-        if(n.parentElement.closest('.term, .katex, script, style, button, a')) return NodeFilter.FILTER_REJECT;
+        if(n.parentElement.closest('.term, .term-tooltip, .katex, script, style, button, a, label, input, textarea, select, option, .check-item span')) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
     });

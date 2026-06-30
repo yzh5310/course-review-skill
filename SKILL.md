@@ -1111,6 +1111,7 @@ window.addEventListener('load', () => setTimeout(renderMath, 500));
 23. **进度导出必须包含版本号**：JSON中加`_version`字段，导入时可做兼容性处理
 24. **撒花动画数量控制**：`celebrateConfetti()`每次40片，上限50片，避免低端机卡顿
 25. **IIFE结尾分号**：每个IIFE结束后必须加`;`，防止与后续代码拼接时报错
+26. **术语词典TreeWalker跳过表单元素**：`acceptNode`必须跳过`label, input, textarea, select, option, .check-item span, .term-tooltip`，避免checkbox等表单标签被术语tooltip污染导致无障碍名称过长
 
 ```javascript
 // 函数劫持示例：不修改原函数，包裹注入新行为
