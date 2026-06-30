@@ -1,35 +1,40 @@
 ---
 name: course-review
-description: 基于7大学习科学理论的通用课程交互式复习方案生成器v3.0——三层深度选择+自适应学习路径+间隔重复+错因分类+正反馈系统。面向基础薄弱、短时间需完成复习的群体，帮助AI为任意课程创建定制化单文件HTML复习应用。适用于大学课程考前速通、职业资格考试冲刺、跨专业补课等场景。
+description: 基于9大学习科学理论的通用课程交互式复习方案生成器v3.1——三层深度选择+自适应学习路径+间隔重复+错因分类+正反馈系统+纸质输出全场景。面向基础薄弱、短时间需完成复习的群体，帮助AI为任意课程创建定制化单文件HTML复习应用。适用于大学课程考前速通、职业资格考试冲刺、跨专业补课等场景。
 ---
 
-# Course Review Skill v3.0 — 学习科学驱动的课程速通复习应用生成器
+# Course Review Skill v3.1 — 学习科学驱动的课程速通复习应用生成器
 
-> **核心理念**：不是文档，是学习应用。融合费曼学习法、主动回忆、间隔重复、掌握学习、最近发展区、认知负荷理论、元认知训练7大学习科学理论，用精准急救设计哲学帮基础薄弱学生在最短时间内建立应试框架。
-> **不是固定模板**：AI应根据课程特点自主增减模块，本skill提供的是设计理念和最佳实践，而非刻板框架。
+> **核心理念**：不是文档，是学习应用。融合费曼学习法、主动回忆、间隔重复、掌握学习、最近发展区、认知负荷理论、元认知训练、自我效能感、情境认知9大学习科学理论，用精准急救设计哲学帮基础薄弱学生在最短时间内建立应试框架。新增**系统八：纸质输出与全场景陪伴**，覆盖电脑学习→打印小抄→手机候考速翻的完整旅程。
+> **不是固定模板**：AI应根据课程特点自主增减模块，本skill提供的是设计理念和最佳实践，而非刻板框架。template.html是可直接运行的完整参考实现。
 
 ---
 
-## v3.0 重大升级总览
+## v3.1 重大升级总览
 
-v3.0 从"静态复习页"进化为"完整学习应用"，核心新增7大系统：
+v3.0 从"静态复习页"进化为"完整学习应用"，v3.1 在此基础上补全了"最后一厘米"的体验细节和全场景覆盖：
 
-| 新系统 | 学习科学理论 | 核心价值 |
-|--------|-------------|---------|
-| 三层深度选择器 | 最近发展区（Vygotsky） | 不同基础学生各取所需（60分/80分/90分） |
-| 自适应学习路径引擎 | 掌握学习（Bloom） | 知识图谱+前置依赖+微检测门控，只学该学的 |
-| 间隔重复系统（类Anki） | 间隔重复（Ebbinghaus） | 7级间隔算法+四级掌握度+到期提醒 |
-| 错因6分类系统 | 元认知（Metacognition） | 把错题从失败转化为精准诊断数据 |
-| 主动回忆强化机制 | 主动回忆（Active Recall） | 遮挡式做题+翻转卡片+诊断前置 |
-| 情感设计系统 | 自我效能感（Bandura） | 撒花庆祝+CTA脉冲+进度可感知+心理建设 |
-| 全局进度追踪 | 自我调节学习 | 四维加权进度条+12套localStorage持久化 |
+| 新系统/组件 | 学习科学理论 | 核心价值 | 版本 |
+|--------|-------------|---------|------|
+| 三层深度选择器 | 最近发展区（Vygotsky） | 不同基础学生各取所需（60分/80分/90分） | v3.0 |
+| 自适应学习路径引擎 | 掌握学习（Bloom） | 知识图谱+前置依赖+微检测门控，只学该学的 | v3.0 |
+| 间隔重复系统（类Anki） | 间隔重复（Ebbinghaus） | 7级间隔算法+四级掌握度+到期提醒 | v3.0 |
+| 错因6分类系统 | 元认知（Metacognition） | 把错题从失败转化为精准诊断数据 | v3.0 |
+| 主动回忆强化机制 | 主动回忆（Active Recall） | 遮挡做题+翻转卡片+诊断前置 | v3.0 |
+| 情感设计系统 | 自我效能感（Bandura） | 撒花庆祝+CTA脉冲+进度可感知+心理建设 | v3.0 |
+| 全局进度追踪 | 自我调节学习 | 四维加权进度条+localStorage持久化 | v3.0 |
+| **纸质输出与全场景陪伴** | **情境认知+分布式认知** | **一页纸打印+移动端适配+状态可导出，覆盖电脑→纸张→手机全旅程** | **v3.1** |
+| **ScrollSpy导航** | **认知负荷** | **长页面实时定位，不迷路** | **v3.1** |
+| **可行动Toast** | **自我效能感** | **通知带行动按钮，形成操作闭环** | **v3.1** |
+| **着陆高亮动效** | **认知负荷** | **跨模块跳转有"着陆感"，不瞬移** | **v3.1** |
 
-v3.0 版本演进轨迹（从v2.x继承并增强）：
-- v2.1: 计算型课程差异化设计（几何直观/依赖树/统一性主线）
-- v2.2: 参考材料收集机制（考点校准/来源标注）
+版本演进轨迹：
+- v2.1: 计算型课程差异化设计
+- v2.2: 参考材料收集机制
 - v2.3: 例题驱动模式（五段式例题卡片）
-- v2.4: 配套小测（学完即练）
-- **v3.0: 学习应用化（7大学习科学系统完整落地）**
+- v2.4: 配套小测
+- v3.0: 学习应用化（7大学习科学系统完整落地）
+- **v3.1: 全场景体验升级（系统八+标准组件库+移动端规范+打印模式+完整参考模板）**
 
 ---
 
@@ -37,7 +42,7 @@ v3.0 版本演进轨迹（从v2.x继承并增强）：
 
 如果你是AI，正在阅读这个skill来为用户创建复习方案，请严格遵循以下原则：
 
-### 第一原则：7大学习科学理论是灵魂
+### 第一原则：9大学习科学理论是灵魂
 
 你创建的每一个复习页面，都必须系统性地融合以下学习科学理论，而非仅用费曼法一个：
 
@@ -47,10 +52,11 @@ v3.0 版本演进轨迹（从v2.x继承并增强）：
 | **主动回忆** | 遮挡做题+翻转卡片+诊断前置+配套小测 | 始终让学生输出，而非被动阅读 |
 | **间隔重复** | 类Anki算法+到期提醒+掌握度分级 | 自动安排复习时机，对抗遗忘曲线 |
 | **最近发展区** | 三层深度选择器+自适应路径门控 | 内容始终在"跳一跳够得着"的难度 |
-| **认知负荷理论** | 渐进披露（四层折叠）+模块化卡片+hint脚手架 | 避免一次性呈现过多内容 |
+| **认知负荷理论** | 渐进披露（四层折叠）+模块化卡片+ScrollSpy+着陆高亮 | 避免一次性呈现过多内容，长页面不迷路 |
 | **掌握学习** | 微检测门控+知识地图+撒花庆祝+回学机制 | 必须掌握当前节点才能前进 |
 | **元认知训练** | 错因6分类+错因统计+自测清单+盲区诊断 | 帮学生知道"我哪里不会、为什么错" |
-| **自我效能感** | CTA脉冲+撒花动效+进度可视化+页脚心理建设 | 降低焦虑，建立信心，正向反馈密度高 |
+| **自我效能感** | CTA脉冲+撒花动效+进度可视化+可行动Toast+页脚心理建设 | 降低焦虑，建立信心，每步操作都有闭环反馈 |
+| **情境认知/分布式认知（v3.1）** | 一页纸打印+移动端速翻+多端连续 | 学习发生在多场景，纸张和手机是认知延伸 |
 
 ### 第二原则：精准急救，而非全面灌输
 
@@ -64,9 +70,10 @@ v3.0 版本演进轨迹（从v2.x继承并增强）：
 
 这不是一个静态HTML页面，而是一个**单文件Web应用**：
 - 零构建、零后端、零依赖（除KaTeX CDN），一个HTML文件即完整应用
-- 完整的数据持久层（localStorage，12+独立键）
+- 完整的数据持久层（localStorage）
 - 模块化IIFE脚本架构，功能间互不干扰
 - 渐进增强+优雅降级
+- v3.1新增：支持打印为一页纸，移动端适配候考速翻场景
 
 ### 第四原则：情感设计降低焦虑
 
@@ -584,29 +591,238 @@ function checkFillAnswer(userInput, correctAnswer) {
 
 ### 打印优化
 
-- 通用打印样式（`@media print`）：隐藏导航/按钮/交互元素，卡片去阴影
-- 专用一页纸打印模式（`body.printing-cheatsheet`）：只显示cheatsheet区域，两列排版，翻转卡片答案全部展开，字号优化为10-12pt
-
+#### 通用打印样式（`@media print`）
 ```css
 @media print {
-  .sticky-nav, .header-tools, button, .global-progress { display: none !important; }
-  .card { box-shadow: none; break-inside: avoid; }
-  body { background: #fff; }
-  body.printing-cheatsheet .accordion-content,
-  body.printing-cheatsheet .ex-variant-body,
-  body.printing-cheatsheet .flip-back { display: block !important; }
+  .sticky-nav, .hero-actions, .depth-selector, .global-progress,
+  .global-progress-label, .back-to-top, .toast, .confetti-piece,
+  .qb-tabs, .qb-stats, .qb-nav, .btn, .flip-actions,
+  .excerpt-btn, .micro-quiz-overlay, .hero-btn { display: none !important; }
+  body { background: #fff !important; color: #000 !important; font-size: 11pt; }
+  .card { box-shadow: none !important; border: none !important; break-inside: avoid; page-break-inside: avoid; }
+  header.hero { background: #fff !important; color: #000 !important; padding: 10px 0 !important; }
 }
 ```
 
-### Canvas几何可视化（冲刺档专属）
+#### 系统八：纸质输出与全场景陪伴（v3.1核心新增）
 
-对依赖空间想象的课程（高数、物理等），使用纯原生Canvas 2D API绘制交互式动画，仅在冲刺档（`data-depth="advanced"`）加载：
+基于情境认知理论（Situated Cognition）和分布式认知（Distributed Cognition），学习不止发生在电脑屏幕前。纸张和手机是认知的延伸，必须作为一等公民设计。
 
-- 旋转曲面动画：播放/重置/角度滑块
-- 极坐标/柱坐标可视化：展示分割方式
-- 向量场/环流动画：直观理解Green/Stokes公式
+**核心组件：一页纸专用打印模式**
 
-**关键原则**：Canvas可视化是可选增强，不影响基础档性能，KaTeX加载失败不影响文字内容阅读。
+在一页纸区域提供独立的橙红色"🖨️ 打印一页纸"按钮，区别于浏览器默认打印：
+
+```javascript
+function printCheatsheet(){
+  document.body.classList.add('printing-cheatsheet');
+  document.querySelectorAll('#cheatsheet .flip-card').forEach(function(c){ c.classList.add('flipped'); });
+  setTimeout(function(){ window.print(); }, 200);
+  var restore = function(){
+    document.body.classList.remove('printing-cheatsheet');
+    window.removeEventListener('afterprint', restore);
+  };
+  window.addEventListener('afterprint', restore);
+  setTimeout(restore, 15000); // 兜底
+}
+```
+
+```css
+body.printing-cheatsheet > *:not(main) { display: none !important; }
+body.printing-cheatsheet main > *:not(#cheatsheet) { display: none !important; }
+body.printing-cheatsheet .flip-grid {
+  grid-template-columns: 1fr 1fr !important; gap: 4mm !important;
+}
+body.printing-cheatsheet .flip-card { height: auto !important; break-inside: avoid; }
+body.printing-cheatsheet .flip-inner { transform: none !important; }
+body.printing-cheatsheet .flip-back {
+  transform: none !important; display: block !important; position: static !important;
+  border-top: 1px dashed #999 !important; margin-top: 3pt !important;
+  font-size: 9.5pt !important; color: #333 !important;
+}
+body.printing-cheatsheet .flip-front {
+  background: #f5f3ff !important; border: 1px solid #8b5cf6 !important;
+}
+```
+
+**设计原则：**
+1. 打印前自动展开所有翻转卡（答案全部显示）
+2. 双列排版节省纸张（A4约可印60-80张卡）
+3. 问题紫色背景，答案用虚线分隔，字号10pt左右
+4. 隐藏所有交互元素（按钮、标记、操作栏）
+5. 必须有恢复机制：`afterprint`事件+15秒setTimeout双保险
+
+**移动端适配规范（候考速翻场景）：**
+
+| 要素 | 规范 |
+|------|------|
+| 断点 | 768px/480px两档 |
+| 正文最小字号 | 15px（不跟随系统缩小） |
+| 触摸目标最小尺寸 | 44×44px |
+| 导航形态 | 横向滚动pill，不加汉堡菜单 |
+| 翻转卡 | 单列排列，高度自适应 |
+| 回到顶部按钮 | 右下44px圆形 |
+| 按钮padding | 不小于8px 14px |
+| 打印模式双列 | 移动端打印仍保持双列（打印纸张是A4不受屏幕宽度影响） |
+
+---
+
+### v3.1 标准组件库（可直接复制使用）
+
+以下组件为v3.1必选/推荐标准组件，template.html中均有完整实现，AI生成时可直接参考。
+
+#### 1. ScrollSpy 导航（必选）
+
+```javascript
+(function(){
+  var navLinks = document.querySelectorAll('#stickyNav a');
+  var sections = [];
+  navLinks.forEach(function(a){
+    var id = a.getAttribute('href').slice(1);
+    var sec = document.getElementById(id);
+    if(sec) sections.push({ id:id, el:sec, link:a });
+  });
+  function update(){
+    var scrollY = window.scrollY + 120;
+    var current = sections[0];
+    for(var i=0;i<sections.length;i++){
+      if(sections[i].el.offsetTop <= scrollY) current = sections[i];
+    }
+    navLinks.forEach(function(a){ a.classList.remove('active'); });
+    if(current) current.link.classList.add('active');
+  }
+  window.addEventListener('scroll', update, { passive:true });
+  update();
+})();
+```
+
+当前项样式：`transform: scale(1.06)` + 紫蓝渐变背景 + 阴影 + 加粗。
+
+#### 2. 回到顶部按钮（必选）
+
+固定右下44px圆形按钮，滚动>400px淡入，点击平滑回顶。仅允许一个实例。
+
+#### 3. 着陆高亮动效（必选）
+
+```javascript
+function scrollToSection(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var accordion = el.closest('.accordion-item');
+  if(accordion && !accordion.classList.contains('open')) accordion.classList.add('open');
+  el.classList.remove('section-highlight');
+  void el.offsetWidth; // 触发reflow重启动画
+  el.classList.add('section-highlight');
+  el.scrollIntoView({ behavior:'smooth', block:'start' });
+  setTimeout(function(){ el.classList.remove('section-highlight'); }, 2800);
+}
+```
+
+所有跨模块跳转（知识图谱"去学习"、错题本"回看"、Toast"查看"）统一使用此函数。
+
+#### 4. 可行动Toast（必选）
+
+API升级为：`showToast(msg, duration, actionText, onAction)`。第三个参数为按钮文字，第四个为点击回调。例如：
+```javascript
+showToast('📌 已加入一页纸', 2500, '查看', function(){ scrollToSection('cheatsheet'); });
+```
+
+#### 5. 撒花庆祝（必选）
+
+`celebrateConfetti()`：40片6色纸屑（紫/蓝/绿/橙/红/粉），从屏幕顶部随机位置下落，1.5-3秒，旋转720度。触发时机：答对微检测、答对题库选择题、诊断完成、考试得分≥75分、标记全部掌握。
+
+#### 6. 划词摘录（推荐）
+
+选中≥2字文字时就近弹出"📌 加到一页纸"浮动按钮，点击后：加入摘录列表、记录来源章节+时间戳、弹出可行动Toast、点击Toast跳转一页纸。
+
+#### 7. 回到顶部（必选）
+
+右下圆形按钮，滚动>400px显示，点击平滑回顶，z-index=400。
+
+#### 8. 错因分类弹窗（必选）
+
+答错后立即弹出错因选择模态框，6类错因（概念误解🧠/公式记错📐/计算失误🧮/方法选错🔀/审题失误👁️/前置薄弱🔗），点击外部或"暂不分类"自动归类为"未分类"。确认后Toast带"查看"按钮跳转错题本。
+
+```javascript
+// 调用方式
+showErrorReasonModal(questionObject);
+// 6类错因定义
+var errorCategories = [
+  { key:'concept', label:'概念误解', color:'#3b82f6' },
+  { key:'formula', label:'公式记错', color:'#8b5cf6' },
+  { key:'calc', label:'计算失误', color:'#f59e0b' },
+  { key:'method', label:'方法选错', color:'#ef4444' },
+  { key:'read', label:'审题失误', color:'#6b7280' },
+  { key:'prereq', label:'前置薄弱', color:'#eab308' }
+];
+```
+
+错题本区域必须包含：①三格统计卡（错题总数/已归类/主要错因）②分类分布柱状条（wb-cat-bar）③每题错因标签（可点击切换）④"回看知识点"补救按钮⑤"已掌握移除"按钮。
+
+#### 9. 间隔重复引擎SRS（推荐）
+
+类Anki的SM-2简化算法，6级间隔（0/1/3/7/15/30天），翻转卡标记✓时升级间隔并显示下次复习时间，标记🔄时降级。一页纸标题旁显示待复习徽章。
+
+```javascript
+SRSystem.markReview(cardId, remembered); // 标记复习结果
+SRSystem.getDueCount(); // 获取待复习卡片数
+SRSystem.updateDueBadge(); // 更新一页纸标题徽章
+SRSystem.SR_INTERVALS; // [0,1,3,7,15,30]
+```
+
+#### 10. 考试计时器（必选）
+
+进入考试模式自动启动20分钟倒计时，>3分钟变黄色警告（pulse动画），≤1分钟变红色危险。考完自动停止。
+
+```javascript
+ExamTimer.start(20); // 启动20分钟计时
+ExamTimer.stop();    // 停止并隐藏
+```
+
+#### 11. Canvas几何可视化（推荐·计算型课程必选）
+
+提供4个现成Canvas动画组件，AI直接调用即可。仅在`data-depth="advanced"`冲刺档显示。
+
+```javascript
+// 黎曼和（积分分割可视化）
+var rs = CanvasViz.riemannSum(canvasEl, { n: 10, fn: function(x){return Math.sin(x*2)+1.5;} });
+rs.setN(30); // 调整分割数
+// 极坐标分割
+var pa = CanvasViz.polarArea(canvasEl);
+pa.setSectors(16);
+// 旋转曲面动画
+var rot = CanvasViz.rotationSurface(canvasEl);
+rot.play(); rot.stop();
+// 向量场
+CanvasViz.vectorField(canvasEl);
+```
+
+所有Canvas组件已处理devicePixelRatio高分屏问题，支持鼠标拖拽（cursor:grab/grabbing）。
+
+#### 12. 术语悬停词典（推荐）
+
+自动为专业术语添加虚线下划线和hover解释tooltip。
+
+```javascript
+TermDictionary.add('导数', '函数在某点的瞬时变化率，即切线斜率');
+TermDictionary.add('偏导数', '多元函数固定其他变量对单一变量求导');
+TermDictionary.annotate(); // 自动扫描DOM标注术语
+```
+
+TreeWalker自动跳过`.katex`、`button`、`a`、`.term`区域，避免重复标注。
+
+#### 13. 进度导入/导出（必选）
+
+考前清单区域折叠面板中提供三个按钮：导出JSON、导入JSON、重置全部进度。导出包含apState/diagResults/wrongbook/srs/checks/flipMarks/dark/depth/excerpts及版本号。
+
+#### 14. 移动端底部导航（必选）
+
+≤768px隐藏顶部sticky-nav，显示底部5个tab（新手/路径/一页纸/刷题/错题），带图标+文字，独立ScrollSpy高亮当前项。
+
+### Canvas几何可视化补充说明（冲刺档专属）
+
+CanvasViz组件库已内置4种可视化（黎曼和/极坐标分割/旋转曲面/向量场），对依赖空间想象的课程（高数、物理等）应在冲刺档（`data-depth="advanced"`）使用。
+
+**关键原则**：Canvas可视化是可选增强，不影响基础档性能，KaTeX加载失败不影响文字内容阅读。新增Canvas组件必须处理devicePixelRatio，否则高分屏模糊。
 
 ### 随机抽测功能
 
@@ -825,18 +1041,19 @@ body.dark {
 
 ```
 course-review-skill/
-├── SKILL.md                # TRAE格式（本文件，v3.0）
+├── SKILL.md                # TRAE格式（本文件，v3.1）
 ├── AGENTS.md               # 跨平台标准格式
 ├── CLAUDE.md               # Claude Code格式
 ├── .cursorrules            # Cursor格式
 ├── .windsurfrules          # Windsurf格式
 ├── .clinerules/course-review.md  # Cline格式
-├── skill.json              # Skill配置v3.0
-├── README.md               # 人类可读文档v3.0
-├── template.html           # 参考模板（含占位符）
-├── assets/js/quiz.js       # 题库系统参考实现
+├── skill.json              # Skill配置v3.1
+├── README.md               # 人类可读文档v3.1
+├── template.html           # 参考模板v3.1（含14个标准组件+4个Canvas可视化）
+├── assets/js/quiz.js       # 题库系统参考实现（已整合进template.html）
 └── examples/
-    └── data-structure.html # 示例
+    ├── data-structure.html # 数据结构示例
+    └── calculus2.html      # 高数2完整示例（含Canvas+术语词典+SRS）
 ```
 
 ### KaTeX集成
@@ -865,7 +1082,7 @@ window.addEventListener('load', () => setTimeout(renderMath, 500));
 </script>
 ```
 
-### 代码生成避坑指南（最高优先级）
+### 代码生成避坑指南（最高优先级 · 25条常见坑）
 
 > **警告**：AI生成JavaScript代码时极易引入语法错误。严格遵守：
 
@@ -876,6 +1093,24 @@ window.addEventListener('load', () => setTimeout(renderMath, 500));
 5. **术语替换跳过KaTeX**：TreeWalker明确跳过`.katex`区域
 6. **IIFE模块化**：每个功能块用独立IIFE包裹，避免全局污染
 7. **函数劫持扩展**：新增功能用Monkey Patching包裹原函数，不破坏已有逻辑
+8. **跨模块跳转统一用scrollToSection**：不直接scrollIntoView，要带着陆高亮和父级手风琴展开
+9. **Toast带行动按钮**：状态变化通知必须提供下一步操作（查看/跳转/撤销），使用`showToast(msg, duration, actionText, onAction)`
+10. **打印必须双保险恢复**：同时监听`afterprint`事件和15秒setTimeout兜底，避免用户取消打印后页面卡在打印模式
+11. **仅允许一个回到顶部按钮**：生成前检查DOM，避免重复ID`backToTop`
+12. **移动端正文≥15px**：防止iOS Safari自动缩放，所有触摸目标≥44×44px
+13. **3D transform翻转卡z-index隔离**：`.flip-card { perspective: 1000px; transform-style: preserve-3d; }`必须在父级设置，否则Safari翻转失效
+14. **localStorage必须加前缀**：使用`LS(key)`函数（基于`SLUG`），避免同域下多课程数据互相污染
+15. **localStorage读写try-catch包裹**：隐私模式下localStorage可能抛异常，必须lsGet/lsSet统一封装
+16. **Canvas必须处理devicePixelRatio**：高分屏模糊问题，`canvas.width = offsetWidth * dpr`后必须`ctx.scale(dpr, dpr)`
+17. **Canvas仅在冲刺档加载**：用`body[data-depth="advanced"]`守卫，基础档不加载Canvas避免性能损耗
+18. **事件委托优于逐个绑定**：动态生成的选项按钮使用事件委托或在render时绑定，避免内存泄漏
+19. **setTimeout/setInterval必须清理**：计时器在模块停止/切换时clearInterval，如ExamTimer.stop()
+20. **错题去重**：addToWrongbook前检查是否已存在同一id的错题，避免重复
+21. **错因分类emoji映射**：使用`getReasonEmoji(key)`函数统一管理，不要硬编码
+22. **移动端底部导航与顶部sticky-nav互斥**：≤768px显示`.mobile-bottom-nav`隐藏`.sticky-nav`，避免双重导航
+23. **进度导出必须包含版本号**：JSON中加`_version`字段，导入时可做兼容性处理
+24. **撒花动画数量控制**：`celebrateConfetti()`每次40片，上限50片，避免低端机卡顿
+25. **IIFE结尾分号**：每个IIFE结束后必须加`;`，防止与后续代码拼接时报错
 
 ```javascript
 // 函数劫持示例：不修改原函数，包裹注入新行为
@@ -894,7 +1129,7 @@ setDepth = function(depth) {
 ### 给AI的提示词模板
 
 ```
-请使用 course-review skill v3.0 为【课程名称】创建交互式复习应用。
+请使用 course-review skill v3.1 为【课程名称】创建交互式复习应用。
 
 课程信息：
 - 课程名称：【名称】
@@ -919,7 +1154,7 @@ setDepth = function(depth) {
 
 要求：
 1. 首先询问参考材料，有参考材料时优先据此校准考点和题目
-2. 融合7大学习科学理论：费曼法+主动回忆+间隔重复+掌握学习+最近发展区+认知负荷+元认知
+2. 融合9大学习科学理论：费曼法+主动回忆+间隔重复+掌握学习+最近发展区+认知负荷+元认知+自我效能感+情境认知
 3. 包含三层深度选择器（补考救命/稳过及格/冲刺高分）
 4. 包含自适应学习路径引擎（知识图谱+微检测门控+四色状态）
 5. 包含全局进度条（四维加权：诊断15%+路径40%+清单25%+刷题20%）
