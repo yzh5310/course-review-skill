@@ -1,1310 +1,362 @@
-# Course Review Skill — 基于费曼学习法的课程速通复习方案生成器
+# Course Review Skill v3.0 — 学习科学驱动的课程速通复习应用生成器
 
-> **v2.4** | 新增每道例题配套小测——学完即练、答案折叠、即时反馈，强化记忆留存
-> **v2.3** | 新增例题驱动模式——以典型题目为核心展开知识点，更适合高数等计算型课程
-> **v2.2** | 新增参考材料收集机制——AI主动询问往年试卷/课件等，确保考点与学校实际一致
-> **v2.1** | 新增计算型课程差异化设计指南
-
-> **核心理念**：用费曼学习法，帮基础薄弱的学生在最短时间内建立课程框架、抓住考试重点。
-> **不是固定模板**：AI应根据课程特点自主增减模块，本skill提供的是设计思路和参考实现，而非刻板框架。
-
-## v2.2 新增：参考材料收集机制
-
-AI生成的知识点和题目基于训练数据，可能与用户学校的实际考试内容不一致。v2.2新增参考材料收集机制：
-
-- **主动询问**：AI在生成复习方案前，必须主动询问用户是否有往年试卷、平时作业、上课课件、教学大纲等参考材料
-- **考点校准**：有参考材料时，据此调整知识点权重、章节优先级和题目风格
-- **原题入库**：往年试卷中的原题直接加入题库，模仿出题风格补充相似题
-- **来源标注**：在页面中标注内容来源（📌 往年试卷/📌 课件强调/⚠️ AI推测）
-- **无材料提醒**：无参考材料时，在页面显著位置提醒用户内容基于AI推测，建议自行校验
-
-**核心原则**：费曼法管"怎么讲"，参考材料管"讲什么、练什么"。
-
-## v2.4 新增：例题配套小测
-
-例题驱动模式的核心是"从做题中学"，但光看一道例题还不够——学生需要**自己动手做几道题**才能真正掌握。v2.4 新增每道例题的配套小测：
-
-- **学完即练**：每道例题结束后，紧跟 2-3 道相关练习题
-- **答案折叠**：题目先展示，答案默认隐藏，学生先自己做再展开对答案
-- **即时反馈**：点击"查看答案"即可展开详细解答和思路
-- **难度递进**：从直接套用公式的基础题，到需要综合运用的提高题
-
-### 配套小测的设计原则
-
-| 原则 | 说明 |
-|------|------|
-| **紧扣例题** | 小测题考察的知识点必须与当前例题直接相关 |
-| **2-3 道为宜** | 太少起不到练习效果，太多会造成认知疲劳 |
-| **难度递进** | 第1题基础（直接套用），第2题变形（换个条件），第3题综合（结合其他知识） |
-| **答案独立折叠** | 每道题的答案单独折叠，做完一道看一道 |
-| **详解不跳步** | 答案要有完整过程，不能只给最终结果 |
-
-### 配套小测与变式练习的区别
-
-| 模块 | 位置 | 数量 | 目的 |
-|------|------|------|------|
-| 变式练习 | 例题内部（第5步） | 1道 | 检验是否理解本题的解题方法 |
-| 配套小测 | 例题末尾（独立模块） | 2-3道 | 巩固本例题涉及的所有知识点 |
-
-## v2.3 新增：例题驱动模式
-
-对高数、物理等计算型/应用型课程，学生常常反映"概念都懂但不会做题"。v2.3新增例题驱动模式——**以典型题目为核心展开知识点**，而非先罗列概念再讲例题。
-
-### 为什么需要例题驱动？
-
-传统的"概念→例题"顺序对基础薄弱的学生效果不好：
-- 概念太抽象，看完就忘
-- 不知道概念"什么时候用、怎么用"
-- 做题时想不到用哪个知识点
-
-**例题驱动的思路**：从一道典型题出发，先看题怎么解，再从解题过程中提炼知识点。学生学完一道题，既会了做题方法，又理解了背后的概念。
-
-### 例题驱动五步法
-
-每道例题都遵循以下结构：
-
-```
-① 题目展示（来自往年试卷/模拟题）
-    ↓
-② 怎么想到的？（解题思路引导，不是直接给答案）
-    ↓
-③ 分步解题（编号步骤，每步有明确的输入输出）
-    ↓
-④ 从题目学到的（提炼知识点、方法、公式）
-    ↓
-⑤ 变式练习（点击展开，改变条件的同类题，检验是否真的掌握）
-```
-
-### 适用场景
-
-| 课程类型 | 是否推荐例题驱动 | 原因 |
-|----------|-----------------|------|
-| 高数/线代/概率论 | **强烈推荐** | 考试以计算题为主，从题目中学概念更高效 |
-| 物理/化学 | **推荐** | 公式多、计算题多，题目驱动理解更深刻 |
-| 编程/算法 | **推荐** | 从实际问题中学算法，比纯讲概念更容易上手 |
-| 经济学/金融 | 可选 | 既有概念又有计算，可混合使用 |
-| 哲学/文学/历史 | 不推荐 | 概念型课程更适合费曼白话法 |
-
-### 与费曼学习法的关系
-
-例题驱动不是对费曼法的替代，而是**计算型课程的费曼法变体**：
-
-| 费曼步骤 | 概念型课程 | 例题驱动（计算型） |
-|----------|-----------|------------------|
-| ① 用最简单的话解释 | 白话版 | "怎么想到的"——用最朴素的思路引导 |
-| ② 用类比建立直觉 | 生活类比 | 分步解题——每一步都是前一步的自然延伸 |
-| ③ 主动暴露盲区 | 常见误区 | 变式练习——换个条件还会不会？ |
-| ④ 压缩为口诀 | 速记口诀 | "从题目学到的"——把知识压缩成可复用的方法 |
-
-**关键原则**：例题驱动的核心不是"多做题"，而是"从一道题里学透一类题"。
-
-## v2.1 新增：计算型课程差异化设计
-
-对高数、物理、线代等强计算+强空间想象的课程，费曼白话法可能失效。v2.1新增差异化设计指南：
-
-- **几何直观优先**：用图形/动画建立直觉，替代白话解释
-- **数学类比**：用低维→高维推广替代生活场景类比
-- **计算依赖树**：展示计算阻塞关系（偏导算不对→重积分全错）
-- **统一性主线**：找课程"纲"（如三大公式本质相同）
-- **分步计算填空**：交互式推导链替代静态题库
-- **知识盲区诊断**：开篇先测盲区再精准补漏
-- **KaTeX公式渲染**：计算型课程的基础设施
+> **v3.0 重大升级** | 从"静态复习页"进化为"完整学习应用"，系统融合7大学习科学理论
+> **核心理念**：不是文档，是学习应用。精准急救，而非全面灌输。
 
 ---
 
-## 给AI的阅读指南（重要）
+## v3.0 核心升级一览
 
-如果你是AI，正在阅读这个skill来为用户创建复习方案，请遵循以下原则：
+v3.0 在 v2.x 基础上进行了革命性升级，将单一的费曼学习法扩展为**7大学习科学理论**的系统融合：
 
-### 第一原则：费曼学习法是灵魂
+| 新系统 | 学习科学理论 | 核心价值 |
+|--------|-------------|---------|
+| 三层深度选择器 | 最近发展区（Vygotsky） | 60分保命/80分稳过/90+冲刺，各取所需 |
+| 自适应学习路径引擎 | 掌握学习（Bloom） | 知识图谱+前置依赖+微检测门控 |
+| 间隔重复系统 | 间隔重复（Ebbinghaus） | 类Anki算法，自动安排复习对抗遗忘 |
+| 错因6分类系统 | 元认知（Metacognition） | 把错题从失败转化为精准诊断数据 |
+| 主动回忆强化 | 主动回忆（Active Recall） | 遮挡做题+翻转卡片+诊断前置+"不会"选项 |
+| 情感设计系统 | 自我效能感（Bandura） | 撒花庆祝+Toast+脉冲动画+心理建设 |
+| 全局进度追踪 | 自我调节学习 | 四维加权进度条+12套localStorage持久化 |
 
-你创建的每一个复习页面，都必须贯彻费曼学习法的四步精神：
+### 版本历史
 
-| 费曼步骤 | 在复习页中的体现 | 你必须做到 |
-|----------|-----------------|-----------|
-| ① 用最简单的话解释 | 每个概念卡片的"白话版" | 用日常语言重新描述，禁止术语堆砌 |
-| ② 用类比建立直觉 | 每个核心概念配生活场景 | 找一个学生熟悉的生活场景做类比 |
-| ③ 主动暴露盲区 | "常见误区" + 自测清单 | 写出学生最容易犯的错，而非只写正确答案 |
-| ④ 压缩为速记口诀 | 速记口诀区 | 用最少的字把核心框架记住 |
-
-### 第二原则：灵活组合，而非照搬模板
-
-**不要照搬宏观经济学复习页的全部模块。** 你应该分析课程特点，决定：
-
-- **哪些模块需要？** 概念型课程不需要公式速查；文科课程不需要计算题库
-- **模块顺序如何排？** 编程课可能先放代码示例再放概念；历史课可能先放时间线
-- **内容深度多深？** 完全零基础的学生需要更多白话和类比；有一定基础的可以更精炼
-- **需要哪些题型？** 看考试形式——纯选择题的考试不需要简答题库
-
-### 第三原则：知识关系图是核心
-
-**这是本skill最重要的创新。** 知识关系图不是简单的"第1章→第2章→第3章"线性罗列，而是要展示**知识点之间的逻辑关系**。详见下文"知识关系图设计指南"。
-
-### 第四原则：面向基础薄弱+短时间
-
-你的读者是：
-- 对课程整体框架缺乏认知的人
-- 核心概念理解不牢固的人
-- 只有1-3天复习时间的人
-- 需要直观、通俗解释而非学术语言的人
-
-**每一个设计决策都要问自己：基础薄弱的学生看得懂吗？短时间能看完吗？**
+- **v3.0** | 学习应用化——7大学习科学系统完整落地
+- v2.4 | 每道例题配套小测（学完即练、答案折叠）
+- v2.3 | 例题驱动模式（以典型题目为核心展开知识点）
+- v2.2 | 参考材料收集机制（考点校准、来源标注）
+- v2.1 | 计算型课程差异化设计（几何直观/依赖树/统一性主线）
 
 ---
 
-## 费曼学习法如何融入复习页
+## 设计哲学
 
-### 费曼法第一步：用最简单的话解释
+### 1. 精准急救，而非全面灌输
 
-**在概念精讲区，每个概念卡片必须包含"白话版"：**
+这是一个**考前冲刺工具**，不是教材。所有设计决策服务于"最短时间拿最多分"：
 
-```html
-<div class="concept-card">
-  <h3>乘数效应</h3>
-  <p><strong>定义：</strong>投资增加引起的国民收入增加量是投资增加量的倍数。</p>
-  
-  <!-- 费曼法第一步：白话版 -->
-  <div class="plain-explain">
-    <strong>白话版：</strong>政府花1块钱修路，修路工人拿到1块钱去买面包，
-    面包师拿到钱去买衣服……这1块钱转了好几圈，最后GDP涨了不止1块钱。
-    涨了几倍，这个"倍"就是乘数。
-  </div>
-</div>
-```
+- 诊断前置，拒绝盲目复习
+- 依赖树预警，优先攻克阻塞点
+- 三层深度，不同基础的人各取所需
+- 考什么学什么，以模拟卷原题为锚点
 
-**关键要求**：
-- 禁止用另一个专业术语解释专业术语
-- 必须用学生日常生活中的场景
-- 宁可啰嗦也不要含糊
+### 2. 学习应用，而非静态文档
 
-### 费曼法第二步：用生活类比建立直觉
+生成的不是一个静态HTML页面，而是一个**单文件Web应用**：
 
-**每个核心概念配一个生活类比，用emoji标注：**
+- 零构建、零后端、零依赖（除KaTeX CDN），一个HTML文件即完整应用
+- 12+个localStorage键实现完整的数据持久层
+- 模块化IIFE脚本架构，功能间互不干扰
+- 渐进增强+优雅降级（Canvas等高级功能仅冲刺档加载）
 
-```html
-<div class="plain-explain">
-  <strong>生活类比：</strong>
-  IS-LM模型就像跷跷板——商品市场坐在一头，货币市场坐在另一头，
-  利率是中间的支点。哪头重（哪个市场需求大），利率就往哪边倾斜。
-</div>
-```
+### 3. 情感设计降低焦虑
 
-**类比设计原则**：
-- 用学生一定熟悉的场景（吃饭、排队、买东西、打游戏）
-- 类比要抓住概念的**核心机制**，而非表面相似
-- 一个概念可以配多个类比，从不同角度理解
+读者是考前焦虑的基础薄弱学生：
 
-### 费曼法第三步：主动暴露盲区
-
-**每个概念卡片包含"常见误区"：**
-
-```html
-<div class="common-mistake">
-  <strong>常见误区：</strong>
-  ① 很多人以为乘数越大越好——其实乘数大意味着经济波动更剧烈
-  ② 很多人忘了乘数公式里的 MPC 是"边际"消费倾向，不是"平均"消费倾向
-  ③ 很多人算乘数时直接用 1/(1-MPC)，但考试常考的是含税乘数，要变形式
-</div>
-```
-
-**自测清单的作用**：
-- 不是"你学到了什么"，而是"你能不能做到什么"
-- 用"我能……"句式，强调能力而非知识
-
-### 费曼法第四步：压缩为速记口诀
-
-**每章或每个知识块配速记口诀：**
-
-```html
-<div class="mnemonic-box">
-  <h4>💡 速记口诀</h4>
-  <div class="mnemonic-item">
-    <span class="emoji">📊</span>
-    <span><b>AD-AS三句话：</b>总需求往下压，总供给往上撑，交点就是均衡价。</span>
-  </div>
-  <div class="mnemonic-item">
-    <span class="emoji">🎚️</span>
-    <span><b>政策方向：</b>财政管税收和花销，货币管利率和钞票。</span>
-  </div>
-</div>
-```
-
-**口诀设计原则**：
-- 字数越少越好，最好押韵
-- 只记框架，细节交给理解
-- 一个口诀对应一个知识块，不要贪多
+- 零基础入口不歧视"小白"，开头第一句安抚
+- 正向反馈密度高：每步操作都有Toast/颜色/动画反馈
+- 进度始终可视化：始终知道"我在哪里、走了多远、下一步是什么"
+- 页脚必须有心理建设（呼吸提示、鼓励话语）
+- 撒花庆祝动效让每一次进步都有仪式感
 
 ---
 
-## 知识关系图设计指南（核心创新）
+## 7大学习科学理论落地
 
-### 为什么知识关系图很重要？
+### 1. 费曼学习法（核心基础）
 
-基础薄弱的学生最大的问题不是"记不住"，而是"不知道知识点之间有什么关系"。他们看到的是一堆孤立的概念，而不是一张有逻辑的网络。
+| 费曼步骤 | 在复习页中的体现 |
+|----------|-----------------|
+| ① 用最简单的话解释 | 白话版/几何直观——禁止术语堆砌 |
+| ② 用类比建立直觉 | 生活类比/数学类比（低维→高维） |
+| ③ 主动暴露盲区 | 常见误区/计算陷阱+自测清单 |
+| ④ 压缩为速记口诀 | 口诀化记忆+统一性主线 |
 
-**知识关系图的目标**：让学生一眼看到"这个知识点为什么在这个位置""它和别的知识点是什么关系"。
+### 2. 主动回忆（Active Recall）
 
-### 七种知识关系类型
+始终让学生**输出**，而非被动阅读：
+- 遮挡式练习模式：例题关键结果模糊化，点击才显示
+- 翻转卡片：考前一页纸问答卡，点击翻转看答案
+- 诊断前置：学习前先做6道诊断题
+- 选择题"不会"选项：降低猜测率，诚实反映盲区
+- 配套小测：每道例题后2-3道折叠练习
 
-AI在分析课程内容时，应识别知识点之间的以下关系类型，选择最合适的来组织关系图：
+### 3. 间隔重复（Spaced Repetition）
 
-#### 1. 因果关系（A导致B）
+类Anki的v3间隔重复引擎：
+- **7级间隔序列**：20分钟→1小时→9小时→1天→2天→4天→7天
+- **四级掌握度**：new → learning → review → mastered
+- **晋级规则**：答对stage+1（间隔拉长），答错重置（5分钟重现）
+- **到期提醒**：红色脉冲闪烁提示需要复习的题目
 
-**适用场景**：经济学、物理、化学等有因果链条的学科
+### 4. 最近发展区（ZPD）
 
-**视觉表现**：
-```
-货币供给↑ → 利率↓ → 投资↑ → 产出↑ → 收入↑
-                                              ↓
-                                         消费↑ ←（循环反馈）
-```
+三层深度选择器匹配不同水平：
 
-**HTML实现思路**：
-```html
-<div class="causal-chain">
-  <div class="chain-node">
-    <strong>货币供给↑</strong>
-    <span class="chain-arrow">导致</span>
-  </div>
-  <div class="chain-node">
-    <strong>利率↓</strong>
-    <span class="chain-arrow">导致</span>
-  </div>
-  <div class="chain-node">
-    <strong>投资↑</strong>
-  </div>
-</div>
-```
+| 档位 | 目标 | 显示内容 |
+|------|------|---------|
+| 🆘 补考救命 | 60分及格 | 每章第1道母题+核心公式+最基础考点 |
+| ✅ 稳过及格 | 75-85分 | 核心+变式+陷阱库+所有例题+基础题库 |
+| 🚀 冲刺高分 | 90+分 | 全部内容含Canvas动画+综合题+统一性主线深度 |
 
-#### 2. 前提依赖（理解A才能理解B）
+### 5. 认知负荷理论
 
-**适用场景**：数学、编程等有严格知识层级的学科
+渐进披露策略避免信息过载：
+- 四层折叠：手风琴→变式→小测→答案，按需展开
+- 模块化卡片：每个知识点封装在独立卡片中
+- hint脚手架：不会做时先看提示，而非直接给答案
 
-**视觉表现**：
-```
-        导数
-         ↑（前提）
-      极限
-         ↑（前提）
-       函数
-         ↑（前提）
-       变量
-```
+### 6. 掌握学习（Mastery Learning）
 
-#### 3. 对比关系（A vs B）
+必须掌握当前节点才能前进：
+- 微检测门控：每个知识点通过1道微检测题才标记掌握
+- 四色知识地图：🟢已掌握/🟡就绪/⚪锁定/🟣当前
+- 自动推荐：掌握后自动推荐下一节点
+- 回学机制：答错则打回重学
 
-**适用场景**：任何有对立/对照概念的课程
+### 7. 元认知训练
 
-**视觉表现**：
-```
-  财政政策              货币政策
-  ─────────            ─────────
-  政府税收/支出         央行利率/货币供给
-  直接影响总需求         间接影响总需求
-  见效慢但持久           见效快但短期
-         ↕
-      两者配合使用
-```
-
-#### 4. 递进关系（从简单到复杂）
-
-**适用场景**：数学、编程等循序渐进的学科
-
-**视觉表现**：
-```
-变量 → 函数 → 导数 → 积分 → 微分方程
-（简单）───────────────────→（复杂）
-```
-
-#### 5. 总分关系（一个大概念包含子概念）
-
-**适用场景**：任何有层级结构的课程
-
-**视觉表现**：
-```
-            宏观经济政策
-           /      |      \
-      财政政策  货币政策  供给政策
-       /  \      /  \
-    税收 支出  利率 货币供给
-```
-
-#### 6. 应用关系（理论→实际问题）
-
-**适用场景**：理论+应用型课程
-
-**视觉表现**：
-```
-供需理论 ──→ 价格分析
-    │
-    └──→ 市场均衡判断
-    │
-    └──→ 政策效果评估
-```
-
-#### 7. 循环反馈（A影响B，B反过来影响A）
-
-**适用场景**：经济学、生态学等有反馈机制的课程
-
-**视觉表现**：
-```
-    收入↑ ───→ 消费↑
-      ↑            │
-      │            ↓
-    产出↑ ←── 投资↑
-```
-
-### 如何选择关系类型？
-
-AI应根据课程特点选择**1-2种主要关系类型**，而非全部使用：
-
-| 课程类型 | 推荐关系类型 | 示例 |
-|----------|-------------|------|
-| 经济学/金融 | 因果关系 + 循环反馈 | 货币政策传导机制 |
-| 数学 | 前提依赖 + 递进关系 | 微积分知识链 |
-| 编程 | 前提依赖 + 总分关系 | 数据结构层级 |
-| 历史 | 因果关系 + 时间线 | 事件因果链 |
-| 物理 | 因果关系 + 应用关系 | 力学→运动学→能量 |
-| 化学 | 总分关系 + 对比关系 | 元素周期表分类 |
-| 文学 | 对比关系 + 总分关系 | 文学流派对比 |
-
-### 关系图的视觉实现建议
-
-**不要只画箭头，要标注关系类型：**
-
-```html
-<div class="relation-map">
-  <!-- 因果链 -->
-  <div class="relation-chain">
-    <div class="relation-node highlight">
-      <strong>总需求AD</strong>
-      <span class="node-tag">核心概念</span>
-    </div>
-    <div class="relation-arrow">
-      <span class="arrow-label">↓ 导致价格下降</span>
-    </div>
-    <div class="relation-node">
-      <strong>价格水平P</strong>
-    </div>
-    <div class="relation-arrow">
-      <span class="arrow-label">↑ 反过来影响</span>
-    </div>
-    <div class="relation-node">
-      <strong>实际货币供给</strong>
-    </div>
-  </div>
-  
-  <!-- 对比框 -->
-  <div class="relation-compare">
-    <div class="compare-side">
-      <h4>财政政策</h4>
-      <ul>
-        <li>工具：税收、政府支出</li>
-        <li>主体：政府</li>
-        <li>见效：慢但持久</li>
-      </ul>
-    </div>
-    <div class="compare-vs">VS</div>
-    <div class="compare-side">
-      <h4>货币政策</h4>
-      <ul>
-        <li>工具：利率、准备金率</li>
-        <li>主体：央行</li>
-        <li>见效：快但短期</li>
-      </ul>
-    </div>
-  </div>
-</div>
-```
+帮学生知道"我哪里不会、为什么错"：
+- **错因6分类**：概念误解/公式记错/计算失误/方法选错/审题失误/前置薄弱
+- **AI智能猜错因**：根据题目关键词预标注建议
+- **错因统计面板**：柱状图展示错因分布+个性化建议
+- **每类错因精准补救路径**：跳转到对应知识点回学
 
 ---
 
-## 模块系统：灵活组合指南
+## 核心系统详解
 
-### 必选模块（4个）
+### 自适应学习路径引擎
 
-这4个模块是费曼学习法的骨架，**任何课程都必须包含**：
+这是v3.0的"骨架"：
 
-| 模块 | 费曼法对应 | 为什么必选 |
-|------|-----------|-----------|
-| 🌱 新手引导区 | 整体认知 | 基础薄弱学生的第一入口，先看森林再看树木 |
-| 🗺️ 知识关系图 | 理解关系 | 用关系代替背诵，理解了关系就不需要死记 |
-| 📚 概念精讲区 | 白话+类比 | 费曼法核心实践：白话解释+生活类比+常见误区 |
-| ✅ 自测清单 | 暴露盲区 | 主动发现"我不会什么" |
+1. 定义知识图谱（10-20个节点），每个节点有id、名称、前置依赖数组
+2. `isReady(node)`算法：所有前置都已掌握时才解锁
+3. 就绪节点显示黄色脉冲光环吸引注意
+4. 学完后弹出微检测题
+5. 答对→撒花庆祝+标记mastered+自动推荐下一节点
+6. 答错→红色提示+回学按钮
 
-### 可选模块（按需选用）
+### 例题驱动七段式结构
 
-AI根据课程特点选择，**不要全部加上**：
-
-| 模块 | 适用课程 | 不适用课程 |
-|------|---------|-----------|
-| 💬 悬浮解释框 | 有专业术语的课程 | 概念极少的课程 |
-| 🔍 概念搜索面板 | 概念多、需快速定位 | 概念少（5个以内） |
-| 📊 复习仪表盘 | 内容多、需进度管理 | 内容少（3章以内） |
-| 📋 公式速查 | 理科、计算类 | 纯文科、概念类 |
-| 📈 概念图表化 | 有图形/模型/流程 | 纯文字概念 |
-| 🚑 应试急救包 | 有固定题型 | 开卷考、论文考 |
-| 🎯 题库系统 | 需针对性练习、错题关联知识点查漏补缺 | 以理解为主 |
-| 🏷️ 章节优先级筛选 | 章节多需取舍 | 章节少 |
-| 💻 代码示例 | 编程类 | 非编程类 |
-| 📅 时间线/历史脉络 | 历史、法律 | 数学、编程 |
-| 📊 对比表格 | 有大量对比 | 概念独立 |
-| 📄 考前一页纸 | 任何课程 | — |
-| 🧩 例题驱动精讲（v2.3新增） | 计算型/应用型课程 | 纯概念型文科课程 |
-
-### 决策流程
+计算型/应用型课程以例题为核心展开：
 
 ```
-分析课程 → 确定课程类型 → 选择模块 → 决定顺序 → 填充内容
-    │
-    ├── 概念型课程（如哲学、文学史）
-    │   → 新手引导 + 知识关系图(总分/对比) + 概念精讲 + 时间线 + 自测清单
-    │
-    ├── 计算型课程（如高数、物理）
-    │   → 新手引导 + 诊断测试 + 计算依赖树 + 统一性主线表
-    │     + 例题驱动精讲(替代概念卡片) + 公式速查 + 计算陷阱库
-    │     + 题库 + 自测清单 + 考前一页纸
-    │
-    ├── 实践型课程（如编程）
-    │   → 新手引导 + 知识关系图(前提依赖) + 例题驱动精讲 + 代码示例 + 题库 + 自测清单
-    │
-    └── 混合型课程（如经济学）
-        → 新手引导 + 知识关系图(因果/循环) + 概念精讲 + 概念图表化 + 公式速查 + 应试急救包 + 题库 + 自测清单
+┌─────────────────────────────────────┐
+│  例题标题 + 来源/分值标签（紫蓝渐变） │
+├─────────────────────────────────────┤
+│  📝 题目内容（琥珀色左边框）          │
+├─────────────────────────────────────┤
+│  💡 怎么想到的？（蓝色左边框·灵魂）   │
+├─────────────────────────────────────┤
+│  ① 第一步... →结果（绿色·遮挡模式）  │
+│  ② 第二步...                        │
+├─────────────────────────────────────┤
+│  📚 从题目学到的（紫蓝边框·提炼）    │
+├─────────────────────────────────────┤
+│  🔄 变式练习（蓝色虚线框·折叠）      │
+├─────────────────────────────────────┤
+│  📝 配套小测2-3题（绿色主题·折叠）   │
+└─────────────────────────────────────┘
 ```
 
----
-
-## 新手引导区设计指南
-
-### 核心目标
-
-用最短时间让基础薄弱的学生建立**整体认知**——知道这门课讲什么、怎么学、从哪开始。
-
-### 必须包含的元素
-
-1. **一句话概括课程**：这门课到底研究什么？
-2. **学习路线（3-5步）**：从零到考试的路径
-3. **速记口诀**：把课程框架压缩成几句话
-4. **难度标识**：哪些零基础可看，哪些需要理解，哪些是难点
-
-### 学习路线设计原则
-
-```
-第1步：看大图（看知识关系图，建立整体印象）     ← 零基础可看
-第2步：抓核心（看概念精讲的白话版和类比）       ← 零基础可看
-第3步：练手感（做几道题，用题库系统）           ← 需要理解
-第4步：查盲区（用自测清单，发现不会的）         ← 需要理解
-第5步：背口诀（用速记口诀，考前最后冲刺）       ← 零基础可看
-```
-
-**注意**：步骤数不固定，AI根据课程复杂度决定3-5步。
-
----
-
-## 概念精讲区设计指南
-
-### 每个概念卡片的完整结构
-
-```html
-<div class="concept-card">
-  <h3>概念名称 <span class="beginner-badge">难度标识</span></h3>
-  
-  <!-- 1. 这章讲什么？（费曼法：建立认知） -->
-  <div class="plain-explain">
-    <strong>这章讲什么？</strong> 用一段话告诉学生这章解决什么问题。
-  </div>
-  
-  <!-- 2. 正式定义 -->
-  <p><strong>定义：</strong>教科书式的准确定义。</p>
-  
-  <!-- 3. 白话版（费曼法第一步） -->
-  <div class="plain-explain">
-    <strong>白话版：</strong> 用日常语言重新描述，禁止术语堆砌。
-  </div>
-  
-  <!-- 4. 生活类比（费曼法第二步） -->
-  <div class="plain-explain">
-    <strong>生活类比：</strong> 用学生熟悉的场景做类比。
-  </div>
-  
-  <!-- 5. 公式/机制（如有） -->
-  <div class="formula">公式或运作机制</div>
-  
-  <!-- 6. 应试要点 -->
-  <div class="key-point">
-    <strong>应试要点：</strong> 考试怎么考、怎么答。
-  </div>
-  
-  <!-- 7. 常见误区（费曼法第三步） -->
-  <div class="common-mistake">
-    <strong>常见误区：</strong> 学生最容易犯的错。
-  </div>
-</div>
-```
-
-### 白话版的写作要求
-
-**好的白话版**：
-> 乘数效应：政府花1块钱修路，修路工人拿到钱去买面包，面包师拿到钱去买衣服……这1块钱转了好几圈，最后GDP涨了不止1块钱。
-
-**差的白话版**：
-> 乘数效应：投资增加导致国民收入成倍增加的效应。
-
-**区别**：好的白话版有**具体场景**和**动作过程**，差的白话版只是换了个说法重复定义。
-
----
-
-## 例题驱动设计指南（v2.3新增）
-
-### 什么是例题驱动？
-
-传统概念精讲区按"概念1→概念2→概念3"的顺序罗列，学生看完概念但不会做题。例题驱动反过来：**先给一道典型题，从解题过程中学概念**。
-
-### 例题卡片的标准结构
-
-```html
-<div class="example-card">
-  <div class="example-header">
-    例题1：求平面方程
-    <span class="ex-tag exam">📌 模拟卷原题 8分</span>
-  </div>
-
-  <!-- 1. 题目展示 -->
-  <div class="ex-problem">
-    求过点 (1,2,1) 且与两直线平行的平面方程。
-  </div>
-
-  <!-- 2. 解题思路引导（费曼法：怎么想到的） -->
-  <div class="ex-thinking">
-    <strong>怎么想到的：</strong>
-    平面与直线平行 → 法向量⊥方向向量 → 法向量=两方向向量叉乘。
-  </div>
-
-  <!-- 3. 分步解题 -->
-  <div class="ex-steps">
-    <div class="ex-step">
-      <div class="ex-step-num">1</div>
-      <div class="ex-step-content">
-        <strong>求L₁方向向量：</strong>两平面法向量叉乘
-        <div class="ex-step-result">s₁ = (1,2,-1) × (1,-1,1) = (1,-2,-3)</div>
-      </div>
-    </div>
-    <div class="ex-step">
-      <div class="ex-step-num">2</div>
-      <div class="ex-step-content">
-        <strong>求法向量：</strong>n = s₁ × s₂
-        <div class="ex-step-result">n = (1,-2,-3) × (0,-1,-1) = (-1,1,-1)</div>
-      </div>
-    </div>
-    <div class="ex-step">
-      <div class="ex-step-num">3</div>
-      <div class="ex-step-content">
-        <strong>点法式写方程：</strong>
-        <div class="ex-step-result">x - y + z = 0</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. 知识提炼（费曼法第四步：压缩为方法） -->
-  <div class="ex-knowledge">
-    <strong>从题目学到的：</strong><br>
-    ① 直线由两平面交线给出时，方向向量=两法向量叉乘<br>
-    ② 平面与直线平行 ⇔ 法向量⊥方向向量<br>
-    ③ 点法式：A(x-x₀)+B(y-y₀)+C(z-z₀)=0
-  </div>
-
-  <!-- 5. 变式练习（费曼法第三步：检验是否真的会） -->
-  <div class="ex-variant">
-    <button class="ex-variant-toggle" onclick="toggleVariant('v1')">
-      🔍 点击展开变式练习
-    </button>
-    <div class="ex-variant-body" id="v1">
-      <strong>变式：</strong>条件变了怎么办？...（答案+提示）
-    </div>
-  </div>
-
-  <!-- 6. 配套小测（v2.4新增：学完即练，强化记忆） -->
-  <div class="ex-practice">
-    <button class="ex-practice-toggle" onclick="togglePractice('p1')">
-      📝 点击展开配套小测
-    </button>
-    <div class="ex-practice-body" id="p1">
-      <div class="ex-practice-item">
-        <div class="ex-practice-q">1. 基础题：...（直接套用例题知识点）</div>
-        <button class="ex-practice-a-toggle" onclick="toggleAnswer('a1_1')">
-          👀 查看答案
-        </button>
-        <div class="ex-practice-a" id="a1_1">
-          <strong>答案：</strong>...<br><br>
-          <strong>过程：</strong>详细解题步骤...
-        </div>
-      </div>
-      <div class="ex-practice-item">
-        <div class="ex-practice-q">2. 提高题：...（变形/综合运用）</div>
-        <button class="ex-practice-a-toggle" onclick="toggleAnswer('a1_2')">
-          👀 查看答案
-        </button>
-        <div class="ex-practice-a" id="a1_2">
-          <strong>答案：</strong>...<br><br>
-          <strong>过程：</strong>详细解题步骤...
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-```
-
-### 例题驱动的选题原则
-
-1. **真题优先**：从往年试卷/模拟卷中选典型题，标注来源和分值
-2. **每章2-3题**：覆盖本章核心考点，不要贪多
-3. **从易到难**：先基础题后综合题
-4. **题目关联知识点**：一道题尽量覆盖多个知识点，提高效率
-
-### 变式练习的设计原则
-
-变式练习是例题驱动的灵魂——检验学生是"看懂了"还是"真的会了"：
-
-- **改变数字**：最简单的变式，检验计算是否独立完成
-- **改变条件**：如"绕x轴旋转"改成"绕z轴旋转"，检验方法是否掌握
-- **反向提问**：给答案求条件，检验理解深度
-- **综合提升**：增加一个知识点，检验知识迁移能力
-
----
-
-## 自测清单设计指南
-
-### 设计原则
-
-- **不是"你学到了什么"，而是"你能不能做到什么"**
-- 用"我能……"句式，强调能力而非记忆
-- 8-12个检查点为宜
-- 与进度条联动，提供学习建议
-
-### 检查点示例
-
-```html
-<label>
-  <input class="study-check" type="checkbox" />
-  我能用白话向别人解释"乘数效应"是什么（费曼检验）
-</label>
-<label>
-  <input class="study-check" type="checkbox" />
-  我能画出IS-LM模型，并说明曲线移动的原因
-</label>
-<label>
-  <input class="study-check" type="checkbox" />
-  我能区分财政政策和货币政策的工具与效果
-</label>
-```
-
-**关键**：检查点要用**可验证的行为**描述，而非"我理解了XX"这种模糊表述。
-
----
-
-## 悬浮解释框设计指南
-
-### 作用
-
-在页面中遇到专业术语时，鼠标悬停即可看到通俗解释，**不需要跳转到其他位置**。这是费曼学习法的即时实践——让学生在阅读过程中随时获得"白话翻译"。
-
-### 使用场景
-
-- 任何有专业术语的课程都建议使用
-- 特别适合：经济学、法学、医学、计算机等术语密集的学科
-
-### HTML实现
-
-```html
-<!-- 在任何文本中嵌入术语解释 -->
-<p>
-  GDP = <span class="tooltip-term" data-tip="消费C：家庭购买商品和服务的支出，如吃饭、买衣服。">消费</span> 
-  + <span class="tooltip-term" data-tip="投资I：企业购买资本品（厂房、设备）及增加存货的支出。">投资</span> 
-  + <span class="tooltip-term" data-tip="政府购买G：各级政府购买商品和服务的支出，如修路、办公支出。">政府支出</span> 
-  + <span class="tooltip-term" data-tip="净出口NX：出口减进口的差额。">净出口</span>
-</p>
-```
-
-### CSS实现
-
-```css
-.tooltip-term {
-  border-bottom: 1.5px dashed var(--primary);
-  cursor: help;
-  position: relative;
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.tooltip-term:hover::after {
-  content: attr(data-tip);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1e293b;
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 400;
-  white-space: normal;
-  width: max-content;
-  max-width: 280px;
-  line-height: 1.5;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  pointer-events: none;
-}
-
-/* 边缘智能定位：避免解释框被遮挡 */
-.tooltip-term.tip-flip-down:hover::after { bottom: auto; top: 100%; }
-.tooltip-term.tip-shift-left:hover::after { left: 0; transform: translateX(0); }
-.tooltip-term.tip-shift-right:hover::after { left: auto; right: 0; transform: translateX(0); }
-```
-
-### JavaScript（边缘智能定位）
-
-```javascript
-// 避免解释框被屏幕边缘遮挡
-document.querySelectorAll('.tooltip-term').forEach(function(term) {
-  term.addEventListener('mouseenter', function() {
-    term.classList.remove('tip-flip-down', 'tip-shift-left', 'tip-shift-right');
-    var rect = term.getBoundingClientRect();
-    var tipW = 280;
-    var margin = 8;
-    
-    // 右边缘溢出 → 左移贴右
-    if (rect.left + tipW/2 + margin > window.innerWidth) {
-      term.classList.add('tip-shift-right');
-    } else if (rect.left - tipW/2 - margin < 0) {
-      // 左边缘溢出 → 右移贴左
-      term.classList.add('tip-shift-left');
-    }
-    // 顶部空间不足 → 翻转到下方
-    if (rect.top < 120) {
-      term.classList.add('tip-flip-down');
-    }
-  });
-});
-```
-
-### 费曼法结合
-
-悬浮解释框是费曼学习法的**即时实践**：
-- 每个 `data-tip` 的内容必须用**白话**写，禁止用术语解释术语
-- 解释要包含**具体场景**或**生活类比**
-- 例如：`"消费C：家庭购买商品和服务的支出，如吃饭、买衣服。"`
-
----
-
-## 概念搜索面板设计指南
-
-### 作用
-
-当课程概念较多时，学生需要快速定位某个概念在哪里。搜索面板提供：
-- **实时搜索**：输入关键词即时过滤
-- **高亮匹配**：搜索结果中高亮显示匹配文字
-- **点击跳转**：点击结果自动滚动到对应位置
-- **智能展开**：如果概念在折叠面板中，自动展开
-- **返回功能**：跳转后可以返回上一位置
-
-### 使用场景
-
-- 概念数量超过10个的课程
-- 术语密集、需要反复查阅的课程
-- 适合：经济学、法学、医学、计算机科学等
-
-### HTML结构
-
-```html
-<!-- 搜索面板（固定在页面右侧） -->
-<div class="search-panel" id="searchPanel">
-  <div class="search-panel-header">
-    <span class="search-panel-title">🔍 概念搜索</span>
-    <button class="search-panel-toggle" id="searchPanelToggle">−</button>
-  </div>
-  <div class="search-panel-body">
-    <div class="search-input-wrap">
-      <input type="text" id="searchInput" placeholder="搜索概念术语..." autocomplete="off">
-      <button id="searchBackBtn" disabled title="返回上一位置">← 返回</button>
-    </div>
-    <div class="search-results" id="searchResults">
-      <div class="search-hint">输入关键词搜索虚线下划线标注的概念</div>
-    </div>
-    <div class="search-stats" id="searchStats"></div>
-  </div>
-</div>
-```
-
-### CSS实现
-
-```css
-.search-panel {
-  position: fixed;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 280px;
-  max-height: 70vh;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.search-panel.collapsed .search-panel-body {
-  display: none;
-}
-
-.search-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  background: var(--primary);
-  color: #fff;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: grab;
-  user-select: none;
-}
-
-.search-panel-body {
-  padding: 12px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.search-input-wrap {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-#searchInput {
-  flex: 1;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 13px;
-  outline: none;
-}
-
-#searchInput:focus {
-  border-color: var(--primary);
-}
-
-.search-results {
-  flex: 1;
-  overflow-y: auto;
-  max-height: calc(70vh - 100px);
-}
-
-.search-hint {
-  color: var(--muted);
-  font-size: 12px;
-  text-align: center;
-  padding: 20px 10px;
-}
-
-.search-result-item {
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 4px;
-  transition: background 0.2s;
-  border: 1px solid transparent;
-}
-
-.search-result-item:hover {
-  background: var(--primary-light);
-  border-color: var(--primary);
-}
-
-.search-result-term {
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--primary);
-  margin-bottom: 2px;
-}
-
-.search-result-desc {
-  font-size: 11.5px;
-  color: var(--muted);
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.search-result-item mark {
-  background: #fef08a;
-  color: inherit;
-  padding: 0 1px;
-  border-radius: 2px;
-}
-
-body.dark .search-result-item mark {
-  background: #854d0e;
-  color: #fef9c3;
-}
-
-.search-stats {
-  font-size: 11px;
-  color: var(--muted);
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
-  margin-top: 8px;
-  text-align: center;
-}
-
-/* 移动端适配 */
-@media (max-width: 900px) {
-  .search-panel {
-    right: 10px;
-    width: 240px;
-    top: auto;
-    bottom: 20px;
-    transform: none;
-    max-height: 50vh;
-  }
-}
-```
-
-### JavaScript实现
-
-```javascript
-(function() {
-  var searchHistory = [];
-  var allTerms = [];
-
-  // 初始化：收集所有 tooltip-term
-  function collectTerms() {
-    var terms = document.querySelectorAll('.tooltip-term');
-    var seen = {};
-    allTerms = [];
-    terms.forEach(function(el) {
-      var text = el.textContent.trim();
-      var tip = el.getAttribute('data-tip') || '';
-      var key = text + '|' + tip;
-      if (!seen[key]) {
-        seen[key] = true;
-        allTerms.push({ element: el, text: text, tip: tip });
-      }
-    });
-  }
-
-  // 高亮匹配文字
-  function highlight(text, keyword) {
-    if (!keyword) return text;
-    var idx = text.toLowerCase().indexOf(keyword.toLowerCase());
-    if (idx < 0) return text;
-    return text.substring(0, idx) + '<mark>' + text.substring(idx, idx + keyword.length) + '</mark>' + text.substring(idx + keyword.length);
-  }
-
-  // 执行搜索
-  function doSearch(keyword) {
-    var resultsEl = document.getElementById('searchResults');
-    var statsEl = document.getElementById('searchStats');
-    keyword = keyword.trim();
-
-    if (!keyword) {
-      resultsEl.innerHTML = '<div class="search-hint">输入关键词搜索虚线下划线标注的概念</div>';
-      statsEl.textContent = '';
-      return;
-    }
-
-    var results = allTerms.filter(function(t) {
-      return t.text.toLowerCase().indexOf(keyword.toLowerCase()) >= 0
-          || t.tip.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
-    });
-
-    if (results.length === 0) {
-      resultsEl.innerHTML = '<div class="search-hint">未找到匹配的概念</div>';
-      statsEl.textContent = '0 个结果';
-      return;
-    }
-
-    var html = '';
-    results.forEach(function(t, i) {
-      html += '<div class="search-result-item" data-idx="' + i + '">'
-           +   '<div class="search-result-term">' + highlight(t.text, keyword) + '</div>'
-           +   '<div class="search-result-desc">' + highlight(t.tip, keyword) + '</div>'
-           + '</div>';
-    });
-    resultsEl.innerHTML = html;
-    statsEl.textContent = results.length + ' 个结果';
-
-    // 绑定点击事件
-    resultsEl.querySelectorAll('.search-result-item').forEach(function(item) {
-      item.addEventListener('click', function() {
-        var idx = +this.getAttribute('data-idx');
-        jumpToTerm(results[idx]);
-      });
-    });
-  }
-
-  // 跳转到某个术语
-  function jumpToTerm(termObj) {
-    searchHistory.push({
-      scrollY: window.scrollY,
-      keyword: document.getElementById('searchInput').value
-    });
-    document.getElementById('searchBackBtn').disabled = false;
-
-    var el = termObj.element;
-
-    // 如果在折叠面板里，先展开
-    var accordionItem = el.closest('.accordion-item');
-    if (accordionItem && !accordionItem.classList.contains('active')) {
-      accordionItem.classList.add('active');
-    }
-
-    // 高亮闪烁
-    el.style.transition = 'background-color 0.3s, color 0.3s';
-    el.style.backgroundColor = 'rgba(37, 99, 235, 0.25)';
-    el.style.color = 'var(--primary)';
-    el.style.borderRadius = '4px';
-    el.style.padding = '2px 4px';
-    setTimeout(function() {
-      el.style.backgroundColor = '';
-      el.style.color = '';
-      el.style.borderRadius = '';
-      el.style.padding = '';
-    }, 2000);
-
-    // 滚动定位
-    requestAnimationFrame(function() {
-      var rect = el.getBoundingClientRect();
-      var scrollTop = window.scrollY + rect.top - window.innerHeight / 3;
-      window.scrollTo({ top: Math.max(0, scrollTop), behavior: 'smooth' });
-    });
-  }
-
-  // 返回上一位置
-  function goBack() {
-    if (searchHistory.length === 0) return;
-    var last = searchHistory.pop();
-    window.scrollTo({ top: last.scrollY, behavior: 'smooth' });
-    if (searchHistory.length === 0) {
-      document.getElementById('searchBackBtn').disabled = true;
-    }
-  }
-
-  // 折叠/展开面板
-  function togglePanel() {
-    var panel = document.getElementById('searchPanel');
-    var btn = document.getElementById('searchPanelToggle');
-    panel.classList.toggle('collapsed');
-    btn.textContent = panel.classList.contains('collapsed') ? '+' : '−';
-  }
-
-  // 防抖
-  function debounce(fn, delay) {
-    var timer = null;
-    return function() {
-      var args = arguments;
-      var ctx = this;
-      clearTimeout(timer);
-      timer = setTimeout(function() { fn.apply(ctx, args); }, delay);
-    };
-  }
-
-  // 初始化
-  window.addEventListener('load', function() {
-    setTimeout(collectTerms, 500);
-
-    var searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', debounce(function() {
-      doSearch(this.value);
-    }, 200));
-
-    document.getElementById('searchBackBtn').addEventListener('click', goBack);
-    document.getElementById('searchPanelToggle').addEventListener('click', togglePanel);
-  });
-})();
-```
-
-### 费曼法结合
-
-概念搜索面板是费曼学习法的**快速查阅工具**：
-- 学生在做题或复习时，遇到不懂的术语可以即时搜索
-- 搜索结果同时显示术语名称和通俗解释
-- 点击跳转后，概念会高亮闪烁2秒，帮助定位
+**「怎么想到的」是灵魂**：不能直接说"用极坐标"，而要说"看到积分区域是圆 + 被积函数含 $x^2+y^2$ → 极坐标！别忘了乘 $r$"。
+
+### 错因6分类系统
+
+| 错因类型 | 颜色 | 补救路径 |
+|---------|------|---------|
+| 概念误解 | 蓝色 | 跳转白话版+类比 |
+| 公式记错 | 紫色 | 跳转公式速查+口诀 |
+| 计算失误 | 橙色 | 计算专项+陷阱提醒 |
+| 方法选错 | 红色 | 方法决策树+信号训练 |
+| 审题失误 | 灰色 | 圈画关键词习惯 |
+| 前置薄弱 | 黄色 | 前置依赖节点回学 |
+
+### 情感设计细节
+
+- **撒花庆祝**：掌握知识点时40片彩色纸屑从屏幕中心散开下落
+- **CTA脉冲呼吸灯**：主按钮持续红色阴影呼吸动画，降低行动门槛
+- **Toast通知**：所有操作即时反馈（切换深度、掌握节点、添加摘录等）
+- **就绪节点脉冲**：可学节点黄色光环扩散动画
+- **页脚心理建设**："深呼吸3次。你已经复习了最核心的考点，及格绝对没问题。加油！💪"
 
 ---
 
 ## 视觉设计系统
 
-### CSS变量
+### 色彩体系v3.0
 
-```css
-:root {
-  --primary: #2563eb;
-  --primary-light: #dbeafe;
-  --text: #111827;
-  --muted: #6b7280;
-  --bg: #f3f4f6;
-  --card: #ffffff;
-  --border: #e5e7eb;
-  --success: #16a34a;
-  --warning: #f59e0b;
-  --danger: #dc2626;
-}
-```
+采用**紫色（#7c3aed）为主色、蓝色（#2563eb）为辅色**的现代化配色：
 
-### 难度标识系统
-
-| 标识 | 含义 | 颜色 |
+| 颜色 | 色值 | 用途 |
 |------|------|------|
-| 零基础可看 | 完全不需要基础 | 绿色 |
-| 需要理解 | 需要先理解前置概念 | 黄色 |
-| 重点难点 | 考试重点且难度大 | 红色 |
+| 主色紫 | #7c3aed | 按钮、链接、主标题、知识/智慧调性 |
+| 辅色蓝 | #2563eb | 思路引导、方法决策树 |
+| 成功绿 | #16a34a | 正确答案、几何直观、配套小测 |
+| 警告黄 | #f59e0b | 题目呈现、核心要点、AI免责 |
+| 危险红 | #dc2626 | 错误、计算陷阱、阻塞点 |
+| 深背景 | #0f172a | 暗黑模式slate-900 |
 
-### 响应式与暗色模式
+### 语义化信息块配色
 
-- 支持移动端（720px断点）
-- 支持平板端（900px断点）
-- 支持暗色模式（CSS变量切换）
-- 支持打印（隐藏交互元素，展开折叠内容）
+每种信息块有专属左边框色和语义，一眼区分内容类型：
+
+| CSS类 | 左边框 | 语义 |
+|-------|--------|------|
+| `.key-point` | 琥珀色 | 核心要点/关键提醒 |
+| `.geo-intuition` | 绿色 | 几何直观解释 |
+| `.plain-explain` | 绿色 | 通俗白话解释 |
+| `.common-mistake` | 红色 | 常见错误/计算陷阱 |
+| `.ex-problem` | 琥珀色 | 题目呈现 |
+| `.ex-thinking` | 蓝色 | 思路引导（元认知层） |
+| `.ex-knowledge` | 紫蓝渐变 | 知识提炼 |
+
+### 卡片化设计
+
+- 大圆角：`border-radius: 22px`（大卡片）/ `999px`（药丸按钮）
+- 柔和阴影：`0 12px 30px rgba(15,23,42,0.08)`
+- 完整暗黑模式双套CSS变量
+- 三断点响应式 + 打印优化 + 一页纸专用打印模式
 
 ---
 
-## 技术实现参考
-
-### 文件结构
+## 推荐页面结构
 
 ```
-course-review-skill/
-├── skill.json              # Skill配置（含费曼法理念和模块系统）
-├── README.md               # 本文档（AI阅读指南）
-├── template.html           # 参考模板（不是固定模板，仅供参考）
-├── assets/
-│   └── js/
-│       └── quiz.js         # 题库系统参考实现
-├── docs/
-│   └── ai-pitfalls.md      # AI生成代码避坑指南（Markdown）
-└── examples/
-    └── data-structure.html # 示例：数据结构复习页
-```
-
-### 题库数据结构
-
-```javascript
-const questionBank = {
-  choice: [{
-    id: 1,
-    question: "题目内容",
-    options: ["A", "B", "C", "D"],
-    answer: 0,
-    explanation: "解析",
-    hint: "提示",  // 费曼法：不会做时先看提示
-    score: 10,
-    chapter: 1,     // 主章节号（用于关联知识点跳转）
-    relatedChapters: [1, 2],  // 可选：相关章节数组（多章节综合题）
-    source: '往年试卷'  // v2.2新增：题目来源（往年试卷/平时作业/AI生成等）
-  }],
-  tf: [...],
-  calc: [...],
-  short: [...],
-  material: [...]
-};
-```
-
-### 题库-知识点关联定位功能（核心特性）
-
-每道题可以关联到一个或多个章节的知识点，学生做题时可以一键跳转到对应概念精讲区。
-
-**三处跳转入口：**
-1. **题目展示区**：题目下方显示"查看第X章概念精讲"按钮
-2. **错题反馈区**：答错时在解析下方显示"回看第X章概念精讲 →"按钮，引导即时复习
-3. **错题回顾列表**：考试结束后的总结页面，每道错题都带跳转按钮
-
-**智能定位效果：**
-- 自动展开折叠的章节
-- 目标章节高亮闪烁2秒，帮助快速定位
-- 平滑滚动到对应位置
-
-**多章节综合题支持：**
-- 如果题目关联多个章节（`relatedChapters` 数组），显示"📚 相关概念："标签和多个跳转按钮
-- 单章节题只显示一个简洁的跳转按钮
-
-**使用前提：**
-1. 概念精讲区的每个 `accordion-item` 必须添加 `id="concept-ch{N}"`
-2. 每道题添加 `chapter` 字段（主章节号）
-3. 综合题可选添加 `relatedChapters` 字段（数组）
-4. 定义 `chapterNames` 章节名称映射对象
-
-### 本地存储
-
-```javascript
-// 保存进度
-localStorage.setItem('course_slug_checks', JSON.stringify(states));
-localStorage.setItem('course_slug_quiz', JSON.stringify(quizData));
+[Header: 标题+三层深度选择器+暗黑模式+CTA脉冲按钮]
+  ↓
+[Sticky Nav: 入门→诊断→路径→学习→刷题→一页纸]（毛玻璃+滚动高亮）
+  ↓
+[⚠️ AI免责声明（无参考材料时）]
+  ↓
+🌱 新手引导（零基础安抚+6步路径+口诀+时间分配）
+  ↓
+🔍 知识盲区诊断（6题→盲区报告→路径推荐）
+  ↓
+🧭 自适应学习路径（知识地图+四色状态+微检测+进度条）
+  ↓
+🪢 计算依赖树（计算型课程：阻塞点红色预警）
+  ↓
+🔗 统一性主线表（有主线的课程：对比表）
+  ↓
+📚 核心内容精讲（手风琴+例题驱动七段式）
+  ↓
+📋 公式/要点速查（卡片网格）
+  ↓
+⚠️ 陷阱库（计算陷阱/常见误区）
+  ↓
+🎯 题库刷题（多模式:顺序/随机/章节/间隔复习/错题本）
+  ↓
+✅ 考前自测清单（12项+进度条）
+  ↓
+📄 考前一页纸（翻转卡+随机抽测+我的摘录+打印模式）
+  ↓
+[Footer: 心理建设+深呼吸提示]
 ```
 
 ---
 
-## 使用指南
+## 技术架构
+
+### 单文件HTML应用
+
+- 零构建工具、零后端、零npm依赖
+- 仅KaTeX CDN用于公式渲染（加载失败不影响阅读）
+- 一个.html文件即可完整运行，双击打开即用
+
+### 数据持久层
+
+12+个独立localStorage键：
+
+| Key | 内容 |
+|-----|------|
+| `course_depth` | 深度偏好（survival/standard/advanced） |
+| `course_dark` | 暗黑模式 |
+| `course_ex_hide` | 遮挡模式 |
+| `course_diag_result` | 诊断结果 |
+| `course_adaptive_path` | 路径节点掌握状态 |
+| `course_checks` | 自测清单勾选 |
+| `course_qb_progress` | 题库进度 |
+| `course_sr_data` | 间隔重复数据 |
+| `course_wrongbook` | 错题本+错因标签 |
+| `course_flip_marks` | 翻转卡片标记 |
+| `course_my_excerpts` | 划词摘录 |
+
+### 代码组织最佳实践
+
+- **IIFE模块化**：每个功能块用独立`(function(){...})()`包裹，避免全局污染
+- **函数劫持扩展**：新增功能用Monkey Patching包裹原函数，不破坏已有逻辑
+- **KaTeX双保险渲染**：DOMContentLoaded(300ms) + load(500ms)，动态内容后setTimeout重渲染
+- **TreeWalker智能术语替换**：按长度降序匹配，明确跳过.katex区域
+- **渐进增强**：Canvas等重功能仅在冲刺档初始化
+
+### AI代码生成避坑
+
+1. **字符串统一单引号**：题库数据中所有字符串用单引号，内部安全使用中文双引号
+2. **KaTeX数学模式禁中文**：不要用`\text{中文}`
+3. **strict:false配置**：容忍边缘情况
+4. **术语替换跳过KaTeX**：TreeWalker必须跳过`.katex`区域
+5. **展开后重渲染公式**：手风琴/折叠展开后调用`setTimeout(renderMath, 50)`
+
+---
+
+## 使用方式
 
 ### 给AI的提示词模板
 
 ```
-请使用 course-review skill 为【课程名称】创建交互式复习方案。
+请使用 course-review skill v3.0 为【课程名称】创建交互式复习应用。
 
 课程信息：
 - 课程名称：【名称】
 - 课程类型：【概念型/计算型/实践型/混合型】
 - 章节范围：【第X章到第Y章】
 - 考试形式：【选择题/简答题/计算题/论文/混合】
-- 学生基础：【完全零基础/有一定基础】
+- 学生基础：【完全零基础/有一定基础/基础较好】
 - 复习时间：【1天/2天/3天】
+- 目标分数：【补考救命/稳过及格/冲刺高分】
 
-核心概念（列出3-5个最重要的概念）：
-1. 【概念1】
-2. 【概念2】
-3. 【概念3】
-
-参考材料（v2.2新增·如有请提供）：
-- 往年试卷/期末卷：【上传文件或粘贴题目】
-- 平时作业/练习题：【上传文件或粘贴题目】
-- 上课课件/PPT：【上传文件】
-- 教学大纲/考试范围：【粘贴内容或描述】
-- 老师强调的重点/考点描述：【文字描述】
+参考材料（如有请提供）：
+- 往年试卷/期末卷
+- 平时作业/练习题
+- 上课课件/PPT
+- 教学大纲/考试范围
 
 要求：
-1. 【v2.2】首先询问参考材料，有参考材料时优先据此校准考点和题目
-2. 贯彻费曼学习法：每个概念都要有白话版、生活类比、常见误区
-3. 知识关系图要体现知识点间的逻辑关系（因果/对比/递进/总分等）
-4. 根据课程类型自主选择模块，不要照搬全部模块
-5. 面向基础薄弱+短时间复习的学生
-6. 生成单个自包含HTML文件
-7. 【v2.2】在页面中标注内容来源（往年试卷/课件/AI推测）
+1. 首先询问参考材料
+2. 融合7大学习科学理论
+3. 包含三层深度选择器
+4. 包含自适应学习路径引擎
+5. 例题驱动七段式结构
+6. 错因6分类系统
+7. 正反馈系统（撒花+Toast+脉冲）
+8. 暗黑模式+响应式+打印优化
+9. 单个自包含HTML文件
 ```
 
 ---
 
-## 示例
+## 文件结构
 
-### 宏观经济学复习页（原始参考）
-
-特点：8章、3大模型、因果+循环反馈关系图、66道题
-
-### 数据结构复习页
-
-参考文件：`examples/data-structure.html`
-
-特点：10章、前提依赖+递进关系图、8种排序算法对比表
+```
+course-review-skill/
+├── SKILL.md                # TRAE/Windsurf/Cursor AI格式主文档（v3.0）
+├── AGENTS.md               # 跨平台Agent标准格式
+├── CLAUDE.md               # Claude Code格式
+├── .cursorrules            # Cursor IDE格式
+├── .windsurfrules          # Windsurf IDE格式
+├── .clinerules/
+│   └── course-review.md    # Cline格式
+├── skill.json              # Skill元数据配置（v3.0）
+├── README.md               # 本文档（人类可读）
+├── template.html           # 参考HTML模板
+├── assets/
+│   └── js/
+│       └── quiz.js         # 题库系统参考实现
+└── examples/
+    └── data-structure.html # 示例：数据结构复习页
+```
 
 ---
 
@@ -1314,4 +366,4 @@ MIT License
 
 ---
 
-**这个skill的灵魂是费曼学习法，骨架是灵活的模块系统，血肉是知识关系图，校准器是参考材料，v2.3新增例题驱动模式。对计算型课程，从"先讲概念再做题"变为"从题目中学概念"。v2.2要求AI在生成方案前主动收集参考材料，确保考点与学校实际一致。AI在创建复习方案时，请始终问自己：基础薄弱的学生看得懂吗？短时间能看完吗？知识点之间的关系清楚吗？考点和学校实际一致吗？对计算型课程：学生看完这道题会做同类题吗？**
+**v3.0的灵魂是7大学习科学理论的系统融合，骨架是自适应学习路径引擎，血肉是例题驱动七段式，校准器是参考材料，体验层是情感设计与正反馈。每一个设计决策都要问：这符合哪个学习科学原理？基础薄弱的学生看得懂吗？短时间能看完吗？是否在学生的最近发展区内？错题是否转化为了精准的诊断数据？**
