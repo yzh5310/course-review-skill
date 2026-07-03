@@ -7,12 +7,12 @@
   ║  所有交互均可直接运行，带有示例数据供AI参考实现方式。                   ║
   ║                                                                    ║
   ║  【AI使用方式】                                                      ║
-  ║  1. 全局替换 {{COURSE_NAME}}、{{COURSE_SLUG}} 等占位符                  ║
+  ║  1. 全局替换 高等数学2、calculus2 等占位符                  ║
   ║  2. 替换 /* === DEMO DATA START === */ 到 /* === DEMO DATA END === */ ║
   ║     之间的示例数据为真实课程内容                                       ║
   ║  3. 根据课程类型增删模块（见SKILL.md"模块组合"章节）                    ║
   ║  4. 不要删除任何工具函数（Toast/撒花/ScrollSpy/打印等）                ║
-  ║  5. 所有localStorage键名必须用{{COURSE_SLUG}}_前缀                     ║
+  ║  5. 所有localStorage键名必须用calculus2_前缀                     ║
   ║                                                                    ║
   ║  【v3.1 八大系统】                                                    ║
   ║  ① 三层深度选择器  ② 自适应学习路径  ③ 间隔重复  ④ 错因6分类           ║
@@ -36,7 +36,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{COURSE_NAME}} - 1天速通交互式复习方案</title>
+<title>高等数学2 - 1天速通交互式复习方案</title>
 
 <!-- KaTeX（可选：数学/计算型课程启用，文科课程可删除） -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -884,7 +884,8 @@ footer .breath {
   .global-progress-label, .back-to-top, .toast, .confetti-piece,
   .qb-tabs, .qb-stats, .qb-nav, .btn, .flip-actions,
   .excerpt-btn, .micro-quiz-overlay, .hero-btn,
-  .cheatsheet-controls button:not(.print-keep) { display: none !important; }
+  .cheatsheet-controls button:not(.print-keep),
+  .ai-fab, .ai-panel-overlay, .ai-nudge { display: none !important; }
   body { background: #fff !important; color: #000 !important; font-size: 11pt; }
   .card { box-shadow: none !important; border: none !important; break-inside: avoid; page-break-inside: avoid; }
   header.hero { background: #fff !important; color: #000 !important; padding: 10px 0 !important; }
@@ -967,6 +968,237 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 }
 
 /* ============================================================
+   v4.0 AI出题助手
+   ============================================================ */
+/* AI FAB浮动按钮 */
+.ai-fab {
+  position: fixed; bottom: 88px; right: 24px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff; border: none; font-size: 24px;
+  cursor: pointer; z-index: 450;
+  box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s;
+  animation: fabPulse 2s infinite;
+}
+.ai-fab:hover { transform: scale(1.1) translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.5); }
+.ai-fab:active { transform: scale(0.95); }
+@keyframes fabPulse {
+  0%, 100% { box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
+  50% { box-shadow: 0 6px 28px rgba(124,58,237,0.6), 0 0 0 8px rgba(124,58,237,0.1); }
+}
+.ai-fab-label {
+  position: absolute; right: 66px; top: 50%; transform: translateY(-50%);
+  background: var(--card); color: var(--primary);
+  padding: 6px 12px; border-radius: var(--radius-full);
+  font-size: 13px; font-weight: 600; white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.ai-fab:hover .ai-fab-label { opacity: 1; }
+@media (max-width: 768px) {
+  .ai-fab { bottom: 78px; right: 16px; width: 52px; height: 52px; font-size: 22px; }
+  .ai-fab-label { display: none; }
+}
+
+/* AI面板遮罩 */
+.ai-panel-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 600;
+  display: none; align-items: center; justify-content: center; padding: 16px;
+  backdrop-filter: blur(4px);
+}
+.ai-panel-overlay.show { display: flex; }
+.ai-panel {
+  background: var(--card); border-radius: var(--radius-lg);
+  max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: panelSlide 0.3s ease;
+}
+@keyframes panelSlide {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.ai-panel-header {
+  padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.ai-panel-header h3 { margin: 0; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+.ai-panel-close {
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: rgba(0,0,0,0.08); color: var(--muted);
+  font-size: 18px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.ai-panel-close:hover { background: rgba(0,0,0,0.15); color: var(--text); }
+.ai-panel-body { padding: 20px 24px; }
+.ai-panel-footer {
+  padding: 16px 24px; border-top: 1px solid var(--border);
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+}
+
+/* AI步骤状态 */
+.ai-step { display: none; }
+.ai-step.active { display: block; }
+.ai-step-indicator {
+  display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;
+}
+.ai-step-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--border); transition: all 0.3s;
+}
+.ai-step-dot.active { background: var(--primary); transform: scale(1.3); }
+.ai-step-dot.done { background: var(--success); }
+
+/* 配置选项 */
+.ai-config-group { margin-bottom: 16px; }
+.ai-config-label {
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  margin-bottom: 8px; display: block;
+}
+.ai-config-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.ai-config-opt {
+  padding: 8px 14px; border-radius: var(--radius-full);
+  border: 1px solid var(--border); background: var(--bg);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all 0.2s; color: var(--text);
+  min-height: 36px;
+}
+.ai-config-opt:hover { border-color: var(--primary); }
+.ai-config-opt.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+.ai-count-slider {
+  width: 100%; margin: 8px 0;
+  accent-color: var(--primary);
+}
+.ai-count-value {
+  text-align: center; font-size: 24px; font-weight: 800;
+  color: var(--primary);
+}
+
+/* AI快捷跳转按钮 */
+.ai-shortcuts {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;
+}
+.ai-shortcut-btn {
+  padding: 12px; border-radius: var(--radius-md);
+  border: 1px solid var(--border); background: var(--bg);
+  cursor: pointer; text-align: center; transition: all 0.2s;
+  text-decoration: none; color: var(--text);
+}
+.ai-shortcut-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.ai-shortcut-btn .sc-icon { font-size: 24px; margin-bottom: 4px; }
+.ai-shortcut-btn .sc-name { font-size: 13px; font-weight: 600; }
+
+/* 提示词预览 */
+.ai-prompt-preview {
+  background: #1e293b; color: #e2e8f0;
+  border-radius: var(--radius-md); padding: 16px;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 12px; line-height: 1.6;
+  max-height: 300px; overflow-y: auto;
+  white-space: pre-wrap; word-break: break-all;
+  margin: 12px 0;
+}
+.ai-copy-btn {
+  width: 100%; padding: 14px; border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff; border: none; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  min-height: 48px;
+}
+.ai-copy-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
+.ai-copy-btn.copied { background: var(--success); }
+
+/* 导入模态框 */
+.ai-import-textarea {
+  width: 100%; min-height: 180px; padding: 12px;
+  border: 2px solid var(--border); border-radius: var(--radius-md);
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px; line-height: 1.5; resize: vertical;
+  background: var(--bg); color: var(--text);
+  transition: border-color 0.2s;
+}
+.ai-import-textarea:focus { outline: none; border-color: var(--primary); }
+.ai-import-status {
+  padding: 12px; border-radius: var(--radius-md);
+  margin: 12px 0; font-size: 14px;
+  display: none;
+}
+.ai-import-status.show { display: block; }
+.ai-import-status.success { background: var(--success-light); color: #065f46; border-left: 4px solid var(--success); }
+.ai-import-status.error { background: var(--danger-light); color: #991b1b; border-left: 4px solid var(--danger); }
+.ai-import-preview { margin: 12px 0; max-height: 200px; overflow-y: auto; }
+.ai-import-qitem {
+  padding: 8px 12px; background: var(--bg); border-radius: var(--radius-sm);
+  margin-bottom: 6px; font-size: 13px; display: flex; gap: 8px; align-items: flex-start;
+}
+.ai-import-qitem .qi-type {
+  flex-shrink: 0; padding: 2px 8px; border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 600; background: var(--primary-light); color: var(--primary);
+}
+.ai-import-qitem .qi-text { flex: 1; line-height: 1.5; color: var(--text); }
+.ai-import-qitem.dup { opacity: 0.5; }
+.ai-import-qitem.dup::after { content: ' (重复)'; color: var(--danger); font-size: 11px; }
+
+/* 首次引导 */
+.ai-onboarding {
+  text-align: center; padding: 8px 0;
+}
+.ai-onboarding-steps {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+  margin: 16px 0;
+}
+.ai-onb-step {
+  padding: 16px 8px; background: var(--bg); border-radius: var(--radius-md);
+}
+.ai-onb-step .onb-icon { font-size: 32px; margin-bottom: 8px; }
+.ai-onb-step .onb-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.ai-onb-step .onb-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+/* AI导入题目标记 */
+.qb-type-tag.ai-imported {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+}
+.qb-type-tag.ai-imported::after { content: ' AI'; }
+
+/* 主动提示条 */
+.ai-nudge {
+  background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+  border-radius: var(--radius-md); padding: 12px 16px;
+  margin: 12px 0; display: flex; align-items: center;
+  justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.ai-nudge-text { font-size: 14px; font-weight: 500; }
+.ai-nudge-btn {
+  padding: 8px 16px; border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff; border: none; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; min-height: 36px;
+}
+
+/* 折叠的高级设置 */
+.ai-advanced {
+  margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;
+}
+.ai-advanced summary {
+  font-size: 13px; color: var(--muted); cursor: pointer;
+  padding: 4px 0; list-style: none; display: flex; align-items: center; gap: 4px;
+}
+.ai-advanced summary::before { content: '⚙️ '; }
+.ai-advanced summary::-webkit-details-marker { display: none; }
+.ai-advanced[open] summary { margin-bottom: 12px; }
+
+@media (max-width: 480px) {
+  .ai-shortcuts { grid-template-columns: 1fr 1fr; }
+  .ai-onboarding-steps { grid-template-columns: 1fr; gap: 8px; }
+  .ai-panel { max-height: 95vh; }
+}
+
+/* ============================================================
    辅助类
    ============================================================ */
 .text-center { text-align: center; }
@@ -988,8 +1220,8 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 
 <!-- ===================== HEADER ===================== -->
 <header class="hero">
-  <h1>{{COURSE_NAME}}</h1>
-  <p class="subtitle">{{COURSE_DESCRIPTION}}</p>
+  <h1>高等数学2</h1>
+  <p class="subtitle">多元函数微积分 · 1天速通 · 从零基础到及格</p>
 
   <div class="depth-selector" id="depthSelector">
     <button class="depth-btn" data-depth="survival">🆘 补考救命(60分)</button>
@@ -1014,6 +1246,7 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
     <a href="#cheatsheet">📄 一页纸</a>
     <a href="#quiz">🎯 刷题</a>
     <a href="#wrongbook">📕 错题</a>
+    <a href="#concept-advanced" data-advanced="true">🚀 可视化</a>
     <a href="#checklist">✅ 清单</a>
   </div>
 </nav>
@@ -1023,7 +1256,7 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 <!-- ===================== 1. 新手引导 ===================== -->
 <section class="card" id="beginner">
   <h2><span class="emoji">🌱</span>零基础？从这里开始！</h2>
-  <p class="card-desc">{{BEGINNER_INTRO}}</p>
+  <p class="card-desc">适合高数2挂科边缘、补考冲刺、期末前1天速成的同学。所有内容采用"例题驱动"模式，先看题再学概念。</p>
 
   <div class="beginner-steps">
     <div class="step-card">
@@ -1059,10 +1292,10 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
   </div>
 
   <div class="info-box tip">
-    <strong>💡 时间分配建议：</strong>{{TIME_ALLOCATION}}
+    <strong>💡 时间分配建议：</strong>诊断题10分钟 → 偏导数与全微分30分钟 → 多元极值20分钟 → 二重积分40分钟 → 三重积分+曲线积分30分钟 → 一页纸速记20分钟 → 刷题+错题回顾30分钟。合计约3小时。
   </div>
   <div class="info-box key">
-    <strong>⚡ 速记口诀：</strong>{{MNEMONIC}}
+    <strong>⚡ 速记口诀：</strong>"偏导固定一变量，全微两分加起来；极值看AC-B²，二重积分画区域；极坐标rdrdθ，柱面r dz dr dθ；格林公式闭曲线，Pdx+Qdy变二重"
   </div>
   <div class="info-box note">
     <strong>📌 使用提示：</strong>选中任意文字可以"📌 加到一页纸"；点击"去学习"自动跳转到对应章节并高亮；答错后选择错因，精准复习。
@@ -1102,72 +1335,356 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
     <!-- === DEMO DATA START === -->
     <div class="accordion-item" id="concept-ch1">
       <button class="accordion-header">
-        <span>示例概念1：核心概念A</span>
+        <span>Ch1 多元函数的基本概念与极限</span>
         <span class="accordion-arrow">▼</span>
       </button>
       <div class="accordion-body">
-        <p>这里是用大白话对概念的解释。使用费曼学习法：用最简单的话讲清楚。</p>
+        <p>多元函数是一元函数的推广：z=f(x,y)表示两个自变量x,y确定一个因变量z。定义域通常是平面上的一个区域（闭区域/开区域）。</p>
 
         <div class="info-box note">
-          <strong>💡 几何直观/类比：</strong>用生活场景或数学类比帮助理解。
+          <strong>💡 几何直观：</strong>z=f(x,y)在三维空间中是一张曲面。例如z=x²+y²是旋转抛物面（碗状），z=√(1-x²-y²)是上半球面。
         </div>
 
         <div class="info-box formula">
-          核心公式：$E = mc^2$（示例）
+          极限定义：$\lim_{(x,y)\to(x_0,y_0)} f(x,y) = A$ 当且仅当沿<strong>任意</strong>路径趋近函数值都趋于A
+        </div>
+
+        <div class="info-box warn">
+          <strong>⚠️ 常见错误：</strong>沿两条不同路径得到不同极限，则极限不存在（最常用的反证法！）。比如沿y=kx方向极限与k有关，则极限不存在。
+        </div>
+
+        <div class="info-box key">
+          <strong>⚡ 连续性：</strong>多元初等函数在其定义域内都是连续的——所以考试时求极限，直接代入即可（只要代入后是有定义的点）。
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item open" id="concept-ch2">
+      <button class="accordion-header">
+        <span>Ch2 偏导数（重点★）</span>
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p><span class="term">偏导数</span>就是"偏向某一个变量"的导数：求f对x的偏导f_x，就把y当作常数，按一元函数求导法则对x求导。</p>
+
+        <div class="info-box note">
+          <strong>💡 几何直观：</strong>f_x(x₀,y₀)是曲面z=f(x,y)在点(x₀,y₀)处沿x轴方向切线的斜率；f_y同理沿y轴方向。
+        </div>
+
+        <div class="info-box formula">
+          偏导定义：$f_x(x_0,y_0) = \lim_{\Delta x \to 0} \frac{f(x_0+\Delta x,y_0)-f(x_0,y_0)}{\Delta x}$
         </div>
 
         <div class="example-card">
           <div class="example-header">
-            <span>📝 典型例题1</span>
+            <span>📝 典型例题1：求一阶偏导</span>
             <span class="source-badge">📌 母题</span>
           </div>
           <div class="example-body">
             <div class="ex-problem">
-              <strong>题目：</strong>这是一道典型例题的题目内容。
+              <strong>题目：</strong>设 $f(x,y) = x^2y + \sin(xy) + e^x\ln y$，求 $f_x, f_y$。
             </div>
             <div class="ex-thinking">
-              <strong>💡 怎么想到的？</strong>看到XX特征→想到用XX方法。关键信号是XX。
+              <strong>💡 怎么想到的？</strong>求f_x时把y当常数，逐项对x求导；求f_y时把x当常数，逐项对y求导。sin(xy)对x求导要用链式法则：外层cos(xy)乘以内层对x的导数y。
             </div>
             <div class="ex-steps">
               <div class="ex-step">
-                <strong>① 第一步：</strong>写明第一步操作。<br>
-                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">结果：第一步答案</span>
+                <strong>① 求f_x（y视为常数）：</strong>(x²y)'_x=2xy；[sin(xy)]'_x=cos(xy)·y；[e^x ln y]'_x=e^x ln y<br>
+                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">结果：f_x = 2xy + y·cos(xy) + e^x·ln y</span>
               </div>
               <div class="ex-step">
-                <strong>② 第二步：</strong>写明第二步操作。<br>
-                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">结果：第二步答案</span>
+                <strong>② 求f_y（x视为常数）：</strong>(x²y)'_y=x²；[sin(xy)]'_y=cos(xy)·x；[e^x ln y]'_y=e^x·(1/y)<br>
+                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">结果：f_y = x² + x·cos(xy) + e^x/y</span>
               </div>
             </div>
             <div class="ex-knowledge">
-              <strong>📚 从这道题学到：</strong>方法适用条件、易错点、关键口诀。
+              <strong>📚 从这道题学到：</strong>①"固定其他变量"是核心口诀；②复合函数用链式法则，别忘了乘以内层导数；③ln y对y求导是1/y（不要写成y）；④高阶偏导：f_xy先对x再对y，混合偏导连续时f_xy=f_yx（克莱罗定理）。
             </div>
             <button class="ex-variant-toggle" onclick="toggleExample(this,'variant')">🔄 点击展开变式练习</button>
             <div class="ex-variant-body">
-              <p><strong>变式：</strong>改变一个条件后的练习题。</p>
-              <p><strong>答案：</strong>变式答案（先自己算再看）。</p>
+              <p><strong>变式：</strong>求 $f(x,y)=x^3y^2+e^{xy}$ 在点(1,0)处的 $f_x(1,0)$ 和 $f_y(1,0)$。</p>
+              <p><strong>答案：</strong>f_x(1,0)=0（先代y=0，f(x,0)=1，f_x=0）；f_y(1,0)=1（先代x=1，f(1,y)=y²+e^y，f_y=2y+e^y，代入y=0得1）。<strong>技巧：先代值再求导更简单！</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="example-card">
+          <div class="example-header">
+            <span>📝 典型例题2：高阶偏导</span>
+            <span class="source-badge">📌 常考</span>
+          </div>
+          <div class="example-body">
+            <div class="ex-problem">
+              <strong>题目：</strong>设 $z = x^3y^2 - 3xy^3 + xy + 1$，求 $\frac{\partial^2 z}{\partial x^2}, \frac{\partial^2 z}{\partial x\partial y}, \frac{\partial^2 z}{\partial y^2}$。
+            </div>
+            <div class="ex-thinking">
+              <strong>💡 怎么想到的？</strong>先求一阶偏导，再对结果求偏导。混合偏导∂²z/∂x∂y先对x求导再对y求导。
+            </div>
+            <div class="ex-steps">
+              <div class="ex-step">
+                <strong>① 求一阶偏导：</strong>∂z/∂x = 3x²y² - 3y³ + y；∂z/∂y = 2x³y - 9xy² + x<br>
+                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">已得到一阶偏导</span>
+              </div>
+              <div class="ex-step">
+                <strong>② 二阶偏导：</strong>∂²z/∂x² = 6xy²；∂²z/∂x∂y = 6x²y - 9y² + 1；∂²z/∂y² = 2x³ - 18xy<br>
+                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">结果如上，验证∂²z/∂x∂y = ∂²z/∂y∂x = 6x²y - 9y² + 1 ✓</span>
+              </div>
+            </div>
+            <div class="ex-knowledge">
+              <strong>📚 要点：</strong>混合偏导在连续的条件下与求导顺序无关，这可以用来验证你的计算是否正确。
             </div>
           </div>
         </div>
 
         <div class="info-box warn">
-          <strong>⚠️ 常见错误：</strong>列出学生最容易犯的错误。
+          <strong>⚠️ 易错点：</strong>①对x求偏导时忘记y是常数，把y也求导了；②链式法则漏乘内层导数（如sin(xy)对x求导漏乘y）；③高阶混合偏导顺序搞错符号。
         </div>
       </div>
     </div>
 
-    <div class="accordion-item" id="concept-ch2">
+    <div class="accordion-item" id="concept-ch3">
       <button class="accordion-header">
-        <span>示例概念2：核心概念B</span>
+        <span>Ch3 全微分与链式法则</span>
         <span class="accordion-arrow">▼</span>
       </button>
       <div class="accordion-body">
-        <p>更多示例概念内容...</p>
+        <p><span class="term">全微分</span>描述函数在两个方向同时变化时的总变化量近似。</p>
+        <div class="info-box formula">
+          全微分公式：$dz = \frac{\partial z}{\partial x}dx + \frac{\partial z}{\partial y}dy = f_x dx + f_y dy$
+        </div>
+        <p>可微的充分条件：f_x和f_y都存在且连续 → f可微。</p>
+        <h4>链式法则（复合函数求导）</h4>
+        <div class="info-box formula">
+          若 z=f(u,v), u=u(x,y), v=v(x,y)：$\frac{\partial z}{\partial x} = \frac{\partial z}{\partial u}\frac{\partial u}{\partial x} + \frac{\partial z}{\partial v}\frac{\partial v}{\partial x}$<br>
+          <small>口诀：沿线相乘，分线相加（画树形图！）</small>
+        </div>
         <div class="info-box tip">
-          <strong>✅ 要点：</strong>关键知识点总结。
+          <strong>✅ 隐函数求导：</strong>F(x,y,z)=0确定z=z(x,y)，则 ∂z/∂x = -F_x/F_z，∂z/∂y = -F_y/F_z。记住负号！
         </div>
       </div>
     </div>
-    <!-- === DEMO DATA END === -->
+
+    <div class="accordion-item" id="concept-ch4">
+      <button class="accordion-header">
+        <span>Ch4 多元函数极值</span>
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p><span class="term">极值</span>求解分两步：①找驻点（f_x=0且f_y=0）；②用二阶偏导判别法判定。</p>
+        <div class="info-box formula">
+          判别法：设 $A=f_{xx}, B=f_{xy}, C=f_{yy}$<br>
+          (1) $AC-B^2 > 0$：是极值，A<0极大，A>0极小<br>
+          (2) $AC-B^2 < 0$：不是极值（鞍点）<br>
+          (3) $AC-B^2 = 0$：无法判断，需另法讨论
+        </div>
+        <div class="example-card">
+          <div class="example-header">
+            <span>📝 典型例题：求f(x,y)=x³-4x²+2xy-y²的极值</span>
+            <span class="source-badge">📌 母题</span>
+          </div>
+          <div class="example-body">
+            <div class="ex-problem"><strong>题目：</strong>求函数极值。</div>
+            <div class="ex-thinking"><strong>💡 思路：</strong>先求驻点，再用AC-B²判别。</div>
+            <div class="ex-steps">
+              <div class="ex-step"><strong>① 求驻点：</strong>f_x=3x²-8x+2y=0，f_y=2x-2y=0 → y=x，代入得3x²-6x=0 → x=0或x=2，驻点(0,0)和(2,2)</div>
+              <div class="ex-step"><strong>② 判别(0,0)：</strong>A=f_xx=6x-8=-8, B=2, C=-2；AC-B²=16-4=12>0, A<0 → 极大值f(0,0)=0</div>
+              <div class="ex-step"><strong>③ 判别(2,2)：</strong>A=12-8=4, B=2, C=-2；AC-B²=-8-4=-12<0 → 不是极值</div>
+            </div>
+            <div class="ex-knowledge"><strong>📚 要点：</strong>条件极值用拉格朗日乘数法：构造L=f+λφ，令L_x=L_y=L_λ=0。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item open" id="concept-ch5">
+      <button class="accordion-header">
+        <span>Ch5 二重积分（直角坐标）（重点★★）</span>
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p><span class="term">二重积分</span>的几何意义是曲顶柱体体积。计算核心思想：<strong>化为累次积分</strong>。</p>
+
+        <div class="info-box formula">
+          直角坐标：$\iint_D f(x,y)\,dA = \int_a^b\!\!\int_{y_1(x)}^{y_2(x)} f(x,y)\,dy\,dx$（X型）<br>
+          或 $= \int_c^d\!\!\int_{x_1(y)}^{x_2(y)} f(x,y)\,dx\,dy$（Y型）
+        </div>
+
+        <div class="example-card">
+          <div class="example-header">
+            <span>📝 典型例题1：X型区域</span>
+            <span class="source-badge">📌 母题</span>
+          </div>
+          <div class="example-body">
+            <div class="ex-problem">
+              <strong>题目：</strong>计算 $\iint_D xy\,dA$，其中D由 y=x, y=0, x=1 围成。
+            </div>
+            <div class="ex-thinking">
+              <strong>💡 怎么想到的？</strong>先画积分区域D：是x从0到1之间，y从0到x的三角形。选择X型（先y后x）更方便：x∈[0,1], y∈[0,x]。
+            </div>
+            <div class="ex-steps">
+              <div class="ex-step">
+                <strong>① 确定积分限：</strong>X型：x从0到1，对每个x，y从0到x（下边界y=0，上边界y=x）<br>
+                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">∫₀¹∫₀ˣ xy dy dx</span>
+              </div>
+              <div class="ex-step">
+                <strong>② 内层（对y积分，x当常数）：</strong>∫₀ˣ xy dy = x·[y²/2]₀ˣ = x·(x²/2) = x³/2<br>
+                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">结果：x³/2</span>
+              </div>
+              <div class="ex-step">
+                <strong>③ 外层（对x积分）：</strong>∫₀¹ x³/2 dx = (1/2)·[x⁴/4]₀¹ = 1/8<br>
+                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">最终结果：1/8</span>
+              </div>
+            </div>
+            <div class="ex-knowledge">
+              <strong>📚 从这道题学到：</strong>①先画区域图再定限——这步绝不能省；②内层积分把外变量当常数；③积分结果是一个数，不再含有x,y；④交换积分次序有时能大幅简化计算（当f对x难积但对y好积时）。
+            </div>
+            <button class="ex-variant-toggle" onclick="toggleExample(this,'variant')">🔄 点击展开变式（交换积分次序）</button>
+            <div class="ex-variant-body">
+              <p><strong>变式：</strong>交换 ∫₀¹∫_y¹ e^{x²} dx dy 的积分次序并计算。</p>
+              <p><strong>提示：</strong>原次序对x积分e^{x²}积不出来！换Y型→X型：区域D是0≤y≤x≤1的三角形，改为∫₀¹∫₀ˣ e^{x²} dy dx = ∫₀¹ xe^{x²} dx = (e-1)/2。这是"必须交换次序"的经典题！</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="example-card">
+          <div class="example-header">
+            <span>📝 典型例题2：利用对称性简化</span>
+            <span class="source-badge">⚡ 秒杀技</span>
+          </div>
+          <div class="example-body">
+            <div class="ex-problem">
+              <strong>题目：</strong>D为x²+y²≤1（单位圆），求 $\iint_D (3x+2y+5)\,dA$。
+            </div>
+            <div class="ex-thinking">
+              <strong>💡 怎么想到的？</strong>D关于x轴和y轴对称！奇函数在对称区域上积分为0。
+            </div>
+            <div class="ex-steps">
+              <div class="ex-step">
+                <strong>① 分项利用对称性：</strong>3x是x的奇函数（D关于y轴对称）→积分=0；2y是y的奇函数（D关于x轴对称）→积分=0<br>
+                <span class="ex-step-result hidden" onclick="this.classList.toggle('hidden')">只剩∫∫_D 5 dA = 5×面积 = 5π</span>
+              </div>
+            </div>
+            <div class="ex-knowledge">
+              <strong>📚 秒杀技巧：</strong>看到对称区域，先看被积函数是否有奇偶性——可以直接干掉某些项，省去大量计算！
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box warn">
+          <strong>⚠️ 常见错误：</strong>①积分限写成常数导致错误（必须画区域图！）；②累次积分的内外层搞反；③忘记先积变量在当常数时"不能出现在积分结果里"。
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item" id="concept-ch6">
+      <button class="accordion-header">
+        <span>Ch6 二重积分（极坐标）</span>
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p>当积分区域是圆、扇形、环形，或被积函数含x²+y²时，<span class="term">极坐标</span>是利器。</p>
+        <div class="info-box key">
+          <strong>⚡ 核心公式：</strong>x=rcosθ, y=rsinθ，<span class="term">雅可比行列式</span>J=r，故 $dA = r\,dr\,d\theta$。<br>
+          <strong style="color:#ef4444;">⚠️ 这个r是挂科率最高的考点，千万别漏！</strong>
+        </div>
+        <div class="example-card">
+          <div class="example-header">
+            <span>📝 典型例题：∫∫_D e^{-x²-y²} dσ（D为单位圆）</span>
+            <span class="source-badge">📌 极坐标经典题</span>
+          </div>
+          <div class="example-body">
+            <div class="ex-problem"><strong>题目：</strong>直角坐标下e^{-x²}积不出来，必须用极坐标！</div>
+            <div class="ex-steps">
+              <div class="ex-step"><strong>① 变换：</strong>x²+y²=r²，dσ=rdrdθ，θ∈[0,2π], r∈[0,1]</div>
+              <div class="ex-step"><strong>② 计算：</strong>=∫₀^{2π}dθ∫₀¹ e^{-r²}·r dr = 2π·[-1/2·e^{-r²}]₀¹ = π(1-e^{-1})</div>
+            </div>
+            <div class="ex-knowledge"><strong>📚 要点：</strong>别忘了r！若漏了r，内层积分∫₀¹ e^{-r²}dr根本积不出来——这本身就是一个信号。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item" id="concept-ch7">
+      <button class="accordion-header">
+        <span>Ch7 三重积分</span>
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p>三重积分是二重积分的推广，三种坐标系选择：</p>
+        <div class="info-box formula">
+          ① 直角坐标：$dV = dxdydz$<br>
+          ② 柱面坐标：$x=r\cos\theta, y=r\sin\theta, z=z$，$dV = r\,dr\,d\theta\,dz$（多一个r）<br>
+          ③ 球面坐标：$x=r\sin\varphi\cos\theta, y=r\sin\varphi\sin\theta, z=r\cos\varphi$，$dV = r^2\sin\varphi\,dr\,d\varphi\,d\theta$（多r²sinφ）
+        </div>
+        <div class="info-box tip">
+          <strong>✅ 选择坐标系口诀：</strong>区域是圆柱/旋转体→柱面坐标；是球/锥→球面坐标；其余→直角坐标。投影法（"先一后二"）最常用。
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item" id="concept-ch8">
+      <button class="accordion-header">
+        <span>Ch8 曲线积分与<span class="term">格林公式</span></span>
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p>第一类曲线积分（对弧长）：∫_L f(x,y) ds，物理意义是曲线的质量。</p>
+        <p>第二类曲线积分（对坐标）：∫_L Pdx+Qdy，物理意义是变力沿曲线做功。</p>
+        <div class="info-box formula">
+          <strong>格林公式：</strong>设L是正向（逆时针）闭曲线，D为L围的区域，P,Q有连续一阶偏导：<br>
+          $\oint_L P\,dx + Q\,dy = \iint_D \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right) d\sigma$
+        </div>
+        <div class="info-box key">
+          <strong>⚡ 格林公式三个条件：</strong>①闭合；②正向（逆时针）；③P,Q在D内有连续一阶偏导。不闭合时"补线"再用格林公式；有奇点时"挖洞"。
+        </div>
+        <div class="info-box tip">
+          <strong>✅ 路径无关条件：</strong>在单连通区域内 ∂Q/∂x=∂P/∂y ⇔ 积分与路径无关 ⇔ 存在原函数u使du=Pdx+Qdy。
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 高分冲刺深度区域：Canvas可视化 ===== -->
+    <div class="accordion-item" id="concept-advanced">
+      <button class="accordion-header">
+        <span>🚀 高分冲刺：几何直观可视化</span>
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p>通过动画直观理解积分的几何意义，加深记忆。</p>
+
+        <h4>📐 黎曼和：二重积分的"分割-近似-求和"</h4>
+        <p>用矩形面积近似曲面下的体积，矩形越密（n越大），近似越精确——这就是积分的本质。</p>
+        <div class="canvas-viz">
+          <div class="canvas-viz-title">黎曼和动画（矩形分割近似积分）</div>
+          <canvas id="canvasRiemann"></canvas>
+          <div class="canvas-controls">
+            <button class="btn btn-ghost btn-sm" onclick="window._vizRS && window._vizRS.setN(5)">n=5（粗糙）</button>
+            <button class="btn btn-ghost btn-sm" onclick="window._vizRS && window._vizRS.setN(10)">n=10</button>
+            <button class="btn btn-ghost btn-sm" onclick="window._vizRS && window._vizRS.setN(30)">n=30（精细）</button>
+            <button class="btn btn-ghost btn-sm" onclick="window._vizRS && window._vizRS.setN(100)">n=100（接近积分）</button>
+          </div>
+        </div>
+
+        <h4>🎯 极坐标面积元素：为什么dA = r dr dθ？</h4>
+        <p>极坐标下的"扇形小块"面积 ≈ r·Δr·Δθ，当分割变细时就是 dA = r dr dθ。下面动画展示极坐标分割：</p>
+        <div class="canvas-viz">
+          <div class="canvas-viz-title">极坐标分割可视化（注意那个"r"的来源）</div>
+          <canvas id="canvasPolar"></canvas>
+          <div class="canvas-controls">
+            <button class="btn btn-ghost btn-sm" onclick="window._vizPA && window._vizPA.setSectors(4)">4等分</button>
+            <button class="btn btn-ghost btn-sm" onclick="window._vizPA && window._vizPA.setSectors(8)">8等分</button>
+            <button class="btn btn-ghost btn-sm" onclick="window._vizPA && window._vizPA.setSectors(16)">16等分</button>
+            <button class="btn btn-ghost btn-sm" onclick="window._vizPA && window._vizPA.setSectors(36)">36等分（精细）</button>
+          </div>
+        </div>
+
+        <div class="info-box note">
+          <strong>💡 直观理解：</strong>极坐标中每个小扇形，外弧长 = r·Δθ（弧长=半径×弧度），径向宽度Δr，所以面积近似为 (r·Δθ)·Δr = rΔrΔθ。这就是那个神秘的"r"的几何来源！
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </section>
 
@@ -1189,25 +1706,136 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
     <!-- === DEMO DATA START === -->
     <div class="flip-card" data-id="f1" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
       <div class="flip-inner">
-        <div class="flip-front"><div class="flip-q">Q: 示例问题1？</div></div>
-        <div class="flip-back"><div class="flip-a">示例答案1的详细内容。</div></div>
-      </div>
-      <div class="flip-actions">
-        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')" title="已记住">✓</button>
-        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')" title="需复习">↻</button>
-      </div>
-    </div>
-    <div class="flip-card" data-id="f2" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
-      <div class="flip-inner">
-        <div class="flip-front"><div class="flip-q">Q: 示例问题2？</div></div>
-        <div class="flip-back"><div class="flip-a">示例答案2。</div></div>
+        <div class="flip-front"><div class="flip-q">偏导数定义</div></div>
+        <div class="flip-back"><div class="flip-a">$f_x = \lim_{\Delta x\to 0}\frac{f(x+\Delta x,y)-f(x,y)}{\Delta x}$<br><b>口诀：固定y，对x求导</b></div></div>
       </div>
       <div class="flip-actions">
         <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
         <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
       </div>
     </div>
-    <!-- === DEMO DATA END === -->
+    <div class="flip-card" data-id="f2" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">全微分公式</div></div>
+        <div class="flip-back"><div class="flip-a">$dz = f_x\,dx + f_y\,dy$<br>两个偏导分别乘各自的微分再相加</div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f3" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">链式法则</div></div>
+        <div class="flip-back"><div class="flip-a">z=f(u,v), u=u(x,y), v=v(x,y)：<br>$\frac{\partial z}{\partial x}=\frac{\partial z}{\partial u}\frac{\partial u}{\partial x}+\frac{\partial z}{\partial v}\frac{\partial v}{\partial x}$<br><b>沿线相乘，分线相加</b></div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f4" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">隐函数求导</div></div>
+        <div class="flip-back"><div class="flip-a">F(x,y,z)=0确定z=z(x,y)：<br>$\frac{\partial z}{\partial x}=-\frac{F_x}{F_z}$，$\frac{\partial z}{\partial y}=-\frac{F_y}{F_z}$<br><b style="color:#ef4444;">别忘了负号！</b></div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f5" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">二元极值判定</div></div>
+        <div class="flip-back"><div class="flip-a">驻点处 $A=f_{xx}, B=f_{xy}, C=f_{yy}$：<br>① $AC-B^2>0$：极值，A<0极大，A>0极小<br>② $AC-B^2<0$：鞍点（非极值）<br>③ $AC-B^2=0$：无法判断</div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f6" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">二重积分（直角坐标）</div></div>
+        <div class="flip-back"><div class="flip-a">$\iint_D f\,dA = \int_a^b\!\!\int_{y_1(x)}^{y_2(x)} f\,dy\,dx$<br>步骤：画区域→定型(X/Y)→定限→计算</div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f7" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">极坐标变换 dA=rdrdθ</div></div>
+        <div class="flip-back"><div class="flip-a">$x=r\cos\theta, y=r\sin\theta$<br>$dA = r\,dr\,d\theta$<br><b style="color:#ef4444;">这个r是挂科率最高的考点！</b><br>适用：圆/扇/环形区域，或含x²+y²的被积函数</div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f8" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">三重积分柱面坐标</div></div>
+        <div class="flip-back"><div class="flip-a">$x=r\cos\theta, y=r\sin\theta, z=z$<br>$dV = r\,dr\,d\theta\,dz$<br>适用：圆柱区域/旋转体</div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f9" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">三重积分球面坐标</div></div>
+        <div class="flip-back"><div class="flip-a">$x=r\sin\varphi\cos\theta, y=r\sin\varphi\sin\theta, z=r\cos\varphi$<br>$dV = r^2\sin\varphi\,dr\,d\varphi\,d\theta$<br>φ∈[0,π], θ∈[0,2π]<br><b>别漏r²和sinφ！</b></div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f10" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">格林公式</div></div>
+        <div class="flip-back"><div class="flip-a">$\oint_L Pdx+Qdy = \iint_D(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y})d\sigma$<br>条件：①闭合 ②正向(逆时针) ③P,Q偏导连续<br>不闭合→补线；有奇点→挖洞</div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f11" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">梯度（Gradient）</div></div>
+        <div class="flip-back"><div class="flip-a">$\nabla f = \text{grad}\,f = (f_x, f_y)$<br>方向：函数增长最快的方向<br>大小：最大方向导数<br>等高线的法线方向</div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f12" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">对称性秒杀技巧</div></div>
+        <div class="flip-back"><div class="flip-a">①D关于y轴对称，f是x的奇函数→∫∫f=0<br>②D关于x轴对称，f是y的奇函数→∫∫f=0<br>③D关于y=x对称，可交换x,y位置<br>④∫∫_D 1 dσ = 区域D的面积</div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+    <div class="flip-card" data-id="f13" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front"><div class="flip-q">交换积分次序何时用？</div></div>
+        <div class="flip-back"><div class="flip-a">当按原次序"积不出来"时必须交换！<br>经典被积函数：$e^{x^2}, \frac{\sin x}{x}, \frac{1}{\ln x}, \sin(x^2)$<br>步骤：由原限画区域→重新定型→重新定限</div></div>
+      </div>
+      <div class="flip-actions">
+        <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
+        <button class="flip-mark-btn" data-mark="review" onclick="event.stopPropagation();markFlip(this,'review')">↻</button>
+      </div>
+    </div>
+
+
   </div>
 
   <div class="excerpt-section">
@@ -1275,13 +1903,14 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
   <p class="card-desc">完成6项以上说明具备应试框架；低于4项应回看核心概念。</p>
   <div class="checklist" id="checklistItems">
     <!-- === DEMO DATA START === -->
-    <label class="check-item"><input type="checkbox"><span>能写出核心公式并理解每个符号含义</span></label>
-    <label class="check-item"><input type="checkbox"><span>能独立完成每章的典型母题</span></label>
-    <label class="check-item"><input type="checkbox"><span>知道常见陷阱并能主动规避</span></label>
-    <label class="check-item"><input type="checkbox"><span>能区分不同方法的适用条件</span></label>
-    <label class="check-item"><input type="checkbox"><span>错题本中的题目都能看懂错因</span></label>
-    <label class="check-item"><input type="checkbox"><span>一页纸内容基本记住</span></label>
-    <!-- === DEMO DATA END === -->
+    <label class="check-item"><input type="checkbox"><span>能默写偏导定义、全微分公式、链式法则</span></label>
+    <label class="check-item"><input type="checkbox"><span>会用AC-B²判别法判定二元极值</span></label>
+    <label class="check-item"><input type="checkbox"><span>能正确画出二重积分区域并写出X/Y型积分限</span></label>
+    <label class="check-item"><input type="checkbox"><span>极坐标变换记住dA=rdrdθ（不会漏r）</span></label>
+    <label class="check-item"><input type="checkbox"><span>柱面/球面坐标体积元素公式记住（r和r²sinφ）</span></label>
+    <label class="check-item"><input type="checkbox"><span>格林公式条件(闭合+正向+偏导连续)和公式记牢</span></label>
+
+
   </div>
   <div class="check-result" id="checkResult">当前完成度：0%。先完成最核心的概念。</div>
   <details style="margin-top:16px;">
@@ -1304,12 +1933,157 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
     <p><strong>💡 考前最后提醒：</strong></p>
     <p>深呼吸3次，吸气4秒-屏息4秒-呼气6秒。你已经复习了最核心的考点，及格绝对没问题。</p>
     <p>遇到不会的题先跳过，把会做的都做对就赢了。计算时每一步都写清楚，不要跳步。加油！💪</p>
-    <p style="margin-top:16px;font-size:12px;opacity:0.7;">{{COURSE_NAME}} · 1天速通交互式复习方案 · v3.1</p>
+    <p style="margin-top:16px;font-size:12px;opacity:0.7;">高等数学2 · 1天速通交互式复习方案 · v4.0（含AI出题助手）</p>
   </div>
 </footer>
 
 <!-- 回到顶部 -->
 <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
+
+<!-- ===================== v4.0 AI出题助手 ===================== -->
+<button class="ai-fab" id="aiFab" title="AI出题助手">
+  🤖
+  <span class="ai-fab-label">AI出题助手</span>
+</button>
+
+<!-- AI出题主面板 -->
+<div class="ai-panel-overlay" id="aiPanelOverlay">
+  <div class="ai-panel" id="aiPanel">
+    <div class="ai-panel-header">
+      <h3>🤖 AI出题助手</h3>
+      <button class="ai-panel-close" id="aiPanelClose">✕</button>
+    </div>
+    <div class="ai-panel-body">
+      <!-- 步骤指示器 -->
+      <div class="ai-step-indicator" id="aiStepIndicator" style="display:none;">
+        <div class="ai-step-dot active" data-step="2"></div>
+        <div class="ai-step-dot" data-step="3"></div>
+        <div class="ai-step-dot" data-step="4"></div>
+      </div>
+
+      <!-- 步骤1：首次引导（首次使用时显示） -->
+      <div class="ai-step active" id="aiStepOnboard">
+        <div class="ai-onboarding">
+          <p style="font-size:15px;margin-bottom:8px;">用AI无限扩充题库，三步搞定：</p>
+          <div class="ai-onboarding-steps">
+            <div class="ai-onb-step">
+              <div class="onb-icon">📋</div>
+              <div class="onb-title">一键复制</div>
+              <div class="onb-desc">系统根据你的学习情况生成出题提示词</div>
+            </div>
+            <div class="ai-onb-step">
+              <div class="onb-icon">🤖</div>
+              <div class="onb-title">去AI生成</div>
+              <div class="onb-desc">打开豆包/DeepSeek粘贴发送</div>
+            </div>
+            <div class="ai-onb-step">
+              <div class="onb-icon">✅</div>
+              <div class="onb-title">回来导入</div>
+              <div class="onb-desc">复制AI的回复，粘贴回来即可</div>
+            </div>
+          </div>
+          <button class="ai-copy-btn" id="aiStartBtn" style="margin-top:8px;">🚀 开始出题</button>
+        </div>
+      </div>
+
+      <!-- 步骤2：配置 -->
+      <div class="ai-step" id="aiStepConfig">
+        <div class="ai-config-group">
+          <label class="ai-config-label">出题范围</label>
+          <div class="ai-config-options" id="aiRangeOpts">
+            <button class="ai-config-opt selected" data-range="weak">🎯 薄弱知识点</button>
+            <button class="ai-config-opt" data-range="all">📚 全部章节</button>
+            <button class="ai-config-opt" data-range="wrong">📕 错题相关</button>
+          </div>
+        </div>
+        <div class="ai-config-group">
+          <label class="ai-config-label">题目数量</label>
+          <div class="ai-count-value" id="aiCountVal">10</div>
+          <input type="range" class="ai-count-slider" id="aiCountSlider" min="5" max="20" value="10" step="5">
+        </div>
+        <div class="ai-config-group">
+          <label class="ai-config-label">难度</label>
+          <div class="ai-config-options" id="aiDiffOpts">
+            <button class="ai-config-opt selected" data-diff="auto">🎯 自动匹配</button>
+            <button class="ai-config-opt" data-diff="easy">🌱 基础为主</button>
+            <button class="ai-config-opt" data-diff="hard">🔥 挑战进阶</button>
+          </div>
+        </div>
+        <details class="ai-advanced">
+          <summary>更多设置</summary>
+          <div class="ai-config-group" style="margin-top:8px;">
+            <label class="ai-config-label">题型偏好</label>
+            <div class="ai-config-options" id="aiTypeOpts">
+              <button class="ai-config-opt selected" data-type="mixed">混合</button>
+              <button class="ai-config-opt" data-type="choice">选择题</button>
+              <button class="ai-config-opt" data-type="calc">计算题</button>
+            </div>
+          </div>
+        </details>
+        <button class="ai-copy-btn" id="aiGenerateBtn" style="margin-top:16px;">📋 生成并复制提示词</button>
+      </div>
+
+      <!-- 步骤3：复制后跳转 -->
+      <div class="ai-step" id="aiStepCopy">
+        <div style="text-align:center;padding:8px 0;">
+          <div style="font-size:48px;margin-bottom:8px;">✅</div>
+          <p style="font-size:16px;font-weight:700;margin-bottom:4px;">提示词已复制！</p>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">去AI工具粘贴发送，生成后复制回复回来</p>
+        </div>
+        <div class="ai-shortcuts">
+          <a class="ai-shortcut-btn" href="https://www.doubao.com" target="_blank" rel="noopener">
+            <div class="sc-icon">🟣</div>
+            <div class="sc-name">豆包</div>
+          </a>
+          <a class="ai-shortcut-btn" href="https://chat.deepseek.com" target="_blank" rel="noopener">
+            <div class="sc-icon">🔵</div>
+            <div class="sc-name">DeepSeek</div>
+          </a>
+          <a class="ai-shortcut-btn" href="https://kimi.moonshot.cn" target="_blank" rel="noopener">
+            <div class="sc-icon">🔷</div>
+            <div class="sc-name">Kimi</div>
+          </a>
+          <a class="ai-shortcut-btn" href="https://yiyan.baidu.com" target="_blank" rel="noopener">
+            <div class="sc-icon">🔴</div>
+            <div class="sc-name">文心一言</div>
+          </a>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button class="btn btn-ghost" style="flex:1;" id="aiBackToConfig">← 重新配置</button>
+          <button class="btn btn-primary" style="flex:1;" id="aiGotoImport">📥 我已生成，去导入</button>
+        </div>
+      </div>
+
+      <!-- 步骤4：导入 -->
+      <div class="ai-step" id="aiStepImport">
+        <p style="font-size:14px;margin-bottom:12px;">把AI的回复粘贴到下面（系统会自动提取JSON）：</p>
+        <textarea class="ai-import-textarea" id="aiImportText" placeholder="在此粘贴AI的回复内容（支持含markdown标记和解释文字，系统自动提取JSON）"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" id="aiPasteFromClipboard">📋 从剪贴板粘贴</button>
+          <button class="btn btn-ghost btn-sm" id="aiShowExample">📖 查看格式示例</button>
+        </div>
+        <div class="ai-import-status" id="aiImportStatus"></div>
+        <div class="ai-import-preview" id="aiImportPreview"></div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="btn btn-ghost" style="flex:1;" id="aiBackToCopy">← 返回</button>
+          <button class="btn btn-primary" style="flex:1;" id="aiParseBtn">🔍 解析预览</button>
+          <button class="btn btn-success" id="aiConfirmImportBtn" style="display:none;">✅ 确认导入</button>
+        </div>
+      </div>
+
+      <!-- 步骤5：导入成功 -->
+      <div class="ai-step" id="aiStepSuccess">
+        <div style="text-align:center;padding:20px 0;">
+          <div style="font-size:56px;margin-bottom:12px;">🎉</div>
+          <p style="font-size:18px;font-weight:700;margin-bottom:4px;" id="aiSuccessMsg">成功导入10道题目！</p>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">新题目已加入题库，现在开始刷题吧！</p>
+          <button class="ai-copy-btn" id="aiStartQuizBtn">🎯 立即刷新加的题</button>
+          <button class="btn btn-ghost" style="width:100%;margin-top:8px;" id="aiCloseBtn">完成</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- 移动端底部导航 -->
 <nav class="mobile-bottom-nav" id="mobileNav">
@@ -1345,42 +2119,137 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 'use strict';
 
 // ==================== 配置 ====================
-var SLUG = '{{COURSE_SLUG}}';
+var SLUG = 'calculus2';
 var LS = function(key){ return SLUG + '_' + key; };
 
 /* === DEMO DATA START — AI替换此区域为真实课程数据 === */
-
 // 知识图谱（自适应路径）
 var knowledgeGraph = [
-  { id: 'c1', name: '核心概念A', chapter: 1, prereqs: [], difficulty: 'easy',
-    microQuiz: { q: '微检测：概念A的核心定义是什么？', options: ['错误选项A','正确选项B','错误选项C','🤷 不会'], answer: 1 } },
-  { id: 'c2', name: '核心概念B', chapter: 2, prereqs: ['c1'], difficulty: 'medium',
-    microQuiz: { q: '微检测：以下哪个是概念B的正确应用？', options: ['正确答案A','错误B','错误C','🤷 不会'], answer: 0 } }
+  { id: 'c1', name: '多元函数极限', chapter: 1, prereqs: [], difficulty: 'easy',
+    microQuiz: { q: '微检测：二元函数极限存在的要求是？', options: ['沿某条路径趋近即可','沿任意路径趋近都相等且有限','只要函数在该点有定义','只与x方向有关','🤷 不会'], answer: 1 } },
+  { id: 'c2', name: '偏导数', chapter: 2, prereqs: ['c1'], difficulty: 'easy',
+    microQuiz: { q: '微检测：求f对x的偏导时，应把谁视为常数？', options: ['x','y','x和y都变','都不视为常数','🤷 不会'], answer: 1 } },
+  { id: 'c3', name: '全微分', chapter: 3, prereqs: ['c2'], difficulty: 'medium',
+    microQuiz: { q: '微检测：z=f(x,y)的全微分dz等于？', options: ['f_x dx','f_y dy','f_x dx + f_y dy','f_x + f_y','🤷 不会'], answer: 2 } },
+  { id: 'c4', name: '多元极值', chapter: 4, prereqs: ['c3'], difficulty: 'medium',
+    microQuiz: { q: '微检测：判定二元极值时AC-B²>0且A<0说明？', options: ['无极值','有极小值','有极大值','无法判断','🤷 不会'], answer: 2 } },
+  { id: 'c5', name: '二重积分(直角坐标)', chapter: 5, prereqs: ['c1'], difficulty: 'medium',
+    microQuiz: { q: '微检测：直角坐标下二重积分面积元素dA=？', options: ['dx','dy','dxdy','rdrdθ','🤷 不会'], answer: 2 } },
+  { id: 'c6', name: '二重积分(极坐标)', chapter: 6, prereqs: ['c5'], difficulty: 'medium',
+    microQuiz: { q: '微检测：极坐标变换下面积元素dA=？', options: ['drdθ','rdrdθ','r²drdθ','dxdy','🤷 不会'], answer: 1 } },
+  { id: 'c7', name: '三重积分', chapter: 7, prereqs: ['c6'], difficulty: 'hard',
+    microQuiz: { q: '微检测：柱面坐标下体积元素dV=？', options: ['dxdydz','rdrdθdz','r²sinφ drdφdθ','rdrdθ','🤷 不会'], answer: 1 } },
+  { id: 'c8', name: '曲线积分', chapter: 8, prereqs: ['c7'], difficulty: 'hard',
+    microQuiz: { q: '微检测：格林公式将闭曲线积分转化为？', options: ['定积分','二重积分','三重积分','曲面积分','🤷 不会'], answer: 1 } }
 ];
 
 // 诊断题（6题）
 var diagQuestions = [
-  { q: '诊断题1：概念A的核心是？', options: ['A选项','B正确选项','C选项','🤷 不会'], answer: 1, blind: 'c1' },
-  { q: '诊断题2：概念B的应用场景是？', options: ['正确A','B错误','C错误','🤷 不会'], answer: 0, blind: 'c2' }
+  { q: '二元函数 f(x,y)=x²+3xy+y² 在点(1,2)处对x的偏导数 f_x(1,2)=？', options: ['5','8','10','13','🤷 不会'], answer: 1, blind: 'c2' },
+  { q: '函数 z=x²y+sin(xy) 的全微分 dz=？', options: ['(2xy+ycos(xy))dx + (x²+xcos(xy))dy','2xydx + x²dy','(2xy+ycosxy)dx','(x²+xcosxy)dy','🤷 不会'], answer: 0, blind: 'c3' },
+  { q: '设f(x,y)=x³-3x+y²-2y，其驻点为(1,1)，则该点？', options: ['不是极值点','是极小值点','是极大值点','无法判断','🤷 不会'], answer: 1, blind: 'c4' },
+  { q: '二重积分 ∫∫_D dxdy，其中D是矩形[0,1]×[0,2]，结果为？', options: ['1','2','3','4','🤷 不会'], answer: 1, blind: 'c5' },
+  { q: '极坐标变换 x=rcosθ, y=rsinθ 下雅可比行列式J=？', options: ['1','r','r²','1/r','🤷 不会'], answer: 1, blind: 'c6' },
+  { q: '格林公式中 ∮_L Pdx+Qdy 在正向闭曲线L下等于？', options: ['∫∫_D (∂Q/∂x-∂P/∂y)dσ','∫∫_D (∂P/∂x-∂Q/∂y)dσ','∫∫_D (∂Q/∂x+∂P/∂y)dσ','∫∫_D P·Q dσ','🤷 不会'], answer: 0, blind: 'c8' }
 ];
 
 // 题库（QuizSystem数据）
 var quizBank = [
   { id: 'q1', type: 'choice', chapter: 1, difficulty: 'easy',
-    question: '选择题示例：概念A的核心要点是什么？',
-    options: ['错误选项','正确选项B','错误选项C','错误选项D'],
+    question: '二元函数极限与一元函数极限最大的区别是？',
+    options: ['没有本质区别','二元要求沿任意路径趋近都相等','二元只需要沿坐标轴趋近','二元极限一定存在'],
     answer: 1,
-    explanation: '解析：因为...所以正确答案是B。',
-    hint: '提示：回想核心定义中的关键词。',
+    explanation: '解析：一元极限只有左右两个方向，二元极限要求点(x,y)沿任意路径趋近(x₀,y₀)时函数值都趋于同一个数，否则极限不存在。',
+    hint: '提示：想想"路径"的数量——一元只有1条直线，二元有无数条路径。',
     errorCategory: 'concept' },
-  { id: 'q2', type: 'tf', chapter: 1, difficulty: 'easy',
-    question: '判断题示例：概念A可以用于所有场景。',
+  { id: 'q2', type: 'tf', chapter: 2, difficulty: 'easy',
+    question: '求f(x,y)对x的偏导数时，将y视为常数，对x求导即可。',
+    answer: true,
+    explanation: '解析：正确。偏导数的本质就是固定其他变量，对单一变量求导。',
+    hint: '提示："偏"就是"偏向某一个"的意思。',
+    errorCategory: 'concept' },
+  { id: 'q3', type: 'choice', chapter: 2, difficulty: 'easy',
+    question: 'f(x,y)=x²y+xy³，则f_x=？',
+    options: ['2xy+y³','x²+3xy²','2x+3y²','2xy'],
+    answer: 0,
+    explanation: '解析：对x求偏导，y视为常数：(x²y)\'_x=2xy，(xy³)\'_x=y³，所以f_x=2xy+y³。',
+    hint: '提示：把y当常数，y³也是常数，导数为0的是常数项。',
+    errorCategory: 'calc' },
+  { id: 'q4', type: 'choice', chapter: 3, difficulty: 'medium',
+    question: 'z=e^{xy} 的全微分 dz=？',
+    options: ['e^{xy}(ydx+xdy)','e^{xy}dx','e^{xy}dy','ye^{xy}dx'],
+    answer: 0,
+    explanation: '解析：z_x=ye^{xy}, z_y=xe^{xy}，所以dz=z_x dx+z_y dy=e^{xy}(ydx+xdy)。',
+    hint: '提示：全微分=对x的偏导·dx + 对y的偏导·dy，别忘了两个部分！',
+    errorCategory: 'formula' },
+  { id: 'q5', type: 'tf', chapter: 3, difficulty: 'medium',
+    question: '若f(x,y)在点(x₀,y₀)处两个偏导数都存在，则f在该点必可微。',
     answer: false,
-    explanation: '解析：概念A有适用条件限制。',
-    hint: '提示：想想有什么例外情况。',
-    errorCategory: 'concept' }
+    explanation: '解析：错误。偏导数存在是可微的必要条件而非充分条件。需要偏导数连续才可微。',
+    hint: '提示：可微条件比"偏导存在"更强——想想那个经典反例。',
+    errorCategory: 'concept' },
+  { id: 'q6', type: 'choice', chapter: 4, difficulty: 'medium',
+    question: '设驻点处 A=f_xx, B=f_xy, C=f_yy，若 AC-B²>0 且 A<0，则该点为？',
+    options: ['极小值点','极大值点','不是极值点','无法判断'],
+    answer: 1,
+    explanation: '解析：AC-B²>0时是极值点，A<0开口向下→极大值；A>0开口向上→极小值；AC-B²<0不是极值；=0不确定。',
+    hint: '提示：类比一元：f\'\'(x)<0是极大值；这里A对应f_xx。',
+    errorCategory: 'formula' },
+  { id: 'q7', type: 'choice', chapter: 4, difficulty: 'medium',
+    question: 'f(x,y)=x²+y² 的极值情况是？',
+    options: ['在(0,0)取极大值0','在(0,0)取极小值0','没有极值','在(1,1)取极小值'],
+    answer: 1,
+    explanation: '解析：f_x=2x, f_y=2y，驻点(0,0)；A=2, B=0, C=2，AC-B²=4>0且A>0，故(0,0)为极小值点，极小值为0。',
+    hint: '提示：这是一个开口向上的旋转抛物面，顶点就是最小值点。',
+    errorCategory: 'method' },
+  { id: 'q8', type: 'choice', chapter: 5, difficulty: 'medium',
+    question: '∫₀¹∫₀¹ (x+y) dxdy =？',
+    options: ['1/2','1','3/2','2'],
+    answer: 1,
+    explanation: '解析：先内层∫₀¹(x+y)dx=[x²/2+yx]₀¹=1/2+y；再外层∫₀¹(1/2+y)dy=[y/2+y²/2]₀¹=1/2+1/2=1。',
+    hint: '提示：先对x积分时把y当常数，计算完再对y积分。',
+    errorCategory: 'calc' },
+  { id: 'q9', type: 'tf', chapter: 5, difficulty: 'easy',
+    question: '二重积分 ∫∫_D 1 dσ 的值等于积分区域D的面积。',
+    answer: true,
+    explanation: '解析：正确。几何意义就是曲顶柱体在高为1时的体积，数值上等于底面积。',
+    hint: '提示：这是二重积分最基本的几何意义。',
+    errorCategory: 'concept' },
+  { id: 'q10', type: 'choice', chapter: 6, difficulty: 'medium',
+    question: '极坐标下计算 ∫∫_D e^{-x²-y²} dσ，D为单位圆，结果为？',
+    options: ['π(1-e^{-1})','π','πe^{-1}','1-e^{-1}'],
+    answer: 0,
+    explanation: '解析：极坐标变换：x²+y²=r²，dσ=rdrdθ，积分=∫₀^{2π}dθ∫₀¹ e^{-r²}·rdr=2π·[-1/2·e^{-r²}]₀¹=π(1-e^{-1})。',
+    hint: '提示：看到x²+y²就想到极坐标，别忘了多出来的r！',
+    errorCategory: 'method' },
+  { id: 'q11', type: 'choice', chapter: 7, difficulty: 'hard',
+    question: '柱面坐标(r,θ,z)与直角坐标的变换关系是？',
+    options: ['x=rcosθ, y=rsinθ, z=z, dV=rdrdθdz','x=rsinφcosθ, y=rsinφsinθ, z=rcosφ','x=r, y=θ, z=z, dV=drdθdz','x=rcosθ, y=rsinθ, z=z, dV=drdθdz'],
+    answer: 0,
+    explanation: '解析：柱面坐标=极坐标+z轴，雅可比行列式为r，所以dV=rdrdθdz。B是球面坐标。',
+    hint: '提示：柱面=极坐标"立起来"，体积元素多个r。',
+    errorCategory: 'formula' },
+  { id: 'q12', type: 'choice', chapter: 8, difficulty: 'hard',
+    question: '格林公式要求L是？',
+    options: ['开曲线','正向（逆时针）闭合曲线且P,Q在D内有连续一阶偏导','任意曲线','闭合曲线即可'],
+    answer: 1,
+    explanation: '解析：格林公式条件：L是正向（逆时针）闭合曲线；D是L围成的闭区域；P、Q在D上有一阶连续偏导数。',
+    hint: '提示：三个条件缺一不可：闭合+正向+偏导连续。',
+    errorCategory: 'prereq' },
+  { id: 'q13', type: 'tf', chapter: 6, difficulty: 'medium',
+    question: '极坐标变换中，x=rcosθ, y=rsinθ，雅可比行列式J=r，因此dxdy=rdrdθ。',
+    answer: true,
+    explanation: '解析：正确。计算雅可比矩阵行列式可得|J|=r，这是极坐标面积元素的关键因子，考试极易遗漏。',
+    hint: '提示："极坐标多一个r"——这是挂科率最高的易错点。',
+    errorCategory: 'formula' },
+  { id: 'q14', type: 'choice', chapter: 8, difficulty: 'hard',
+    question: '球面坐标下体积元素dV=？',
+    options: ['drdφdθ','rsinφ drdφdθ','r²sinφ drdφdθ','r²drdφdθ'],
+    answer: 2,
+    explanation: '解析：球面坐标雅可比行列式J=r²sinφ，故dV=r²sinφ drdφdθ。φ是极角(0到π)，θ是方位角(0到2π)。',
+    hint: '提示：球坐标有r²和sinφ两个因子，sinφ千万别丢！',
+    errorCategory: 'formula' }
 ];
-
 /* === DEMO DATA END === */
 
 // ==================== 工具函数 ====================
@@ -2186,7 +3055,8 @@ var TermDictionary = {
   });
 })();
 
-// ==================== 题库系统（QuizSystem 整合版） ====================
+// ==================== 题库系统（QuizSystem 整合版 v4.0） ====================
+// v4.0: 使用getAllQuestions()支持动态题库，新增refreshBank和focusQuestions
 var QuizSystem = (function(){
   var state = {
     mode: 'practice',
@@ -2194,8 +3064,16 @@ var QuizSystem = (function(){
     current: 0,
     correct: 0, wrong: 0,
     answered: false,
-    examAnswers: {}
+    examAnswers: {},
+    focusedQuestions: null  // v4.0: 聚焦特定题目集（如AI新题）
   };
+
+  // v4.0: 获取完整题库（内置+自定义）
+  function getAllQuestions(){
+    var custom = [];
+    try { custom = JSON.parse(localStorage.getItem(LS('custom_questions')) || '[]'); } catch(e){}
+    return quizBank.concat(custom);
+  }
 
   function shuffle(arr){
     var a = arr.slice();
@@ -2206,19 +3084,22 @@ var QuizSystem = (function(){
     return a;
   }
 
-  function start(mode){
+  function start(mode, focusQs){
     state.mode = mode;
     state.correct = 0; state.wrong = 0; state.current = 0;
     state.answered = false; state.examAnswers = {};
+    state.focusedQuestions = focusQs || null;
+    var bank = state.focusedQuestions || getAllQuestions();
     if(mode === 'random'){
-      state.questions = shuffle(quizBank).slice(0, Math.min(10, quizBank.length));
+      state.questions = shuffle(bank).slice(0, Math.min(10, bank.length));
     } else {
-      state.questions = quizBank.slice();
+      state.questions = bank.slice();
     }
     document.getElementById('qbSummary').classList.remove('show');
     document.getElementById('qbSummary').innerHTML = '';
     document.getElementById('qbSubmit').textContent = mode==='exam' ? '提交答案' : '提交';
     document.getElementById('qbNext').disabled = true;
+    document.getElementById('qbNext').textContent = '下一题 →';
     // 考试模式启动计时器（默认20分钟）
     if(mode === 'exam'){
       ExamTimer.start(20);
@@ -2236,7 +3117,9 @@ var QuizSystem = (function(){
     }
     var q = state.questions[state.current];
     state.answered = false;
-    document.getElementById('qbTypeTag').textContent = {choice:'选择题',tf:'判断题',calc:'计算题',short:'简答题',material:'材料题'}[q.type] || '题目';
+    var typeTag = document.getElementById('qbTypeTag');
+    typeTag.textContent = {choice:'选择题',tf:'判断题',calc:'计算题',short:'简答题',material:'材料题'}[q.type] || '题目';
+    typeTag.className = 'qb-type-tag' + (q.source === 'ai-import' ? ' ai-imported' : '');
     document.getElementById('qbQuestion').textContent = (state.current+1) + '. ' + q.question;
     document.getElementById('qbFeedback').className = 'qb-feedback';
     document.getElementById('qbFeedback').innerHTML = '';
@@ -2521,7 +3404,65 @@ var QuizSystem = (function(){
     });
   });
 
-  return { start: start };
+  // v4.0: 刷新题库（导入新题后调用）
+  function refreshBank(){
+    // 如果当前正在做focused题目，不打断
+    if(state.focusedQuestions) return;
+    // 重新开始当前模式
+    start(state.mode);
+  }
+
+  // v4.0: 获取总题数
+  function getBankSize(){
+    return getAllQuestions().length;
+  }
+
+  // v4.0: 获取当前深度
+  function getDepth(){
+    return lsGet('depth', 'standard');
+  }
+
+  // v4.0: 获取错题数量
+  function getWrongCount(){
+    return lsGet('wrongbook', []).length;
+  }
+
+  // v4.0: 获取错题本
+  function getWrongbook(){
+    return lsGet('wrongbook', []);
+  }
+
+  // v4.0: 获取未掌握的知识点
+  function getUnmasteredConcepts(){
+    var nodes = lsGet('ap', {});
+    var unmastered = [];
+    Object.keys(nodes).forEach(function(k){
+      if(nodes[k].status !== 'passed'){
+        unmastered.push(k);
+      }
+    });
+    return unmastered;
+  }
+
+  // v4.0: 聚焦到特定题目集（如刚导入的新题）
+  function focusQuestions(questions, mode){
+    state.focusedQuestions = questions;
+    state.current = 0;
+    state.correct = 0;
+    state.wrong = 0;
+    state.answered = false;
+    state.examAnswers = {};
+    start(mode || 'practice');
+  }
+
+  // v4.0: 退出聚焦模式
+  function exitFocus(){
+    state.focusedQuestions = null;
+  }
+
+  return { start: start, refreshBank: refreshBank, getBankSize: getBankSize, getAllQuestions: getAllQuestions,
+           getDepth: getDepth, getWrongCount: getWrongCount, getWrongbook: getWrongbook,
+           getUnmasteredConcepts: getUnmasteredConcepts, focusQuestions: focusQuestions, exitFocus: exitFocus };
 })();
 
 // 错题本渲染
@@ -2700,6 +3641,611 @@ setTimeout(function(){ SRSystem.updateDueBadge(); }, 500);
 // 初始化术语词典（AI可通过TermDictionary.add添加术语）
 // TermDictionary.add('导数', '函数在某点的瞬时变化率，即切线斜率');
 // TermDictionary.annotate();
+
+// ==================== v4.0 AI出题助手核心模块 ====================
+
+// ---------- 智能JSON提取器 ----------
+var SmartJSON = {
+  extract: function(text){
+    if(!text || typeof text !== 'string') return { ok:false, error:'内容为空' };
+    var t = text.trim();
+    // 1. 去除markdown代码块标记
+    t = t.replace(/```(?:json|JSON)?\s*/g, '').replace(/```\s*/g, '');
+    // 2. 找到第一个 [ 和最后一个 ] 之间的内容
+    var start = t.indexOf('[');
+    var end = t.lastIndexOf(']');
+    if(start === -1 || end === -1) return { ok:false, error:'未找到JSON数组（需要[ ]包裹）' };
+    var jsonStr = t.substring(start, end+1);
+    // 3. 自动修复常见问题
+    jsonStr = this.fix(jsonStr);
+    // 4. 尝试解析
+    try {
+      var data = JSON.parse(jsonStr);
+      if(!Array.isArray(data)) return { ok:false, error:'解析结果不是数组' };
+      return { ok:true, data:data, fixed:true };
+    } catch(e) {
+      return this.detailedError(jsonStr, e);
+    }
+  },
+  fix: function(s){
+    // 去除尾部多余逗号
+    s = s.replace(/,(\s*[}\]])/g, '$1');
+    // 给未加引号的key加引号（简单处理）
+    s = s.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*:)/g, '$1"$2"$3');
+    // 处理中文单引号（风险提示：只处理属性值外层）
+    // 注意：不做单引号转双引号（内容中单引号常见）
+    return s;
+  },
+  detailedError: function(s, e){
+    var msg = e.message;
+    var m = msg.match(/position (\d+)/);
+    if(m){
+      var pos = parseInt(m[1]);
+      var line = s.substring(0, pos).split('\n').length;
+      return { ok:false, error:'JSON格式错误（约第'+line+'个字符附近）：'+msg+'. 请检查是否有多余逗号或引号不匹配。' };
+    }
+    return { ok:false, error:'JSON解析失败：'+msg };
+  },
+  // 校验题目格式
+  validateQuestions: function(questions){
+    var errors = [];
+    var valid = [];
+    var dups = 0;
+    var existing = QuizSystem.getAllQuestions();
+    questions.forEach(function(q, i){
+      var idx = i+1;
+      if(!q.type){ errors.push('第'+idx+'题：缺少type字段'); return; }
+      if(!q.question){ errors.push('第'+idx+'题：缺少question字段'); return; }
+      if(q.answer === undefined && q.answer === null){ errors.push('第'+idx+'题：缺少answer字段'); return; }
+      if(['choice','tf','calc','short','material'].indexOf(q.type) === -1){
+        errors.push('第'+idx+'题：type必须是choice/tf/calc/short/material之一');
+        return;
+      }
+      if(q.type === 'choice' && (!q.options || q.options.length !== 4)){
+        errors.push('第'+idx+'题：选择题必须有4个options');
+        return;
+      }
+      if(q.type === 'choice' && (typeof q.answer !== 'number' || q.answer < 0 || q.answer > 3)){
+        errors.push('第'+idx+'题：选择题answer必须是0-3的数字');
+        return;
+      }
+      if(q.type === 'tf' && typeof q.answer !== 'boolean'){
+        // 尝试修复：true/false字符串
+        if(q.answer === 'true' || q.answer === true) q.answer = true;
+        else if(q.answer === 'false' || q.answer === false) q.answer = false;
+        else { errors.push('第'+idx+'题：判断题answer必须是true/false'); return; }
+      }
+      // 去重检查
+      var isDup = existing.some(function(eq){ return eq.question === q.question; });
+      if(isDup) dups++;
+      q._duplicate = isDup;
+      valid.push(q);
+    });
+    return { valid:valid, errors:errors, duplicates:dups };
+  }
+};
+
+// ---------- 提示词生成器 ----------
+var PromptGenerator = {
+  COURSE_META: {
+    name: '高等数学2',
+    type: '计算型',
+    examFormat: '选择题/判断题/计算题为主',
+    chapters: '第1章 多元函数极限、第2章 偏导数、第3章 全微分、第4章 多元极值、第5章 二重积分(直角坐标)、第6章 二重积分(极坐标)、第7章 三重积分、第8章 曲线积分(格林公式)'
+  },
+  build: function(opts){
+    opts = opts || {};
+    var ctx = this.collectContext(opts);
+    return this.fillTemplate(ctx);
+  },
+  collectContext: function(opts){
+    var depth = lsGet('depth', 'standard');
+    var depthLabels = { survival:'60分及格（补考救命）', standard:'80分稳过', advanced:'90+冲刺高分' };
+    var depthDiff = { survival:{e:70,m:30,h:0}, standard:{e:30,m:50,h:20}, advanced:{e:10,m:40,h:50} };
+    var adaptive = [];
+    try { adaptive = JSON.parse(localStorage.getItem(LS('adaptive_path')) || '[]'); } catch(e){}
+    var mastered = [], weak = [];
+    adaptive.forEach(function(n){
+      if(n.status === 'mastered') mastered.push(n.name);
+      else weak.push(n.name);
+    });
+    var wb = [];
+    try { wb = JSON.parse(localStorage.getItem(LS('wrongbook')) || '[]'); } catch(e){}
+    var errStats = { concept:0, formula:0, calc:0, method:0, read:0, prereq:0, unknown:0 };
+    wb.forEach(function(w){ if(errStats[w.category]!==undefined) errStats[w.category]++; });
+    var totalErr = wb.length || 1;
+    var errPct = {};
+    Object.keys(errStats).forEach(function(k){ errPct[k] = Math.round(errStats[k]/totalErr*100); });
+    // 范围
+    var range = opts.range || 'weak';
+    var knowledgeList = '';
+    if(range === 'weak' && weak.length){
+      knowledgeList = '重点薄弱知识点（请优先围绕这些出题）：\n' + weak.map(function(n){return'- '+n;}).join('\n');
+    } else if(range === 'wrong' && wb.length){
+      var wrongChapters = {};
+      wb.forEach(function(w){ if(w.chapter) wrongChapters[w.chapter] = true; });
+      knowledgeList = '错题相关章节：\n' + Object.keys(wrongChapters).map(function(c){return'- '+c;}).join('\n');
+    } else {
+      knowledgeList = '全部章节：'+this.COURSE_META.chapters;
+    }
+    var diff = opts.difficulty || 'auto';
+    var diffDist = diff === 'easy' ? {e:70,m:30,h:0} : (diff === 'hard' ? {e:10,m:40,h:50} : depthDiff[depth]);
+    var typePref = opts.type || 'mixed';
+    var typeDist = typePref === 'choice' ? '选择题80%，判断题20%' :
+                   typePref === 'calc' ? '计算题60%，选择题30%，判断题10%' :
+                   '选择题30%，判断题10%，计算题40%，简答题20%';
+    return {
+      courseName: this.COURSE_META.name,
+      courseType: this.COURSE_META.type,
+      examFormat: this.COURSE_META.examFormat,
+      depthLabel: depthLabels[depth] || '80分稳过',
+      knowledgeList: knowledgeList,
+      mastered: mastered.length ? mastered.join('、') : '刚开始复习',
+      weak: weak.length ? weak.join('、') : '暂无',
+      errPct: errPct,
+      accuracy: this.getAccuracy(),
+      count: opts.count || 10,
+      easyPct: diffDist.e,
+      mediumPct: diffDist.m,
+      hardPct: diffDist.h,
+      typeDistribution: typeDist
+    };
+  },
+  getAccuracy: function(){
+    try {
+      // 简单估算：从错题数和答题数
+      var prog = JSON.parse(localStorage.getItem(LS('qb_progress')) || '{}');
+      if(prog.correct+prog.wrong > 0){
+        return Math.round(prog.correct/(prog.correct+prog.wrong)*100);
+      }
+    } catch(e){}
+    return 50;
+  },
+  fillTemplate: function(c){
+    return '═══════════════════════════════════════\n' +
+'你是一位资深的' + c.courseType + '应试辅导老师，正在为一位大学生\n' +
+'生成《' + c.courseName + '》的个性化练习题。请严格按照以下要求出题。\n' +
+'═══════════════════════════════════════\n\n' +
+'【一、课程信息】\n' +
+'- 课程名称：' + c.courseName + '\n' +
+'- 课程类型：' + c.courseType + '\n' +
+'- 考试形式：' + c.examFormat + '\n' +
+'- 当前目标档位：' + c.depthLabel + '\n\n' +
+'【二、知识范围（请只在以下范围内出题）】\n' +
+'全部章节：' + this.COURSE_META.chapters + '\n' +
+c.knowledgeList + '\n\n' +
+'【三、学生画像（非常重要！请据此调整难度和侧重点）】\n' +
+'- 已掌握知识点：' + c.mastered + '\n' +
+'- 薄弱/未掌握知识点：' + c.weak + '\n' +
+'- 近期错题分布：\n' +
+'  · 概念误解：' + c.errPct.concept + '% → 多出道义辨析/易混淆对比题\n' +
+'  · 公式记错：' + c.errPct.formula + '% → 多出公式应用题、变形题\n' +
+'  · 计算失误：' + c.errPct.calc + '% → 多出带陷阱的计算题\n' +
+'  · 方法选错：' + c.errPct.method + '% → 多出"看到XX信号选XX方法"的决策题\n' +
+'  · 审题失误：' + c.errPct.read + '% → 多出带干扰条件的题目\n' +
+'  · 前置薄弱：' + c.errPct.prereq + '% → 前置知识点相关基础题\n' +
+'- 历史正确率约：' + c.accuracy + '%（请据此调整题目难度分布）\n\n' +
+'【四、出题要求】\n' +
+'1. 题目数量：' + c.count + '道\n' +
+'2. 难度分布：\n' +
+'   - 基础题（占' + c.easyPct + '%）：考察核心概念/公式直接应用\n' +
+'   - 中档题（占' + c.mediumPct + '%）：考察综合应用/常见变式\n' +
+'   - 拔高题（占' + c.hardPct + '%）：考察多知识点综合/方法选择\n' +
+'3. 题型分布：' + c.typeDistribution + '\n' +
+'4. 题目要求：\n' +
+'   - 每道题必须标注 chapter（章节名）、difficulty（easy/medium/hard）\n' +
+'   - 选择题必须有4个选项，错误选项要有迷惑性（不能明显离谱）\n' +
+'   - 每道题必须有详细解析（explanation），讲清"为什么对/为什么错"\n' +
+'   - 每道题必须有提示（hint），给学生"怎么想到的"线索\n' +
+'   - 每道题必须标注 errorCategory（concept/formula/calc/method/read/prereq）\n' +
+'   - 计算题关键结果要清晰，可分步给出\n' +
+'   - 禁止出超纲题、偏题、怪题，以考试常见题型为准\n' +
+'   - 数学公式用$...$包裹（LaTeX格式），如$f_x$、$\\frac{\\partial z}{\\partial x}$\n\n' +
+'【五、输出格式（严格遵守，不要输出其他多余内容）】\n' +
+'请只输出一个JSON数组，不要有任何解释文字，不要加markdown代码块标记（```json），直接输出纯JSON：\n' +
+'[\n' +
+'  {\n' +
+'    "type": "choice",\n' +
+'    "chapter": "第2章",\n' +
+'    "difficulty": "medium",\n' +
+'    "question": "题目内容",\n' +
+'    "options": ["选项A", "选项B", "选项C", "选项D"],\n' +
+'    "answer": 0,\n' +
+'    "explanation": "详细解析",\n' +
+'    "hint": "提示：看到XX关键词应该想到XX方法",\n' +
+'    "errorCategory": "concept"\n' +
+'  }\n' +
+']\n\n' +
+'注意：\n' +
+'- type可选值：choice(选择题)/tf(判断题)/calc(计算题)/short(简答题)\n' +
+'- answer：选择题填0-3，判断题填true/false，计算/简答题填参考答案字符串\n' +
+'- 请确保JSON格式合法，可以被JSON.parse()直接解析\n' +
+'═══════════════════════════════════════';
+  }
+};
+
+// ---------- 题目导入引擎 ----------
+var QuestionImporter = {
+  importQuestions: function(questions){
+    var existing = [];
+    try { existing = JSON.parse(localStorage.getItem(LS('custom_questions')) || '[]'); } catch(e){}
+    var newQ = questions.filter(function(q){ return !q._duplicate; }).map(function(q, i){
+      return {
+        id: 'custom-' + Date.now() + '-' + i,
+        type: q.type,
+        chapter: q.chapter || '未知章节',
+        difficulty: q.difficulty || 'medium',
+        question: q.question,
+        options: q.options,
+        answer: q.answer,
+        explanation: q.explanation || '',
+        hint: q.hint || '',
+        errorCategory: q.errorCategory || 'unknown',
+        source: 'ai-import',
+        importedAt: Date.now()
+      };
+    });
+    var merged = existing.concat(newQ);
+    localStorage.setItem(LS('custom_questions'), JSON.stringify(merged));
+    QuizSystem.refreshBank();
+    return newQ.length;
+  },
+  getCustomCount: function(){
+    try { return JSON.parse(localStorage.getItem(LS('custom_questions')) || '[]').length; } catch(e){}
+    return 0;
+  },
+  getLatest: function(n){
+    try {
+      var all = JSON.parse(localStorage.getItem(LS('custom_questions')) || '[]');
+      return all.slice(-(n||10));
+    } catch(e){ return []; }
+  }
+};
+
+// ---------- AI出题助手UI控制器 ----------
+var AIAssistant = (function(){
+  var currentStep = 1;
+  var hasOnboarded = localStorage.getItem(LS('ai_onboarded')) === '1';
+  var config = { range:'weak', count:10, difficulty:'auto', type:'mixed' };
+  var parsedQuestions = null;
+
+  function $(id){ return document.getElementById(id); }
+
+  function showStep(n){
+    document.querySelectorAll('.ai-step').forEach(function(s){ s.classList.remove('active'); });
+    var indicator = $('aiStepIndicator');
+    // 引导页和成功页不显示指示器
+    if(n === 1 || n === 5){
+      indicator.style.display = 'none';
+    } else {
+      indicator.style.display = '';
+      document.querySelectorAll('.ai-step-dot').forEach(function(d){
+        var step = parseInt(d.dataset.step);
+        d.classList.remove('active','done');
+        if(step < n) d.classList.add('done');
+        if(step === n) d.classList.add('active');
+      });
+    }
+    // 步骤映射
+    var stepMap = { 1:'aiStepOnboard', 2:'aiStepConfig', 3:'aiStepCopy', 4:'aiStepImport', 5:'aiStepSuccess' };
+    var el = $(stepMap[n]);
+    if(el) el.classList.add('active');
+    currentStep = n;
+  }
+
+  function open(){
+    $('aiPanelOverlay').classList.add('show');
+    showStep(hasOnboarded ? 2 : 1);
+    if(!hasOnboarded){
+      showStep(1);
+    } else {
+      showStep(2);
+    }
+    // 根据当前状态智能预填范围
+    var wb = [];
+    try { wb = JSON.parse(localStorage.getItem(LS('wrongbook')) || '[]'); } catch(e){}
+    var adaptive = [];
+    try { adaptive = JSON.parse(localStorage.getItem(LS('adaptive_path')) || '[]'); } catch(e){}
+    var weakNodes = adaptive.filter(function(n){ return n.status !== 'mastered'; });
+    // 默认选最需要的范围
+    if(wb.length >= 3){
+      selectOpt('aiRangeOpts', 'wrong');
+      config.range = 'wrong';
+    } else if(weakNodes.length > 0){
+      selectOpt('aiRangeOpts', 'weak');
+      config.range = 'weak';
+    } else {
+      selectOpt('aiRangeOpts', 'all');
+      config.range = 'all';
+    }
+  }
+
+  function close(){
+    $('aiPanelOverlay').classList.remove('show');
+    // 回到配置步，方便下次使用
+    setTimeout(function(){ showStep(hasOnboarded ? 2 : 1); }, 300);
+  }
+
+  function selectOpt(containerId, value){
+    var container = $(containerId);
+    if(!container) return;
+    container.querySelectorAll('.ai-config-opt').forEach(function(b){
+      b.classList.remove('selected');
+      var matches = false;
+      for(var key in b.dataset){
+        if(b.dataset[key] === value){ matches = true; break; }
+      }
+      if(matches) b.classList.add('selected');
+    });
+  }
+
+  function bindEvents(){
+    // FAB点击
+    $('aiFab').addEventListener('click', open);
+    $('aiPanelClose').addEventListener('click', close);
+    $('aiPanelOverlay').addEventListener('click', function(e){
+      if(e.target === this) close();
+    });
+    // 开始出题（跳过引导）
+    $('aiStartBtn').addEventListener('click', function(){
+      hasOnboarded = true;
+      localStorage.setItem(LS('ai_onboarded'), '1');
+      showStep(2);
+    });
+    // 范围选择
+    $('aiRangeOpts').addEventListener('click', function(e){
+      var b = e.target.closest('.ai-config-opt');
+      if(!b) return;
+      document.querySelectorAll('#aiRangeOpts .ai-config-opt').forEach(function(x){ x.classList.remove('selected'); });
+      b.classList.add('selected');
+      config.range = b.dataset.range;
+    });
+    // 难度选择
+    $('aiDiffOpts').addEventListener('click', function(e){
+      var b = e.target.closest('.ai-config-opt');
+      if(!b) return;
+      document.querySelectorAll('#aiDiffOpts .ai-config-opt').forEach(function(x){ x.classList.remove('selected'); });
+      b.classList.add('selected');
+      config.difficulty = b.dataset.diff;
+    });
+    // 题型选择
+    $('aiTypeOpts').addEventListener('click', function(e){
+      var b = e.target.closest('.ai-config-opt');
+      if(!b) return;
+      document.querySelectorAll('#aiTypeOpts .ai-config-opt').forEach(function(x){ x.classList.remove('selected'); });
+      b.classList.add('selected');
+      config.type = b.dataset.type;
+    });
+    // 数量滑块
+    $('aiCountSlider').addEventListener('input', function(){
+      config.count = parseInt(this.value);
+      $('aiCountVal').textContent = config.count;
+    });
+    // 生成并复制
+    $('aiGenerateBtn').addEventListener('click', function(){
+      var prompt = PromptGenerator.build(config);
+      copyToClipboard(prompt).then(function(ok){
+        if(ok){
+          var btn = $('aiGenerateBtn');
+          btn.textContent = '✅ 已复制到剪贴板！';
+          btn.classList.add('copied');
+          setTimeout(function(){
+            btn.textContent = '📋 生成并复制提示词';
+            btn.classList.remove('copied');
+            showStep(3);
+          }, 800);
+        } else {
+          showToast('复制失败，请手动复制', 2000);
+        }
+      });
+    });
+    // 返回配置
+    $('aiBackToConfig').addEventListener('click', function(){ showStep(2); });
+    // 去导入
+    $('aiGotoImport').addEventListener('click', function(){
+      showStep(4);
+      $('aiImportText').value = '';
+      $('aiImportStatus').className = 'ai-import-status';
+      $('aiImportStatus').textContent = '';
+      $('aiImportPreview').innerHTML = '';
+      $('aiConfirmImportBtn').style.display = 'none';
+      $('aiParseBtn').style.display = '';
+      // 尝试自动读取剪贴板
+      setTimeout(function(){ tryAutoPaste(); }, 300);
+    });
+    $('aiBackToCopy').addEventListener('click', function(){ showStep(3); });
+    // 从剪贴板粘贴
+    $('aiPasteFromClipboard').addEventListener('click', function(){
+      navigator.clipboard.readText().then(function(text){
+        $('aiImportText').value = text;
+        showToast('已从剪贴板粘贴', 1500);
+      }).catch(function(){
+        showToast('请手动Ctrl+V粘贴', 2000);
+      });
+    });
+    // 查看示例
+    $('aiShowExample').addEventListener('click', function(){
+      var example = '[\n  {"type":"choice","chapter":"第2章","difficulty":"easy","question":"偏导数f_x的含义是？","options":["y对x的导数","固定y对x求导","x和y都变化时的导数","二阶导数"],"answer":1,"explanation":"偏导数就是固定其他变量，对单一变量求导。","hint":"偏=偏向某一个","errorCategory":"concept"}\n]';
+      $('aiImportText').value = example;
+      showToast('已填入示例，点击「解析预览」试试', 2000);
+    });
+    // 解析预览
+    $('aiParseBtn').addEventListener('click', function(){
+      var text = $('aiImportText').value;
+      if(!text.trim()){
+        showStatus('请先粘贴AI的回复内容', 'error');
+        return;
+      }
+      var result = SmartJSON.extract(text);
+      if(!result.ok){
+        showStatus('❌ ' + result.error, 'error');
+        return;
+      }
+      var validation = SmartJSON.validateQuestions(result.data);
+      if(validation.errors.length > 0){
+        var errMsg = '⚠️ 发现' + validation.errors.length + '个问题：\n' + validation.errors.slice(0,3).join('\n');
+        if(validation.errors.length > 3) errMsg += '\n...（还有' + (validation.errors.length-3) + '个）';
+        if(validation.valid.length === 0){
+          showStatus(errMsg, 'error');
+          return;
+        }
+        showStatus(errMsg + '\n\n其他' + validation.valid.length + '题格式正确，可以导入', 'error');
+      } else {
+        var msg = '✅ 解析成功！共' + validation.valid.length + '道题';
+        if(validation.duplicates > 0) msg += '（其中' + validation.duplicates + '道与已有题目重复，将自动跳过）';
+        showStatus(msg, 'success');
+      }
+      parsedQuestions = validation.valid;
+      renderPreview(validation.valid);
+      $('aiConfirmImportBtn').style.display = '';
+      $('aiParseBtn').style.display = 'none';
+    });
+    // 确认导入
+    $('aiConfirmImportBtn').addEventListener('click', function(){
+      if(!parsedQuestions) return;
+      var count = QuestionImporter.importQuestions(parsedQuestions);
+      $('aiSuccessMsg').textContent = '成功导入' + count + '道题目！';
+      showStep(5);
+      celebrateConfetti();
+    });
+    // 立即刷新题
+    $('aiStartQuizBtn').addEventListener('click', function(){
+      var latest = QuestionImporter.getLatest(config.count);
+      close();
+      scrollToSection('quiz');
+      document.querySelectorAll('.qb-tab').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelector('.qb-tab[data-mode="practice"]').classList.add('active');
+      QuizSystem.start('practice', latest);
+      showToast('🎯 开始刷新加的' + latest.length + '道题！', 2500);
+    });
+    // 完成
+    $('aiCloseBtn').addEventListener('click', close);
+  }
+
+  function showStatus(msg, type){
+    var el = $('aiImportStatus');
+    el.className = 'ai-import-status show ' + type;
+    el.textContent = msg;
+    el.style.whiteSpace = 'pre-line';
+  }
+
+  function renderPreview(questions){
+    var container = $('aiImportPreview');
+    var typeNames = {choice:'选择',tf:'判断',calc:'计算',short:'简答'};
+    container.innerHTML = questions.map(function(q){
+      var cls = 'ai-import-qitem' + (q._duplicate ? ' dup' : '');
+      return '<div class="'+cls+'"><span class="qi-type">'+(typeNames[q.type]||q.type)+'</span><span class="qi-text">'+(q.question||'').substring(0,50)+(q.question&&q.question.length>50?'...':'')+'</span></div>';
+    }).join('');
+  }
+
+  function tryAutoPaste(){
+    if(navigator.clipboard && navigator.clipboard.readText){
+      navigator.clipboard.readText().then(function(text){
+        if(text && text.trim().indexOf('[') !== -1){
+          $('aiImportText').value = text;
+          showToast('📋 检测到剪贴板内容，已自动填入', 2000);
+        }
+      }).catch(function(){});
+    }
+  }
+
+  function copyToClipboard(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(text).then(function(){ return true; }).catch(function(){
+        return fallbackCopy(text);
+      });
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); document.body.removeChild(ta); return true; }
+    catch(e){ document.body.removeChild(ta); return false; }
+  }
+
+  // 主动触发：题刷完时提示
+  function checkNudge(){
+    // 如果题库总题数较少，显示提示
+    var total = QuizSystem.getBankSize();
+    if(total < 20){
+      setTimeout(function(){
+        var qCard = document.getElementById('qbSummary');
+        if(qCard.innerHTML && qCard.classList.contains('show')){
+          // 已经是结算页，不重复
+        }
+      }, 1000);
+    }
+  }
+
+  return { open: open, close: close, bindEvents: bindEvents, checkNudge: checkNudge };
+})();
+
+// 绑定AI助手事件
+AIAssistant.bindEvents();
+
+// 主动触发：题刷完时提示AI出题（修改QuizSystem的showSummary后触发）
+var _origShowSummary = QuizSystem.start; // avoid closure issue; use event-based nudge
+
+// 在题库区顶部添加一个"题不够？AI来凑"的轻提示
+(function addNudge(){
+  var quizSection = document.getElementById('quiz');
+  if(!quizSection) return;
+  var nudge = document.createElement('div');
+  nudge.className = 'ai-nudge';
+  nudge.id = 'aiNudge';
+  nudge.innerHTML = '<span class="ai-nudge-text">🤖 题不够刷？让AI根据你的薄弱点生成个性化题目</span>' +
+    '<button class="ai-nudge-btn" onclick="AIAssistant.open()">AI出题助手</button>';
+  var tabs = quizSection.querySelector('.qb-tabs');
+  if(tabs) tabs.after(nudge);
+  // 当导入题目达到一定数量后隐藏提示
+  function updateNudge(){
+    var cnt = QuestionImporter.getCustomCount();
+    nudge.style.display = cnt >= 30 ? 'none' : '';
+  }
+  updateNudge();
+  setInterval(updateNudge, 3000);
+})();
+
+// ==================== 术语词典初始化 ====================
+TermDictionary.add('偏导数', '固定其他变量，对单一变量求导，记为 ∂z/∂x 或 f_x');
+TermDictionary.add('全微分', '函数在两个方向同时变化的总增量近似：dz = f_x dx + f_y dy');
+TermDictionary.add('梯度', '向量 (f_x, f_y)，指向函数增长最快的方向，大小为最大方向导数');
+TermDictionary.add('极值', '函数在某邻域内的局部最大/最小值；需先找驻点再用AC-B²判别');
+TermDictionary.add('二重积分', '∫∫_D f(x,y) dA，几何意义是曲顶柱体体积，计算化为累次积分');
+TermDictionary.add('极坐标', '用(r,θ)表示平面点：x=rcosθ, y=rsinθ，适合圆形区域');
+TermDictionary.add('雅可比行列式', '坐标变换时面积/体积元素的伸缩因子；极坐标J=r，球面坐标J=r²sinφ');
+TermDictionary.add('格林公式', '将正向闭曲线积分转化为二重积分：∮Pdx+Qdy = ∫∫_D(∂Q/∂x-∂P/∂y)dσ');
+TermDictionary.annotate();
+
+// ==================== Canvas可视化初始化 ====================
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    var c1 = document.getElementById('canvasRiemann');
+    if(c1){
+      window._vizRS = CanvasViz.riemannSum(c1, {
+        n: 10,
+        fn: function(x){ return Math.sin(x*3)*0.4 + 0.8 + x*0.5; }
+      });
+    }
+    var c2 = document.getElementById('canvasPolar');
+    if(c2){
+      window._vizPA = CanvasViz.polarArea(c2);
+    }
+    // KaTeX重新渲染可视化区域的公式
+    if(typeof renderMathInElement === 'function'){
+      var adv = document.getElementById('concept-advanced');
+      if(adv) setTimeout(function(){ renderMathInElement(adv, { strict:false, delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false }); }, 100);
+    }
+  }, 300);
+});
+
+// v4.0: 将AI助手暴露到全局作用域，供HTML onclick使用
+window.AIAssistant = AIAssistant;
 
 })();
 </script>

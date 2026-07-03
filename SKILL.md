@@ -1,18 +1,18 @@
 ---
 name: course-review
-description: 基于9大学习科学理论的通用课程交互式复习方案生成器v3.1——三层深度选择+自适应学习路径+间隔重复+错因分类+正反馈系统+纸质输出全场景。面向基础薄弱、短时间需完成复习的群体，帮助AI为任意课程创建定制化单文件HTML复习应用。适用于大学课程考前速通、职业资格考试冲刺、跨专业补课等场景。
+description: 基于9大学习科学理论的通用课程交互式复习方案生成器v4.0——三层深度选择+自适应学习路径+间隔重复+错因分类+正反馈系统+纸质输出全场景+知识点屏蔽+AI出题助手。面向基础薄弱、短时间需完成复习的群体，帮助AI为任意课程创建定制化单文件HTML复习应用。适用于大学课程考前速通、职业资格考试冲刺、跨专业补课等场景。
 ---
 
-# Course Review Skill v3.1 — 学习科学驱动的课程速通复习应用生成器
+# Course Review Skill v4.0 — 学习科学驱动的课程速通复习应用生成器
 
-> **核心理念**：不是文档，是学习应用。融合费曼学习法、主动回忆、间隔重复、掌握学习、最近发展区、认知负荷理论、元认知训练、自我效能感、情境认知9大学习科学理论，用精准急救设计哲学帮基础薄弱学生在最短时间内建立应试框架。新增**系统八：纸质输出与全场景陪伴**，覆盖电脑学习→打印小抄→手机候考速翻的完整旅程。
+> **核心理念**：不是文档，是学习应用。融合费曼学习法、主动回忆、间隔重复、掌握学习、最近发展区、认知负荷理论、元认知训练、自我效能感、情境认知9大学习科学理论，用精准急救设计哲学帮基础薄弱学生在最短时间内建立应试框架。v4.0新增**系统十：AI出题助手**（导出个性化提示词→外部AI生成题目→一键导入扩充题库，解决题目数量不足和文件体积过大的问题）。
 > **不是固定模板**：AI应根据课程特点自主增减模块，本skill提供的是设计理念和最佳实践，而非刻板框架。template.html是可直接运行的完整参考实现。
 
 ---
 
-## v3.1 重大升级总览
+## v4.0 重大升级总览
 
-v3.0 从"静态复习页"进化为"完整学习应用"，v3.1 在此基础上补全了"最后一厘米"的体验细节和全场景覆盖：
+v4.0 在v3.1基础上新增"AI出题助手"系统，实现题库无限扩展与文件体积控制的平衡：
 
 | 新系统/组件 | 学习科学理论 | 核心价值 | 版本 |
 |--------|-------------|---------|------|
@@ -23,18 +23,13 @@ v3.0 从"静态复习页"进化为"完整学习应用"，v3.1 在此基础上补
 | 主动回忆强化机制 | 主动回忆（Active Recall） | 遮挡做题+翻转卡片+诊断前置 | v3.0 |
 | 情感设计系统 | 自我效能感（Bandura） | 撒花庆祝+CTA脉冲+进度可感知+心理建设 | v3.0 |
 | 全局进度追踪 | 自我调节学习 | 四维加权进度条+localStorage持久化 | v3.0 |
-| **纸质输出与全场景陪伴** | **情境认知+分布式认知** | **一页纸打印+移动端适配+状态可导出，覆盖电脑→纸张→手机全旅程** | **v3.1** |
-| **ScrollSpy导航** | **认知负荷** | **长页面实时定位，不迷路** | **v3.1** |
-| **可行动Toast** | **自我效能感** | **通知带行动按钮，形成操作闭环** | **v3.1** |
-| **着陆高亮动效** | **认知负荷** | **跨模块跳转有"着陆感"，不瞬移** | **v3.1** |
+| 纸质输出与全场景陪伴 | 情境认知+分布式认知 | 一页纸打印+移动端适配+状态可导出 | v3.1 |
+| 知识点屏蔽系统 | 认知负荷+自我调节学习 | 一键标记不考知识点，联动隐藏 | v3.1 |
+| **AI出题助手** | **最近发展区+元认知+自我效能感** | **个性化提示词生成+智能JSON解析+一键导入，题库无限扩充且保持文件轻量** | **v4.0** |
 
 版本演进轨迹：
-- v2.1: 计算型课程差异化设计
-- v2.2: 参考材料收集机制
-- v2.3: 例题驱动模式（五段式例题卡片）
-- v2.4: 配套小测
-- v3.0: 学习应用化（7大学习科学系统完整落地）
-- **v3.1: 全场景体验升级（系统八+标准组件库+移动端规范+打印模式+完整参考模板）**
+- v2.1-v3.1: （略，见提交历史）
+- **v4.0: AI出题助手（系统十）——轻量核心题库+外部AI出题+智能导入，三步零摩擦扩充题库**
 
 ---
 
@@ -524,6 +519,121 @@ function showToast(msg, duration) {
 
 ---
 
+## v4.0 系统十：AI出题助手
+
+### 设计目标
+
+解决两个核心矛盾：
+1. **题目数量 vs 文件体积**：内置题库越多HTML越大，但内置题少又不够练习
+2. **个性化 vs 通用性**：不同学生的薄弱点不同，固定题库无法千人千面
+
+方案：**轻量核心题库（50-80题）+ 外部AI出题 + 智能导入**，用户可以随时用自己的AI工具生成个性化题目并导入，文件保持轻量。
+
+### 用户流程（三步零摩擦）
+
+```
+点击AI助手 → 配置出题范围/数量/难度 → 一键复制提示词
+    → 打开外部AI（豆包/DeepSeek/Kimi/文心一言）粘贴发送
+    → 复制AI回复 → 回到页面粘贴导入 → 自动开练
+```
+
+### 核心模块
+
+#### 1. 智能提示词生成器（PromptGenerator）
+
+读取用户学习状态，生成高度个性化的出题提示词：
+- **深度适配**：根据当前选择的深度（survival/standard/advanced）自动调整难度分布（简单:中等:困难）
+- **薄弱点定位**：读取自适应学习路径（`adaptive_path`）中未通过的节点
+- **错题关联**：读取错题本（`wrongbook`），提取错题相关章节
+- **格式规范**：提示词内包含完整JSON格式说明、题目示例、评分标准
+
+提示词模板结构：
+```
+你是一位[课程名]考试出题专家。请为我生成[N]道[难度分布]题目。
+
+【我的学习状态】
+- 当前目标：60分及格/80分稳过/90+冲刺
+- 已掌握知识点：...
+- 薄弱知识点：...
+- 错题相关章节：...
+- 近期正确率：约X%
+
+【出题要求】
+- 范围：[薄弱知识点/全部章节/错题相关/指定章节]
+- 题型分布：[选择题X%/判断题X%/计算题X%/简答题X%]
+- 难度：基础X% / 中等X% / 困难X%
+- 每题必须包含：题干、选项（选择题）、正确答案、详细解析、所属章节、难度标签(e/m/h)
+
+【输出格式】
+严格输出JSON数组，不要输出其他内容：
+[{"q":"题目","o":["A.选项","B.选项"...],"a":"B","explain":"解析","chapter":"章节","difficulty":"m"}]
+```
+
+#### 2. 智能JSON提取器（SmartJSON）
+
+AI输出经常带有markdown标记、解释文字、格式错误，SmartJSON自动处理：
+- 去除 ````json` 和 ```` ``` ` 代码块标记
+- 找到第一个 `[` 和最后一个 `]` 之间的内容（容错提取）
+- 自动修复：尾随逗号、单引号→双引号、未加引号的key
+- 失败时给出精确错误位置和修复建议
+
+#### 3. 题目导入引擎（QuestionImporter）
+
+- **SHA256去重**：基于题目文本计算哈希，重复题目自动跳过
+- **字段校验**：检查必填字段（q/a/explain）、选项数量、答案有效性
+- **自动标准化**：补全选项编号（A./B./C./D.）、规范化字段名
+- **localStorage持久化**：导入的题目存储在`custom_questions`键中
+- **即时反馈**：显示成功导入数量、跳过数量及原因
+
+#### 4. QuizSystem改造
+
+- `getAllQuestions()`：合并内置题库和自定义题目
+- `refreshBank()`：导入新题后刷新当前练习
+- `focusQuestions(qs, mode)`：聚焦到特定题目集（如刚导入的新题）
+- `getDepth()/getWrongCount()/getWrongbook()/getUnmasteredConcepts()`：供提示词生成器读取学习状态
+
+### 零摩擦体验设计
+
+1. **双入口**：右下角悬浮FAB按钮 + 刷题区域内"AI出题助手"按钮
+2. **智能默认值**：自动选择"薄弱知识点"范围、自动匹配难度、默认10题，零配置即可使用
+3. **首次引导**：首次使用显示三步操作说明，之后记住偏好直接进入配置
+4. **一键复制**：点击按钮自动复制提示词到剪贴板（navigator.clipboard → execCommand降级）
+5. **AI快捷跳转**：复制后显示豆包/DeepSeek/Kimi/文心一言快捷入口，点击直达
+6. **导入后即时练习**：导入成功后一键开始刷新题，自动聚焦新题集
+7. **撒花庆祝**：导入成功触发celebrateConfetti()，给正向反馈
+8. **打印时隐藏**：`@media print`中隐藏AI助手FAB和面板，不影响纸质输出
+
+### CSS规范
+
+AI助手CSS类名统一使用`ai-`前缀：
+- `.ai-fab`：右下角悬浮按钮
+- `.ai-panel-overlay`：半透明遮罩层
+- `.ai-panel`：主面板（固定定位，居中显示）
+- `.ai-step`：步骤页（默认隐藏，`.active`时显示）
+- `.ai-step-indicator`：步骤进度点
+- `.ai-config-option`：配置选项卡片（选中时高亮边框）
+- `.ai-range-slider`：题目数量滑块
+- `.ai-shortcut-btn`：AI工具快捷入口按钮
+- `.ai-import-textarea`：粘贴导入文本域
+- `.ai-import-status`：导入结果状态提示
+
+### localStorage键命名
+
+所有键使用统一前缀（SLUG + '_'）：
+- `custom_questions`：用户导入的自定义题目数组
+- `ai_onboarded`：是否已完成首次引导（'1'表示已引导）
+- `ai_config`：记住用户上次的配置（range/count/difficulty/type）
+
+### 生成课程页面时的AI注意事项
+
+1. **核心题库保持精简**：内置题目控制在50-80题（平衡模式），覆盖核心考点即可，更多题目交给AI生成
+2. **COURSE_META必须填写**：PromptGenerator依赖COURSE_META中的name/type/examFormat/chapters生成提示词
+3. **章节名称要准确**：提示词中会包含章节信息，AI出题时会按章节分配题目
+4. **题目格式统一**：内置题目遵循相同JSON格式，作为示例给AI参考
+5. **不要省略AI助手模块**：所有生成的课程页面都必须包含AI出题助手，这是v4.0的核心功能
+
+---
+
 ## v3.0 增强功能设计指南
 
 ### 术语悬停词典（TreeWalker智能替换）
@@ -663,6 +773,77 @@ body.printing-cheatsheet .flip-front {
 | 回到顶部按钮 | 右下44px圆形 |
 | 按钮padding | 不小于8px 14px |
 | 打印模式双列 | 移动端打印仍保持双列（打印纸张是A4不受屏幕宽度影响） |
+
+---
+
+#### 系统九：知识点屏蔽（用户可自定义考试范围）
+
+**问题场景**：老师划重点后部分知识点明确不考，用户需要快速屏蔽相关内容，避免复习不考的内容浪费时间。
+
+**设计原则：**
+1. **一键屏蔽**：悬停知识点标题时显示"🚫 不考"按钮，点击即屏蔽
+2. **联动隐藏**：屏蔽后该知识点的概念精讲、例题、变式、配套小测、知识图谱节点、相关题库题目全部隐藏/灰化
+3. **可视化反馈**：屏蔽后标题加删除线+半透明+🚫徽章+"↩️ 撤销"按钮，视觉明确
+4. **集中管理**：Header有"🚫 不考项"按钮（带红色角标显示数量），打开模态框统一管理
+5. **可恢复**：单个撤销或"恢复全部"，操作有Toast反馈
+6. **进度修正**：被屏蔽的知识点不计入学习进度总数，知识图谱标记为🚫不考
+7. **打印保留**：打印时被屏蔽内容恢复显示（打印作为全量备份）
+8. **持久化**：localStorage存储，刷新页面后保持屏蔽状态
+
+**HTML结构规范（AI必须遵守）：**
+
+每个知识点的accordion-item必须：
+- 添加 `data-topic-id="c{N}"` 属性（与knowledgeGraph中的id一致）
+- accordion-header使用 `<div role="button" tabindex="0">` 而非 `<button>`（因为内部要嵌套屏蔽按钮，button不能嵌套button）
+- 标题用 `<span class="accordion-title-wrap"><span class="accordion-title-text">标题</span></span>` 包裹
+- 添加屏蔽按钮：`<button class="topic-exclude-btn" data-topic-id="c{N}" data-topic-name="知识点名称" onclick="event.stopPropagation();excludeTopic(this)">🚫 不考</button>`
+
+```html
+<div class="accordion-item" id="concept-ch1" data-topic-id="c1">
+  <div class="accordion-header" role="button" tabindex="0">
+    <span class="accordion-title-wrap">
+      <span class="accordion-title-text">知识点名称</span>
+    </span>
+    <button class="topic-exclude-btn" data-topic-id="c1" data-topic-name="知识点名称"
+            onclick="event.stopPropagation();excludeTopic(this)">🚫 不考</button>
+    <span class="accordion-arrow">▼</span>
+  </div>
+  <div class="accordion-body">
+    <!-- 知识点内容 -->
+  </div>
+</div>
+```
+
+**题库题目data属性规范：**
+
+每道题库题目需要添加 `data-topic-ids` 属性，关联到一个或多个知识点id（逗号分隔），屏蔽知识点时相关题目自动隐藏：
+
+```html
+<div class="quiz-item" data-topic-ids="c1,c2" data-id="q1">
+  <!-- 题目内容 -->
+</div>
+```
+
+**knowledgeGraph数据无需额外修改**：系统自动从knowledgeGraph读取id/name/chapter/difficulty元数据。
+
+**Header按钮位置：**在hero-actions中"🌙 夜间模式"按钮之后、"📄 一页纸"按钮之前添加：
+```html
+<button class="hero-btn exclude-manager-btn" id="excludeManagerBtn">
+  🚫 不考项
+  <span class="exclude-badge-count" id="excludeBadgeCount">0</span>
+</button>
+```
+
+**屏蔽后的视觉效果：**
+- accordion-item添加 `.excluded` 类
+- opacity降为0.5，背景变灰，边框变虚线
+- 标题文字加删除线变灰色
+- 箭头隐藏，内容区强制不展开
+- 显示🚫不考徽章和↩️撤销按钮
+- hover无背景变化，cursor变为default
+- 知识图谱对应节点显示🚫图标、半透明、删除线、去学习按钮隐藏、显示"(不考)"标签
+
+**localStorage键名**：`{SLUG}_excluded_topics`，值为 `{topicId: {name, excludedAt}}` 对象。
 
 ---
 
@@ -1056,33 +1237,275 @@ course-review-skill/
     └── calculus2.html      # 高数2完整示例（含Canvas+术语词典+SRS）
 ```
 
-### KaTeX集成
+### KaTeX集成（v3.1增强：含化学mhchem扩展）
+
+> **重要**：数学/物理/化学课程必须使用以下增强配置，确保所有符号正确显示。
 
 ```html
+<!-- KaTeX 核心 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<!-- 化学方程式扩展（mhchem）——化学/生化课程必加，其他课程可选加（仅增加~15KB） -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js"></script>
+<!-- 物理单位扩展（physics）——物理课程推荐 -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/physics.min.js"></script>
 
 <script>
-function renderMath(){
+// KaTeX就绪检测
+var katexReady = false;
+function renderMath(root){
+  root = root || document.body;
   if(typeof renderMathInElement !== 'undefined'){
-    renderMathInElement(document.body,{
-      delimiters:[
-        {left:'$$',right:'$$',display:true},
-        {left:'$',right:'$',display:false}
-      ],
-      throwOnError:false,
-      strict:false
-    });
+    try {
+      renderMathInElement(root, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ],
+        throwOnError: false,
+        strict: false,
+        trust: true,
+        // 化学扩展支持
+        macros: {
+          // 常用物理符号快捷命令
+          "\\v": "\\mathbf{#1}",
+          "\\unit": "\\,\\text{#1}",
+          "\\const": "\\text{#1}",
+          // 常用化学快捷
+          "\\chem": "\\ce{#1}"
+        }
+      });
+      katexReady = true;
+    } catch(e) {
+      console.warn('KaTeX渲染异常:', e);
+    }
   }
 }
 // DOMContentLoaded + load双保险；动态内容更新后重渲染
-document.addEventListener('DOMContentLoaded', () => setTimeout(renderMath, 300));
-window.addEventListener('load', () => setTimeout(renderMath, 500));
+document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ renderMath(); }, 300); });
+window.addEventListener('load', function(){ setTimeout(function(){ renderMath(); }, 500); });
+// 兜底：CDN加载慢时延迟重试
+setTimeout(function(){ if(!katexReady) renderMath(); }, 1500);
+setTimeout(function(){ if(!katexReady) renderMath(); }, 3000);
 </script>
 ```
 
-### 代码生成避坑指南（最高优先级 · 25条常见坑）
+**扩展加载说明**：
+- `mhchem.min.js`：化学方程式/化学式渲染，使用 `$\ce{H2O}$`、`$\ce{2H2 + O2 -> 2H2O}$` 语法
+- `physics.min.js`：物理常用符号（矢量、微分、bra-ket等），提供 `\vb`、`\dd`、`\pdv` 等快捷命令
+- 所有扩展均为CDN加载失败时不影响基础数学符号渲染（优雅降级）
+
+### 数学/物理/化学符号完整写法参考
+
+> **核心原则**：所有数学/物理/化学公式、符号、单位必须放在 `$...$`（行内）或 `$$...$$`（块级）中，**禁止**直接用Unicode特殊字符（如 ∂、∫、∑、α、β、→ 等在正文非数学环境中可能无法正确显示）。
+
+#### 一、数学符号速查表
+
+| 符号 | 错误写法 | ✅ 正确LaTeX写法 | 说明 |
+|------|---------|-----------------|------|
+| 希腊字母α | α | `$\alpha$` | 不要直接打Unicode字符α |
+| 希腊字母β | β | `$\beta$` | |
+| 希腊字母π | π | `$\pi$` | 圆周率 |
+| 希腊字母θ | θ | `$\theta$` | 角度 |
+| 希腊字母λ | λ | `$\lambda$` | 波长/特征值 |
+| 希腊字母μ | μ | `$\mu$` | 微/均值 |
+| 希腊字母σ | σ | `$\sigma$` | 标准差/求和小写 |
+| 大写希腊字母Σ | Σ | `$\Sigma$` | 求和 |
+| 大写希腊字母Ω | Ω | `$\Omega$` | 欧姆/样本空间 |
+| 大写希腊字母Δ | Δ | `$\Delta$` | 增量/判别式 |
+| 无穷大 | ∞ | `$\infty$` | |
+| 偏导数∂ | ∂ | `$\partial$` | 或用physics扩展的 `$\pdv{f}{x}$` |
+| 积分∫ | ∫ | `$\int$` | 定积分：`$\int_a^b f(x)\,dx$` |
+| 求和∑ | ∑ | `$\sum$` | `$\sum_{i=1}^n a_i$` |
+| 极限 | lim | `$\lim$` | `$\lim_{x \to 0}$` |
+| 箭头→ | → | `$\to$` 或 `$\rightarrow$` | |
+| 双箭头⇒ | ⇒ | `$\Rightarrow$` | 推出 |
+| 等价⇔ | ⇔ | `$\Leftrightarrow$` | |
+| 不等于≠ | ≠ | `$\neq$` | |
+| 约等于≈ | ≈ | `$\approx$` | |
+| 小于等于≤ | ≤ | `$\leq$` 或 `$\le$` | |
+| 大于等于≥ | ≥ | `$\geq$` 或 `$\ge$` | |
+| 乘号× | × | `$\times$` | 叉乘/乘法 |
+| 点乘· | · | `$\cdot$` | 点积/乘法 |
+| 除号÷ | ÷ | `$\div$` | |
+| 分数 | a/b | `$\frac{a}{b}$` 或 `$\dfrac{a}{b}$` | dfrac是显示风格更大 |
+| 上标 | x^2 | `$x^2$` | 多字符要加花括号：`$x^{10}$` |
+| 下标 | x_i | `$x_i$` | 多字符：`$x_{ij}$` |
+| 根号√ | √x | `$\sqrt{x}$` | n次根：`$\sqrt[n]{x}$` |
+| 绝对值 | |x| | `$|x|$` 或 `$\left|x\right|$` |
+| 向量 | v | `$\vec{v}$` 或 `$\mathbf{v}$` | 物理推荐用 `$\vb{v}$`（需physics扩展） |
+| hat | â | `$\hat{a}$` | 单位向量/估计量 |
+| 平均值 | ā | `$\bar{a}$` | |
+| 度° | ° | `$^\circ$` | 角度：`$30^\circ$` |
+| 摄氏度 | ℃ | `$^\circ\text{C}$` | 不要直接打℃字符 |
+| 上下标同时 |  | `$x_i^2$` 或 `${x_i}^2$` | |
+| 括号 | ( ) | `$\left( \right)$` | 自动调整大小的括号 |
+| 方括号 | [ ] | `$\left[ \right]$` | |
+| 花括号 | { } | `$\left\{ \right\}$` | 花括号需要转义 |
+| 行列式/矩阵 |  | `$\begin{vmatrix} a&b\\c&d \end{vmatrix}$` | |
+| 矩阵 |  | `$\begin{pmatrix} a&b\\c&d \end{pmatrix}$` | |
+| 省略号... | ... | `$\cdots$`（居中）/ `$\ldots$`（基线）/ `$\vdots$`（竖） | |
+| 因为 | ∵ | `$\because$` | |
+| 所以 | ∴ | `$\therefore$` | |
+| 存在 | ∃ | `$\exists$` | |
+| 任意 | ∀ | `$\forall$` | |
+| 属于 | ∈ | `$\in$` | |
+| 不属于 | ∉ | `$\notin$` | |
+| 子集 | ⊂ | `$\subset$` | |
+| 真子集 | ⊆ | `$\subseteq$` | |
+| 并集 | ∪ | `$\cup$` | |
+| 交集 | ∩ | `$\cap$` | |
+| 空集 | ∅ | `$\emptyset$` | |
+| 实数集 | ℝ | `$\mathbb{R}$` | |
+| 自然数集 | ℕ | `$\mathbb{N}$` | |
+| 整数集 | ℤ | `$\mathbb{Z}$` | |
+| 分式(大) |  | `$\dfrac{dy}{dx}$` | display风格分数 |
+| 二项式系数 |  | `$\binom{n}{k}$` | |
+
+#### 二、物理符号写法
+
+| 符号 | ✅ 正确LaTeX写法 | 说明 |
+|------|-----------------|------|
+| 矢量（粗体） | `$\vb{F}$` | 需physics扩展，或用 `$\mathbf{F}$` |
+| 矢量（箭头） | `$\vec{v}$` | |
+| 单位矢量 | `$\hat{\imath}$`、`$\hat{\jmath}$`、`$\hat{k}$` | |
+| 速度 | `$\vec{v}$` 或 `$\vb{v}$` | |
+| 加速度 | `$\vec{a}$` 或 `$\vb{a}$` | |
+| 力 | `$\vb{F}$` | |
+| 电场 | `$\vb{E}$` | |
+| 磁场 | `$\vb{B}$` | |
+| 微分d | `$\dd{x}$` | physics扩展，直立即是 `$dx$` |
+| 一阶导数 | `$\dv{y}{x}$` | physics扩展：dy/dx |
+| 二阶导数 | `$\dv[2]{y}{x}$` | physics扩展：d²y/dx² |
+| 偏导数 | `$\pdv{f}{x}$` | physics扩展：∂f/∂x |
+| 二阶偏导 | `$\pdv[2]{f}{x}$` | physics扩展：∂²f/∂x² |
+| 混合偏导 | `$\pdv{f}{x}{y}$` | physics扩展：∂²f/∂x∂y |
+| 梯度 | `$\nabla f$` | 或 `$\grad f$`（physics扩展） |
+| 散度 | `$\nabla \cdot \vb{F}$` | 或 `$\div \vb{F}$` |
+| 旋度 | `$\nabla \times \vb{F}$` | 或 `$\curl \vb{F}$` |
+| 拉普拉斯 | `$\nabla^2 f$` | |
+| 点积 | `$\vb{a} \cdot \vb{b}$` | |
+| 叉积 | `$\vb{a} \times \vb{b}$` | |
+|  bra | `$\bra{\psi}$` | physics扩展：左矢 |
+|  ket | `$\ket{\psi}$` | physics扩展：右矢 |
+| bra-ket | `$\braket{\phi|\psi}$` | physics扩展：内积 |
+| 单位（正体） | `$5\,\text{m/s}$` | 单位必须用\text{}包起来并加小空格\, |
+| 牛顿N | `$F = 10\,\text{N}$` | |
+| 焦耳J | `$E = 100\,\text{J}$` | |
+| 帕斯卡Pa | `$P = 1.013\times10^5\,\text{Pa}$` | |
+| 电子伏特 | `$E = 13.6\,\text{eV}$` | |
+| 米每秒 | `$v = 3\times10^8\,\text{m/s}$` | |
+| 千克 | `$m = 5\,\text{kg}$` | |
+| 摩尔 | `$n = 2\,\text{mol}$` | |
+| 开尔文 | `$T = 300\,\text{K}$` | |
+| 安培 | `$I = 2\,\text{A}$` | |
+| 伏特 | `$U = 220\,\text{V}$` | |
+| 欧姆 | `$R = 10\,\Omega$` | |
+| 法拉 | `$C = 10\,\mu\text{F}$` | 注意μ用 `$\mu$`，F用\text{F} |
+| 亨利 | `$L = 5\,\text{mH}$` | |
+| 赫兹 | `$f = 50\,\text{Hz}$` | |
+| 瓦特 | `$P = 1000\,\text{W}$` | |
+| 库仑 | `$Q = 1.6\times10^{-19}\,\text{C}$` | |
+| 特斯拉 | `$B = 1\,\text{T}$` | |
+| 韦伯 | `$\Phi = 1\,\text{Wb}$` | |
+| 普朗克常数 | `$h = 6.626\times10^{-34}\,\text{J·s}$` | J·s 中间用\text{·}或\cdot |
+| 约化普朗克常数 | `$\hbar = 1.05\times10^{-34}\,\text{J·s}$` | |
+| 光速 | `$c = 3\times10^8\,\text{m/s}$` | |
+| 真空介电常数 | `$\varepsilon_0$` | |
+| 真空磁导率 | `$\mu_0$` | |
+| 玻尔兹曼常数 | `$k_B$` | |
+| 阿伏伽德罗常数 | `$N_A$` | |
+
+**物理单位书写规则**：
+1. 物理量符号用斜体（默认数学模式），单位用正体 `\text{}`
+2. 数字与单位之间必须有小空格：`\` （反斜杠加空格）或 `\,`
+3. 复合单位用 `/` 或 `\cdot` 连接：`$\text{m/s}$` 或 `$\text{m} \cdot \text{s}^{-1}$`
+4. 词头（μ、m、k、M、G等）与单位连写：`$\mu\text{m}$`（微米）、`$\text{keV}$`（千电子伏）
+
+#### 三、化学符号写法（需mhchem扩展）
+
+> 加载 `mhchem.min.js` 后，使用 `$\ce{...}$` 语法自动渲染化学式和方程式。
+
+| 化学式/方程式 | ✅ 正确写法 | 说明 |
+|--------------|-----------|------|
+| 水 | `$\ce{H2O}$` | 自动下标 |
+| 硫酸 | `$\ce{H2SO4}$` | |
+| 氢氧化钠 | `$\ce{NaOH}$` | |
+| 二氧化碳 | `$\ce{CO2}$` | |
+| 铁离子 | `$\ce{Fe^3+}$` | 上标电荷 |
+| 硫酸根 | `$\ce{SO4^2-}$` | |
+| 铵根 | `$\ce{NH4+}$` | |
+| 水合氢离子 | `$\ce{H3O+}$` | |
+| 同位素碳14 | `$\ce{^{14}C}$` | 质量数左上标 |
+| 铀235 | `$\ce{^{235}_{92}U}$` | 质量数+原子序数 |
+| 化学键单键 | `$\ce{CH3-CH3}$` | 单键 |
+| 双键 | `$\ce{CH2=CH2}$` | 双键 |
+| 三键 | `$\ce{HC#CH}$` | 三键（#符号） |
+| 配位键 | `$\ce{[Cu(NH3)4]^2+}$` | 配合物 |
+| 反应箭头 | `$\ce{A -> B}$` | 反应箭头 |
+| 可逆反应 | `$\ce{A <=> B}$` | 可逆箭头 |
+| 平衡反应 | `$\ce{A <--> B}$` | 平衡箭头 |
+| 逆反应 | `$\ce{A <- B}$` | 逆反应箭头 |
+| 反应条件上 | `$\ce{A ->[H2O] B}$` | 反应条件在箭头上 |
+| 反应条件上下 | `$\ce{A ->[催化剂][\Delta] B}$` | 上下都有条件 |
+| 加热符号Δ | `$\ce{A ->[\Delta] B}$` | |
+| 化学方程式 | `$\ce{2H2 + O2 -> 2H2O}$` | 自动配平系数 |
+| 中和反应 | `$\ce{HCl + NaOH -> NaCl + H2O}$` | |
+| 合成氨 | `$\ce{N2 + 3H2 <=>[高温高压][催化剂] 2NH3}$` | |
+| 氧化还原电子转移 | `$\ce{2Na + Cl2 -> 2NaCl}$` | （可配合上下标说明） |
+| 沉淀符号↓ | `$\ce{CaCO3 v}$` | 沉淀 |
+| 气体符号↑ | `$\ce{CO2 ^}$` | 气体 |
+| 摩尔浓度 | `$\ce{1 M HCl}$` | |
+| 物质的量 | `$n = 2\,\text{mol}$` | mol用\text{mol} |
+| 浓度 | `$c = 0.1\,\text{mol/L}$` | |
+| pH值 | `$\text{pH} = 7$` | pH正体 |
+| 反应速率 | `$v = 0.5\,\text{mol/(L·s)}$` | |
+| 平衡常数 | `$K_c$` 或 `$K_\text{eq}$` | |
+| 焓变 | `$\Delta H = -286\,\text{kJ/mol}$` | Δ是 `$\Delta$` |
+| 熵变 | `$\Delta S$` | |
+| 吉布斯自由能 | `$\Delta G = \Delta H - T\Delta S$` | |
+| 活化能 | `$E_a$` | |
+| 化学元素符号 | 在正文也可直接写H、O、C、Fe | 单字母/双字母元素符号作为普通文本即可，但化学式必须用 `$\ce{}$` |
+| 有机化学苯环 | `$\ce{C6H6}$` 或用chemfig包（KaTeX不支持chemfig，建议用文字描述或插入图片） | |
+
+**化学符号注意事项**：
+1. 化学式中的数字（下标）不需要手动写 `_`，mhchem 自动处理
+2. 电荷用 `^+`、`^2+`、`^-`、`^2-` 即可
+3. 反应箭头不要用 `->`（C语言指针），必须在 `$\ce{}$` 内用 `->` mhchem会渲染为化学箭头
+4. 不加载mhchem扩展时，`$\ce{}$` 命令不会报错但会原样显示，建议始终加载mhchem
+5. 状态标注（s/l/g/aq）：`$\ce{H2O(l)}$`、`$\ce{CO2(g)}$`、`$\ce{NaCl(aq)}$`、`$\ce{Fe(s)}$`
+
+#### 四、常见符号渲染问题排查
+
+| 问题现象 | 原因 | ✅ 解决方案 |
+|---------|------|-----------|
+| 希腊字母显示为方框/乱码 | 直接打了Unicode字符 | 全部改用LaTeX命令如 `$\alpha$` |
+| 公式不渲染，显示原始$...$ | KaTeX CDN未加载完成 | 已配置300ms/500ms/1.5s/3s四重渲染兜底 |
+| 化学式显示`$\ce{H2O}$`原样 | 未加载mhchem扩展 | 添加 `mhchem.min.js` script标签 |
+| 单位显示为斜体 | 未用\text{}包裹 | 单位写为 `$\text{m/s}$` |
+| 箭头显示为`->`字符 | 直接打了-> | 在数学模式用 `$\to$` 或化学用 `$\ce{->}$` |
+| 中文出现在公式中报错 | KaTeX数学模式不支持中文 | 中文放在数学模式外，或用 `\text{中文}` 包裹 |
+| 括号太小不包裹内容 | 直接用了() | 用 `$\left( ... \right)$` 自动调整大小 |
+| 下标/上标只显示一个字符 | 没加花括号 | 多字符必须用 `x_{ij}`、`x^{10}` |
+| 花括号{}不显示 | 花括号在LaTeX中有特殊含义 | 用 `$\{$` 和 `$\}$` 或 `$\left\{ ... \right\}$` |
+| 度符号℃显示异常 | 直接打了Unicode℃ | 写为 `$^\circ\text{C}$` |
+| 物理矢量不是粗体 | 直接打了字母 | 用 `$\vb{F}$`（需physics扩展）或 `$\mathbf{F}$` |
+| 省略号位置不对 | 直接打了三个点 | 用 `$\cdots$`（居中）或 `$\ldots$`（基线） |
+
+#### 五、符号使用红线（必须遵守）
+
+1. **禁止**在正文/选项/标题中直接使用Unicode数学符号：∂、∫、∑、√、∞、≠、≈、≤、≥、×、→、⇒、∵、∴、∃、∀、∈、⊂、∪、∩、α、β、γ、δ、ε、θ、λ、μ、π、σ、φ、ψ、ω、Δ、Σ、Ω、℃、°、²、³
+2. 以上所有符号**必须**放在 `$...$` 内使用对应的LaTeX命令
+3. 正文叙述中"如果x>0"这种不等式，x和>也应放数学模式：`如果 $x > 0$`
+4. 数字与单位组合必须是 `$5\,\text{cm}$` 格式，禁止直接写"5cm"在技术语境中
+5. 化学课程必须加载mhchem扩展，所有化学式/方程式用 `$\ce{}$` 语法
+6. 物理课程推荐加载physics扩展简化矢量/微分书写
+7. KaTeX渲染失败时不影响页面阅读——CDN加载失败时公式降级为原始LaTeX文本，用户仍可读懂
+
+### 代码生成避坑指南（最高优先级 · 28条常见坑）
 
 > **警告**：AI生成JavaScript代码时极易引入语法错误。严格遵守：
 
@@ -1112,6 +1535,8 @@ window.addEventListener('load', () => setTimeout(renderMath, 500));
 24. **撒花动画数量控制**：`celebrateConfetti()`每次40片，上限50片，避免低端机卡顿
 25. **IIFE结尾分号**：每个IIFE结束后必须加`;`，防止与后续代码拼接时报错
 26. **术语词典TreeWalker跳过表单元素**：`acceptNode`必须跳过`label, input, textarea, select, option, .check-item span, .term-tooltip`，避免checkbox等表单标签被术语tooltip污染导致无障碍名称过长
+27. **禁止直接使用Unicode数学/科学符号**：所有希腊字母(αβγΔΣΩ)、数学符号(∂∫∑√∞≠≈≤≥×→∵∴∃∀∈⊂∪∩)、单位(℃°μΩ)、上下标(²³)必须放在`$...$`内用LaTeX命令书写，禁止直接打Unicode字符，否则可能在不同环境显示为方框。详见"数学/物理/化学符号完整写法参考"章节。化学课程必须加载mhchem扩展并用`$\ce{}$`写化学式。
+28. **每个accordion-item必须加data-topic-id**：知识点手风琴卡片必须添加`data-topic-id="c{N}"`（与knowledgeGraph的id一致），accordion-header用`<div role="button" tabindex="0">`而非`<button>`（内部要嵌套屏蔽按钮，button不能嵌套button），标题用`.accordion-title-wrap > .accordion-title-text`包裹，并添加`.topic-exclude-btn`屏蔽按钮。题库题目必须加`data-topic-ids`属性关联知识点，否则屏蔽功能无法联动隐藏相关题目。详见"系统九：知识点屏蔽"章节。
 
 ```javascript
 // 函数劫持示例：不修改原函数，包裹注入新行为
