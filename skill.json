@@ -1,7 +1,7 @@
 {
   "name": "course-review",
-  "version": "3.0.0",
-  "description": "基于7大学习科学理论的通用课程交互式复习应用生成器——三层深度选择+自适应学习路径+间隔重复+错因分类+正反馈系统。面向基础薄弱、短时间内需要完成课程复习的学生，帮助AI为任意课程创建定制化单文件HTML复习应用。v3.0从静态复习页进化为完整学习应用。",
+  "version": "4.2.0",
+  "description": "基于9大学习科学理论的通用课程交互式复习应用生成器v4.2——三层深度选择+自适应学习路径+间隔重复+错因分类+正反馈系统+纸质输出全场景+知识点屏蔽+AI出题助手+首次欢迎引导+考试倒计时+个性化配置+免责声明+截图预览。面向基础薄弱、短时间需完成复习的群体，帮助AI为任意课程创建定制化单文件HTML复习应用。v4.2新增首次欢迎浮层、考试倒计时徽章、COURSE_META个性化字段、标准化免责声明、截图预览模式，清理开发者注释。",
   "author": "SOLO AI Assistant",
   "license": "MIT",
   "keywords": [
@@ -76,6 +76,11 @@
         "name": "自我效能感（Self-Efficacy, Bandura）",
         "implementation": "CTA脉冲+撒花动效+进度可视化+页脚心理建设+Toast反馈",
         "corePrinciple": "降低焦虑，建立信心，正向反馈密度高"
+      },
+      {
+        "name": "情境认知/分布式认知（Situated/Distributed Cognition）",
+        "implementation": "一页纸打印+移动端速翻+多端连续+进度导入导出",
+        "corePrinciple": "学习发生在多场景，纸张和手机是认知延伸"
       }
     ]
   },
@@ -353,17 +358,56 @@
     },
     "katexIntegration": {
       "version": "0.16.9",
-      "config": "throwOnError:false, strict:false",
-      "delimiters": "$$...$$（块级）/ $...$（行内）",
-      "renderTiming": "DOMContentLoaded(300ms) + load(500ms) 双保险；动态内容后setTimeout(renderMath,50-120)"
+      "coreConfig": "throwOnError:false, strict:false, trust:true",
+      "delimiters": [
+        "$$...$$（块级）",
+        "$...$（行内）",
+        "\\(...\\)（行内）",
+        "\\[...\\]（块级）"
+      ],
+      "extensions": {
+        "mhchem": "化学方程式/化学式渲染，使用$\\ce{}$语法，化学课程必加",
+        "physics": "物理符号快捷命令（\\vb矢量、\\dv导数、\\pdv偏导等），物理课程推荐"
+      },
+      "renderTiming": "DOMContentLoaded(300ms) + load(500ms) + 1500ms兜底 + 3000ms兜底 四重渲染；动态内容后setTimeout(renderMath,80ms)",
+      "symbolSupport": {
+        "math": "完整LaTeX数学符号支持（希腊字母、积分、求和、矩阵等）",
+        "physics": "矢量、微分、单位（正体）、物理常数等",
+        "chemistry": "化学式、化学方程式、反应条件、沉淀/气体符号、同位素等（需mhchem扩展）",
+        "redRule": "禁止直接使用Unicode数学/科学符号，必须用LaTeX命令在$...$内书写"
+      }
+    },
+    "topicExclusionSystem": {
+      "description": "用户可一键标记不考的知识点，相关概念精讲、例题、变式、小测、知识图谱节点、题库题目联动隐藏，进度自动修正",
+      "uiEntry": "每个知识点标题hover显示🚫不考按钮；Header有🚫不考项管理按钮（带红色角标计数）",
+      "htmlRequirements": {
+        "accordionItem": "每个.accordion-item必须有data-topic-id='c{N}'（与knowledgeGraph.id一致）",
+        "accordionHeader": "必须用<div role='button' tabindex='0'>而非<button>（内部嵌套屏蔽按钮，button不能嵌套button）",
+        "titleWrap": "标题用<span class='accordion-title-wrap'><span class='accordion-title-text'>标题</span></span>",
+        "excludeButton": "<button class='topic-exclude-btn' data-topic-id='c{N}' data-topic-name='名称' onclick='event.stopPropagation();excludeTopic(this)'>🚫 不考</button>",
+        "quizItems": "每道.quiz-item必须有data-topic-ids='c1,c2'（逗号分隔关联知识点）"
+      },
+      "visualFeedback": {
+        "excludedClass": ".accordion-item.excluded（opacity:0.5、删除线、虚线边框、不可点击）",
+        "badge": "🚫不考红色徽章+↩️撤销按钮",
+        "knowledgeMap": "kmap-node显示🚫图标、半透明、删除线、去学习按钮隐藏",
+        "quizItems": "[data-topic-excluded='true']隐藏"
+      },
+      "storage": "{SLUG}_excluded_topics，值为{topicId: {name, excludedAt}}对象",
+      "printBehavior": "打印时被屏蔽内容恢复显示（打印是全量备份）",
+      "manager": "模态框统一管理，支持单个恢复和全部恢复，Toast反馈"
     },
     "codePitfalls": [
       "字符串统一单引号，内部安全使用中文双引号",
-      "KaTeX数学模式中禁止中文（不用\\text{}）",
+      "KaTeX数学模式中禁止中文（不用\\text{}），中文放在数学模式外",
       "TreeWalker术语替换必须跳过.katex区域",
       "每个功能块用独立IIFE包裹避免全局污染",
       "新增功能用函数劫持（Monkey Patching）包裹原函数",
-      "所有动态内容展开后必须重渲染KaTeX"
+      "所有动态内容展开后必须重渲染KaTeX",
+      "禁止直接使用Unicode数学/科学符号（希腊字母、积分、箭头等），必须用LaTeX命令在$...$内书写",
+      "化学课程必须加载mhchem扩展，化学式用$\\ce{}$语法",
+      "物理单位必须用\\text{}包裹为正体，数字与单位间加小空格\\,",
+      "每个accordion-item必须加data-topic-id；accordion-header用div而非button；题库题目必须加data-topic-ids属性，否则屏蔽功能无法联动"
     ],
     "architecture": {
       "pattern": "单文件HTML应用",
@@ -385,6 +429,7 @@
     { "version": "v2.2", "changes": "参考材料收集机制（考点校准/来源标注）" },
     { "version": "v2.3", "changes": "例题驱动模式（五段式例题卡片）" },
     { "version": "v2.4", "changes": "配套小测（学完即练，答案折叠）" },
-    { "version": "v3.0", "changes": "学习应用化——7大学习科学系统完整落地：三层深度+自适应路径+间隔重复+错因分类+主动回忆强化+情感设计+全局进度" }
+    { "version": "v3.0", "changes": "学习应用化——7大学习科学系统完整落地：三层深度+自适应路径+间隔重复+错因分类+主动回忆强化+情感设计+全局进度" },
+    { "version": "v3.1", "changes": "全场景体验升级+符号显示修复+知识点屏蔽系统——纸质输出全场景+ScrollSpy+可行动Toast+着陆高亮+14个标准组件库+移动端底部导航+mhchem化学扩展+physics物理扩展+四重KaTeX渲染兜底+完整数学/物理/化学符号写法参考+系统九知识点屏蔽（用户可一键隐藏不考内容，联动隐藏概念/例题/题目，进度自动修正）" }
   ]
 }

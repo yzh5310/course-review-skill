@@ -1,47 +1,16 @@
-<!--
-  ╔══════════════════════════════════════════════════════════════════╗
-  ║  Course Review Skill v3.1 — 参考模板                               ║
-  ║                                                                    ║
-  ║  【这是什么？】                                                      ║
-  ║  这是一个功能完整的交互式复习应用参考模板，包含v3.1全部8大系统。        ║
-  ║  所有交互均可直接运行，带有示例数据供AI参考实现方式。                   ║
-  ║                                                                    ║
-  ║  【AI使用方式】                                                      ║
-  ║  1. 全局替换 高等数学2、calculus2 等占位符                  ║
-  ║  2. 替换 /* === DEMO DATA START === */ 到 /* === DEMO DATA END === */ ║
-  ║     之间的示例数据为真实课程内容                                       ║
-  ║  3. 根据课程类型增删模块（见SKILL.md"模块组合"章节）                    ║
-  ║  4. 不要删除任何工具函数（Toast/撒花/ScrollSpy/打印等）                ║
-  ║  5. 所有localStorage键名必须用calculus2_前缀                     ║
-  ║                                                                    ║
-  ║  【v3.1 八大系统】                                                    ║
-  ║  ① 三层深度选择器  ② 自适应学习路径  ③ 间隔重复  ④ 错因6分类           ║
-  ║  ⑤ 主动回忆强化    ⑥ 情感设计系统    ⑦ 全局进度  ⑧ 纸质输出与全场景     ║
-  ║                                                                    ║
-  ║  【必选模块】                                                        ║
-  ║  Header+深度选择器 / Sticky Nav+ScrollSpy / 一页纸+打印 / Footer      ║
-  ║  进度条 / Toast系统 / 暗黑模式                                        ║
-  ║                                                                    ║
-  ║  【技术红线】                                                        ║
-  ║  - 单文件HTML，零构建零后端，仅KaTeX CDN可选依赖                       ║
-  ║  - JS全部用IIFE避免全局污染                                           ║
-  ║  - 字符串用单引号，KaTeX用strict:false                                ║
-  ║  - 所有DOM查询跳过.katex区域                                          ║
-  ║  - 临时修改DOM必须有恢复逻辑（afterprint/transitionend+兜底）          ║
-  ║  - 触摸目标≥44px，正文移动端≥15px                                     ║
-  ⚑══════════════════════════════════════════════════════════════════╝
--->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>高等数学2 - 1天速通交互式复习方案</title>
+<title>课程名称 - 交互式复习方案</title>
 
-<!-- KaTeX（可选：数学/计算型课程启用，文科课程可删除） -->
+<!-- KaTeX（数学/计算型课程启用，文科课程可删除） -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<!-- 化学课程加：<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js"></script> -->
+<!-- 物理课程加：<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/physics.min.js"></script> -->
 
 <style>
 /* ============================================================
@@ -1220,13 +1189,15 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 
 <!-- ===================== HEADER ===================== -->
 <header class="hero">
-  <h1>高等数学2</h1>
-  <p class="subtitle">多元函数微积分 · 1天速通 · 从零基础到及格</p>
+  <h1 id="courseTitle">高等数学2</h1>
+  <p class="subtitle" id="courseSubtitle">多元函数微积分 · 1天速通 · 从零基础到及格</p>
+  <div id="schoolBadge" style="display:none;margin-bottom:10px;"></div>
 
   <div class="depth-selector" id="depthSelector">
     <button class="depth-btn" data-depth="survival">🆘 补考救命(60分)</button>
     <button class="depth-btn active" data-depth="standard">✅ 稳过及格(80分)</button>
     <button class="depth-btn" data-depth="advanced">🚀 冲刺高分(90+)</button>
+    <span class="countdown-badge" id="countdownBadge" style="display:none;"></span>
   </div>
 
   <div class="hero-actions">
@@ -1926,6 +1897,18 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 
 </main>
 
+<!-- ===================== 免责声明 ===================== -->
+<div class="disclaimer-section" style="margin:20px 20px 0;padding:20px;background:#fef3c7;border-radius:12px;border-left:4px solid #f59e0b;max-width:900px;margin-left:auto;margin-right:auto;">
+  <h3 style="margin:0 0 10px 0;color:#92400e;font-size:16px;">📌 使用须知</h3>
+  <ul style="margin:0;padding-left:20px;color:#78350f;font-size:13px;line-height:1.8;">
+    <li>本复习方案由AI辅助生成，仅供参考学习使用，不保证与实际考试100%重合。</li>
+    <li>建议结合老师课件、课堂笔记和平时作业综合复习，不要完全依赖本方案。</li>
+    <li>往年题/例题来源已标注，未标注内容为基于通用知识的总结。</li>
+    <li>如有发现错误或内容过时，欢迎反馈以便持续改进。</li>
+    <li>祝考试顺利，一次过！💪</li>
+  </ul>
+</div>
+
 <!-- ===================== Footer ===================== -->
 <footer>
   <div class="psych-tips">
@@ -1933,7 +1916,6 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
     <p><strong>💡 考前最后提醒：</strong></p>
     <p>深呼吸3次，吸气4秒-屏息4秒-呼气6秒。你已经复习了最核心的考点，及格绝对没问题。</p>
     <p>遇到不会的题先跳过，把会做的都做对就赢了。计算时每一步都写清楚，不要跳步。加油！💪</p>
-    <p style="margin-top:16px;font-size:12px;opacity:0.7;">高等数学2 · 1天速通交互式复习方案 · v4.0（含AI出题助手）</p>
   </div>
 </footer>
 
@@ -2118,8 +2100,17 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 (function(){
 'use strict';
 
-// ==================== 配置 ====================
-var SLUG = 'calculus2';
+// ==================== 课程元信息配置（v4.2新增） ====================
+var COURSE_META = {
+  courseName: '高等数学2',
+  courseSlug: 'calculus2',
+  school: '',           // 学校名（可选，填写后Header显示专属徽章）
+  major: '',            // 专业名（可选）
+  studentName: '',      // 使用者姓名（可选，填写后欢迎页显示）
+  examDate: '',         // 考试日期 YYYY-MM-DD（可选，填写后显示倒计时）
+  version: '1.0'
+};
+var SLUG = COURSE_META.courseSlug;
 var LS = function(key){ return SLUG + '_' + key; };
 
 /* === DEMO DATA START — AI替换此区域为真实课程数据 === */
@@ -4246,6 +4237,107 @@ window.addEventListener('load', function(){
 
 // v4.0: 将AI助手暴露到全局作用域，供HTML onclick使用
 window.AIAssistant = AIAssistant;
+
+// ==================== v4.2 个性化字段初始化 ====================
+(function(){
+  if(COURSE_META.courseName) {
+    document.title = COURSE_META.courseName + ' - 交互式复习方案';
+    var t = document.getElementById('courseTitle');
+    if(t) t.textContent = COURSE_META.courseName;
+  }
+  if(COURSE_META.school) {
+    var badge = document.getElementById('schoolBadge');
+    if(badge) {
+      var badgeText = '📘 ' + COURSE_META.school;
+      if(COURSE_META.major) badgeText += '·' + COURSE_META.major;
+      badge.innerHTML = '<span style="display:inline-block;padding:4px 14px;background:rgba(255,255,255,0.2);border-radius:999px;font-size:12px;color:white;">' + badgeText + '</span>';
+      badge.style.display = 'block';
+    }
+  }
+})();
+
+// ==================== v4.2 考试倒计时 ====================
+(function(){
+  if(!COURSE_META.examDate) return;
+  var el = document.getElementById('countdownBadge');
+  if(!el) return;
+  function update() {
+    var exam = new Date(COURSE_META.examDate + 'T09:00:00');
+    var now = new Date();
+    var diff = Math.ceil((exam - now) / (1000*60*60*24));
+    el.style.display = 'inline-block';
+    el.style.padding = '6px 14px';
+    el.style.borderRadius = '999px';
+    el.style.fontSize = '13px';
+    el.style.fontWeight = '600';
+    el.style.marginLeft = '10px';
+    el.style.animation = 'none';
+    if(diff > 7) {
+      el.innerHTML = '📅 距考试还有 <b>' + diff + '</b> 天';
+      el.style.background = '#dcfce7'; el.style.color = '#166534';
+    } else if(diff > 3) {
+      el.innerHTML = '⏰ 距考试还有 <b>' + diff + '</b> 天';
+      el.style.background = '#fef3c7'; el.style.color = '#92400e';
+    } else if(diff > 0) {
+      el.innerHTML = '🔥 距考试还有 <b>' + diff + '</b> 天！';
+      el.style.background = '#fee2e2'; el.style.color = '#991b1b';
+      el.style.animation = 'pulse 1.5s infinite';
+    } else if(diff === 0) {
+      el.innerHTML = '✍️ 今天考试，加油！';
+      el.style.background = '#dc2626'; el.style.color = 'white';
+    } else {
+      el.innerHTML = '✅ 考试已结束';
+      el.style.background = '#e5e7eb'; el.style.color = '#6b7280';
+    }
+  }
+  update();
+  setInterval(update, 60*60*1000);
+})();
+
+// ==================== v4.2 首次使用欢迎浮层 ====================
+(function(){
+  var WELCOME_KEY = SLUG + '_welcomed';
+  if(localStorage.getItem(WELCOME_KEY)) return;
+  var overlay = document.createElement('div');
+  overlay.className = 'welcome-overlay';
+  var welcomeSubtitle = COURSE_META.studentName ? '为' + COURSE_META.studentName + '准备的复习方案' : '选择你的目标档位，系统会自动推荐最适合你的复习路径';
+  overlay.innerHTML = '<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;">' +
+    '<div style="background:var(--card);color:var(--text);border-radius:20px;padding:32px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">' +
+    '<div style="font-size:48px;margin-bottom:16px;">🎓</div>' +
+    '<h2 style="margin:0 0 8px 0;font-size:22px;">欢迎使用交互式复习方案</h2>' +
+    '<p style="color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 24px 0;">' + welcomeSubtitle + '。所有进度自动保存，随时可以继续。</p>' +
+    '<div style="text-align:left;background:var(--bg);border-radius:12px;padding:16px;margin-bottom:20px;font-size:13px;line-height:1.8;">' +
+    '<div>🆘 <b>补考救命</b>：只学最核心考点</div>' +
+    '<div>✅ <b>稳过及格</b>：核心+变式+陷阱</div>' +
+    '<div>🚀 <b>冲刺高分</b>：全部内容含难题</div>' +
+    '</div>' +
+    '<button id="welcomeStartBtn" style="width:100%;padding:14px;background:linear-gradient(135deg,#7c3aed,#2563eb);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;">开始复习 →</button>' +
+    '</div></div>';
+  document.body.appendChild(overlay);
+  var btn = overlay.querySelector('#welcomeStartBtn');
+  btn.addEventListener('click', function(){
+    overlay.remove();
+    localStorage.setItem(WELCOME_KEY, '1');
+    if(typeof showToast === 'function') showToast('开始复习吧！💪');
+  });
+})();
+
+// ==================== v4.2 截图预览模式（URL加?preview=1展开所有内容） ====================
+(function(){
+  var isPreview = location.search.indexOf('preview=1') !== -1 || location.hash.indexOf('preview') !== -1;
+  if(!isPreview) return;
+  document.querySelectorAll('.accordion-item').forEach(function(item){
+    item.classList.add('active');
+    var content = item.querySelector('.accordion-content');
+    if(content) content.style.maxHeight = content.scrollHeight + 'px';
+  });
+  var w = document.querySelector('.welcome-overlay');
+  if(w) w.remove();
+  var badge = document.createElement('div');
+  badge.style.cssText = 'position:fixed;top:10px;right:10px;background:#7c3aed;color:white;padding:4px 12px;border-radius:6px;font-size:11px;z-index:9999;';
+  badge.textContent = '📸 截图预览模式';
+  document.body.appendChild(badge);
+})();
 
 })();
 </script>
