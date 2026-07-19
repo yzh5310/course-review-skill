@@ -1,86 +1,34 @@
-# Course Review Skill v3.1 — 学习科学驱动的课程速通复习应用生成器
+# Course Review Skill v5.1
 
-> **版本**: v3.1.0 | **核心理念**: 不是文档，是学习应用。精准急救，而非全面灌输。
+The authoritative entrypoint is `SKILL.md`. Read it before generating or modifying a course review application.
 
----
+Load only the references required by the task:
 
-## 快速指引
+- Path, evidence, coverage, or mastery decisions: `references/path-generation.md`
+- Learning memory and migration: `references/learning-profile.md`
+- External-AI question prompts or imports: `references/question-generation.md`
+- Course-specific learning loops: `references/course-profiles.md`
+- UI and accessibility: `references/accessibility.md`
+- HTML/JavaScript implementation: `references/implementation-guardrails.md`
+- Generated artifact contract and release gate: `references/output-contract.md`
 
-本skill的**完整权威文档是 `SKILL.md`**，请阅读该文件获取所有设计指南、代码示例、符号写法参考和最佳实践。本文档提供快速摘要。
+Use `schemas/learning-profile.schema.json`, `schemas/question.schema.json`, and `schemas/review-plan.schema.json` as normative data contracts.
 
-## v3.1 九大核心原则
+Mandatory boundaries:
 
-1. **9大学习科学理论系统融合**（而非仅费曼法）：费曼学习法+主动回忆+间隔重复+最近发展区+认知负荷理论+掌握学习+元认知+自我效能感+情境认知
-2. **精准急救而非全面灌输**：考前冲刺工具，诊断前置，优先攻克阻塞点
-3. **学习应用而非静态文档**：单文件HTML应用，零构建零后端，12+localStorage持久化
-4. **三层深度选择器**：🆘补考救命(60分)/✅稳过及格(80分)/🚀冲刺高分(90+)，基于最近发展区理论
-5. **自适应学习路径引擎**：知识图谱+前置依赖+微检测门控+四色状态+撒花庆祝
-6. **例题驱动七段式**：题目→思路引导→分步解题(结果遮挡)→知识提炼→变式→配套小测
-7. **错因6分类元认知系统**：概念误解/公式记错/计算失误/方法选错/审题失误/前置薄弱，每类配精准补救路径
-8. **情感设计降低焦虑**：撒花庆祝+Toast通知+CTA脉冲+页脚心理建设+零基础友好
-9. **纸质输出与全场景陪伴（v3.1新增）**：一页纸打印+移动端适配+进度导入导出+ScrollSpy导航+可行动Toast
-10. **知识点屏蔽系统（v3.1新增）**：用户可一键标记不考知识点，相关概念/例题/题目联动隐藏，进度自动修正，知识图谱标记🚫不考
+1. Do not predict scores or promise a pass.
+2. Do not call inferred content high-frequency, must-test, or predicted.
+3. Do not require teacher review; this version produces personal practice material.
+4. Do not mark mastery from one answer.
+5. Keep unverified AI questions practice-only.
+6. Preview and minimize data before copying a prompt to an external AI.
+7. Preserve attempt history when a wrongbook item is resolved.
+8. Embed `#courseReviewContract` and keep it synchronized with visible evidence, coverage, and the next action.
+9. Do not deliver a generated artifact until its output validator passes.
 
-## 数学/物理/化学符号显示重要提醒（v3.1修复）
+Validate repository changes with:
 
-**符号显示问题已修复**，但必须遵守以下规则：
-1. **禁止直接打Unicode数学符号**：希腊字母(αβγΔΣΩ)、数学符号(∂∫∑√∞≠≈≤≥×→∵∴)、单位(℃°μΩ)等必须用LaTeX命令写在`$...$`内
-2. **正确示例**：`$\alpha$`、`$\int_0^1 f(x)\,dx$`、`$\ce{H2O}$`、`$v = 5\,\text{m/s}$`
-3. **化学课程必加**：加载mhchem扩展，化学式/方程式用`$\ce{}$`语法（如`$\ce{2H2 + O2 -> 2H2O}$`）
-4. **物理课程推荐**：加载physics扩展，矢量用`$\vb{F}$`、导数用`$\dv{y}{x}$`
-5. **KaTeX四重渲染兜底**：DOMContentLoaded(300ms) + load(500ms) + 1500ms + 3000ms，确保CDN慢时也能渲染
-6. **完整符号写法参考**：详见SKILL.md"数学/物理/化学符号完整写法参考"章节（含数学/物理/化学三张速查表+问题排查表）
-
-## 知识点屏蔽系统使用规范（v3.1新增）
-
-1. 每个accordion-item必须加`data-topic-id="c{N}"`（与knowledgeGraph的id一致）
-2. accordion-header必须用`<div role="button" tabindex="0">`而非`<button>`（内部嵌套屏蔽按钮，button不能嵌套button）
-3. 标题用`<span class="accordion-title-wrap"><span class="accordion-title-text">标题</span></span>`包裹
-4. 添加屏蔽按钮：`<button class="topic-exclude-btn" data-topic-id="c{N}" data-topic-name="名称" onclick="event.stopPropagation();excludeTopic(this)">🚫 不考</button>`
-5. 题库题目必须加`data-topic-ids="c1,c2"`属性关联知识点，否则屏蔽时无法联动隐藏相关题目
-6. Header按钮位置：hero-actions中"🌙 夜间模式"之后添加🚫不考项管理按钮（带红色角标计数）
-7. 用户操作：悬停知识点标题点"🚫不考"即可屏蔽，点"↩️撤销"恢复，Header"🚫不考项"打开管理面板
-8. 打印时被屏蔽内容自动恢复显示
-
-## 必选模块
-
-- 新手引导区（零基础安抚+学习路径+口诀）
-- 知识盲区诊断（6题前置测试→盲区报告）
-- 核心内容精讲（例题驱动七段式 / 概念卡片，每个知识点支持屏蔽）
-- 考前自测清单（12项能力检查）
-- 考前一页纸（翻转卡片+随机抽测+划词摘录+打印模式）
-- KaTeX增强配置（含mhchem+physics扩展+四重兜底渲染）
-- 知识点屏蔽系统（用户自定义考试范围）
-
-## 推荐页面流程
-
-Header(深度选择器+不考项管理) → Sticky导航(ScrollSpy) → AI免责声明(无材料时) → 新手引导 → 诊断 → 自适应路径(含不考节点标记) → 依赖树(计算型) → 统一性主线(计算型) → 核心精讲(手风琴，每个知识点可屏蔽) → 公式速查 → 陷阱库 → 题库刷题(多模式+错题本+间隔重复，屏蔽题目自动过滤) → 自测清单 → 一页纸(打印模式) → Footer(心理建设)
-
-## 代码生成红线（28条，详见SKILL.md）
-
-1. 字符串统一单引号，内部安全使用中文双引号
-2. KaTeX配置 `strict:false`、`trust:true`，数学模式中禁中文
-3. **禁止直接使用Unicode数学/科学符号，必须用LaTeX命令在$...$内书写**（v3.1新增红线）
-4. TreeWalker术语替换必须跳过 `.katex` 区域
-5. IIFE模块化避免全局污染
-6. 函数劫持(Monkey Patching)扩展功能，不破坏原函数
-7. 动态内容展开后必须 `setTimeout(renderMath, 80)` 重渲染公式（传入具体root元素）
-8. **化学课程必须加载mhchem扩展，化学式用`$\ce{}$`语法**（v3.1新增）
-9. **物理单位必须用`\text{}`包裹为正体，数字与单位间加`\,`小空格**（v3.1新增）
-10. 单个自包含HTML文件，零外部依赖（除KaTeX CDN及其扩展）
-11. 打印必须双保险恢复（afterprint+15s兜底）
-12. 移动端正文≥15px，触摸目标≥44×44px
-13. localStorage必须加前缀，读写try-catch包裹
-14. Canvas必须处理devicePixelRatio，仅冲刺档加载
-15. 撒花每次40片，上限50片
-16. IIFE结尾必须加分号
-17. **每个accordion-item必须加data-topic-id；accordion-header用div而非button；题库题目必须加data-topic-ids属性，否则屏蔽功能无法联动**（v3.1新增红线）
-18. 术语词典TreeWalker必须跳过表单元素（label/input/textarea等）
-
-## 第一步：收集参考材料（必须执行）
-
-生成复习方案前，**必须先询问用户**是否有：往年试卷/期末卷、平时作业、上课课件、教学大纲等参考材料。有材料时以材料为准校准考点；无材料时添加显著AI免责声明。
-
----
-
-**完整设计指南、代码示例、模块详解、符号速查表、屏蔽系统详细规范请阅读 `SKILL.md`。**
+```bash
+python scripts/validate_repo.py
+python scripts/validate_output.py path/to/generated-review.html
+```

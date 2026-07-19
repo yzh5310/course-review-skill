@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yzh5310/course-review-skill/schemas/learning-profile.schema.json",
+  "title": "Course Review Learning Profile",
+  "type": "object",
+  "required": ["version", "course", "evidence", "coverageMode", "concepts", "attempts", "errorHistory", "preferences"],
+  "properties": {
+    "version": { "const": 1 },
+    "course": {
+      "type": "object",
+      "required": ["name", "slug"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "type": { "type": "string" },
+        "examDate": { "type": ["string", "null"], "format": "date" }
+      },
+      "additionalProperties": true
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["level", "summary"],
+      "properties": {
+        "level": { "enum": ["exam-grounded", "course-grounded", "generic"] },
+        "summary": { "type": "string" },
+        "sources": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              {
+                "type": "object",
+                "required": ["type", "label"],
+                "properties": {
+                  "type": { "enum": ["past-paper", "scope", "rubric", "slide", "assignment", "textbook", "topic-list", "other"] },
+                  "label": { "type": "string", "minLength": 1 }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "coverageMode": { "enum": ["minimum-core", "standard-coverage", "extended-improvement"] },
+    "timeBudget": {
+      "type": "object",
+      "properties": {
+        "remainingMinutes": { "type": ["integer", "null"], "minimum": 0 },
+        "dailyMinutes": { "type": ["integer", "null"], "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "concepts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["name", "state", "attempts", "independentCorrect", "hintUses", "recentResults", "independentSuccessTimes", "confirmedErrors"],
+        "properties": {
+          "name": { "type": "string" },
+          "state": { "enum": ["unseen", "learning", "unstable", "provisional", "mastered", "excluded", "insufficient-data"] },
+          "attempts": { "type": "integer", "minimum": 0 },
+          "firstAttemptCorrect": { "type": "integer", "minimum": 0 },
+          "independentCorrect": { "type": "integer", "minimum": 0 },
+          "hintUses": { "type": "integer", "minimum": 0 },
+          "recentResults": { "type": "array", "maxItems": 10, "items": { "type": "boolean" } },
+          "independentSuccessTimes": { "type": "array", "maxItems": 10, "items": { "type": "integer", "minimum": 0 } },
+          "lastPracticedAt": { "type": ["integer", "null"], "minimum": 0 },
+          "confidence": { "enum": ["unknown", "low", "medium", "high"] },
+          "confirmedErrors": {
+            "type": "object",
+            "propertyNames": { "enum": ["concept", "formula", "calc", "method", "read", "prereq", "unknown"] },
+            "additionalProperties": { "type": "integer", "minimum": 0 }
+          },
+          "stateEvidence": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "attempts": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "required": ["questionId", "conceptIds", "correct", "hintUsed", "sourceBasis", "affectsMastery", "timestamp"],
+        "properties": {
+          "questionId": { "type": "string" },
+          "conceptIds": { "type": "array", "items": { "type": "string" }, "maxItems": 3 },
+          "correct": { "type": "boolean" },
+          "firstAttempt": { "type": "boolean" },
+          "hintUsed": { "type": "boolean" },
+          "difficulty": { "enum": ["easy", "medium", "hard", "unknown"] },
+          "sourceBasis": { "enum": ["source", "derived", "generic", "ai-import"] },
+          "affectsMastery": { "type": "boolean" },
+          "suggestedErrorCategory": { "type": ["string", "null"] },
+          "userConfirmedErrorCategory": { "type": ["string", "null"] },
+          "timestamp": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "errorHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["questionId", "conceptIds", "category", "timestamp"],
+        "properties": {
+          "questionId": { "type": "string" },
+          "conceptIds": { "type": "array", "items": { "type": "string" }, "maxItems": 3 },
+          "category": { "type": "string" },
+          "affectsMastery": { "type": "boolean" },
+          "timestamp": { "type": "integer", "minimum": 0 },
+          "migrated": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "reviewSchedule": { "type": "object" },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "feedbackMode": { "enum": ["quiet", "encouraging", "sprint"] },
+        "shareRawWrongQuestions": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "migration": { "type": "object" }
+  },
+  "additionalProperties": false
+}
