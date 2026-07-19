@@ -65,6 +65,7 @@ Ask the external AI to generate and then independently solve each question. Self
 ## Feedback loop safety
 
 - An AI question cannot alone mark a concept mastered.
+- Record an external-AI attempt with `affectsMastery:false`; correctness and selected error categories must not change concept evidence or error-history targeting even after repeated use.
 - An AI-suggested error category cannot become confirmed memory automatically.
 - Removing an item from the wrongbook must not delete its attempt history.
 - Low-confidence questions cannot lock or unlock prerequisites.

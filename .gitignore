@@ -19,6 +19,9 @@ dist/
 build/
 *.min.js
 *.min.css
+__pycache__/
+*.py[cod]
+output/playwright/
 
 # Logs
 *.log

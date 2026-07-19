@@ -72,6 +72,8 @@ Use multiple signals. One correct micro-question is insufficient for stable mast
 
 Consider first-attempt correctness, hint use, recent results, recency, confidence when available, and performance on a variation.
 
+In the reference implementation, require at least two independent successes separated by 5 minutes for `provisional`, and at least three separated across a 30-minute window for `mastered`. These are minimum guards, not proof of durable long-term retention.
+
 ## Output contract
 
 For every generated path, include:

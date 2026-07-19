@@ -39,6 +39,7 @@ Track at least:
 - independent correct count;
 - hint-use count;
 - recent results;
+- timestamps for independent successes used to verify delayed retrieval;
 - last-practiced time;
 - confirmed error-category counts;
 - current mastery state;
@@ -55,10 +56,15 @@ Record an attempt after the result is known. Include:
 - first-attempt flag;
 - hint use;
 - difficulty and source basis;
+- whether the event is eligible to affect mastery;
 - timestamp;
 - suggested and user-confirmed error categories separately.
 
 AI-suggested error categories must not become confirmed memory without user confirmation or repeated behavioral evidence.
+
+Require a time gap between independent successes before raising mastery state. The reference template uses at least 5 minutes for `provisional` and 30 minutes for `mastered`; never compress three immediate answers into stable mastery.
+
+Set `affectsMastery` to `false` for every external-AI question attempt. Preserve the attempt event and the learner's selected category for transparency, but do not update concept attempts, independent-correct counts, recent results, confirmed concept-error counts, error-history targeting, or mastery state from that event.
 
 ## Migration
 

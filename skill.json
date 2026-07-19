@@ -1,7 +1,7 @@
 {
   "name": "course-review",
-  "version": "5.0.0",
-  "description": "Evidence-aware, time-constrained course review application generator with canonical learning memory and privacy-aware external-AI practice generation.",
+  "version": "5.1.0",
+  "description": "Evidence-aware, time-constrained course review application generator with a machine-readable output contract, deterministic release validation, canonical learning memory, and privacy-aware external-AI practice generation.",
   "author": "SOLO AI Assistant",
   "license": "MIT",
   "targetAudience": {
@@ -66,13 +66,24 @@
     "previewBeforeSharing": true,
     "anonymousByDefault": true
   },
+  "generatedOutputContract": {
+    "schema": "schemas/review-plan.schema.json",
+    "manifestId": "courseReviewContract",
+    "validator": "python scripts/validate_output.py <generated-review.html>",
+    "releaseGate": true
+  },
   "references": [
     "references/path-generation.md",
     "references/learning-profile.md",
     "references/question-generation.md",
     "references/course-profiles.md",
     "references/accessibility.md",
-    "references/implementation-guardrails.md"
+    "references/implementation-guardrails.md",
+    "references/output-contract.md"
   ],
-  "validation": "python scripts/validate_repo.py"
+  "validation": {
+    "repository": "python scripts/validate_repo.py",
+    "generatedOutput": "python scripts/validate_output.py <generated-review.html>",
+    "regression": "python scripts/test_validate_output.py"
+  }
 }

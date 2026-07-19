@@ -346,6 +346,8 @@ body.dark .diag-opt.wrong { color: #fecaca; }
 }
 .kmap-name { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
 .kmap-ch { font-size: 12px; color: var(--muted); }
+.kmap-reason { margin-top: 7px; font-size: 11px; line-height: 1.45; color: var(--text-soft); text-align: left; }
+.kmap-uncertainty { margin-top: 3px; font-size: 11px; line-height: 1.4; color: var(--muted); text-align: left; }
 .kmap-action {
   margin-top: 8px; width: 100%;
   padding: 6px; font-size: 12px; border-radius: var(--radius-sm);
@@ -1237,6 +1239,18 @@ body[data-feedback-mode="quiet"] .srs-due-indicator { animation: none !important
 
 <main>
 
+<!-- 每个生成产物都必须保留并同步此即时行动卡；产物校验器会与合规清单交叉检查。 -->
+<section class="card" id="nextActionCard" data-objective-id="c1" data-duration-minutes="8" style="border:2px solid var(--primary);background:linear-gradient(135deg,var(--card),var(--primary-light));">
+  <div style="display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:12px;font-weight:800;color:var(--primary);letter-spacing:.08em;text-transform:uppercase;">现在只做这一件事 · 8分钟</div>
+      <h2 style="margin:6px 0 4px;font-size:20px;">完成多元函数极限基础检测</h2>
+      <p style="margin:0;color:var(--text-soft);font-size:14px;">先取得一条真实学习证据，再决定后续覆盖范围；本任务不用于预测考试分数。</p>
+    </div>
+    <button class="btn btn-primary" onclick="scrollToSection('diagnostic')">开始8分钟检测 →</button>
+  </div>
+</section>
+
 <!-- ===================== 1. 新手引导 ===================== -->
 <section class="card" id="beginner">
   <h2><span class="emoji">🌱</span>零基础？从这里开始！</h2>
@@ -1913,7 +1927,8 @@ body[data-feedback-mode="quiet"] .srs-due-indicator { animation: none !important
 <!-- ===================== 免责声明 ===================== -->
 <div class="disclaimer-section" style="margin:20px 20px 0;padding:20px;background:#fef3c7;border-radius:12px;border-left:4px solid #f59e0b;max-width:900px;margin-left:auto;margin-right:auto;">
   <h3 style="margin:0 0 10px 0;color:#92400e;font-size:16px;">📌 使用须知</h3>
-  <p id="evidenceNotice" style="margin:0 0 8px;color:#78350f;font-size:13px;font-weight:700;">证据等级将在应用启动后显示。</p>
+  <p id="evidenceNotice" data-evidence-level="generic" style="margin:0 0 8px;color:#78350f;font-size:13px;font-weight:700;">证据等级：通用知识推测。当前模板未绑定试卷或课程资料，考试相关性未知。</p>
+  <p id="coverageNotice" data-coverage-mode="standard-coverage" style="margin:0 0 8px;color:#78350f;font-size:13px;">覆盖模式：标准覆盖路径。可根据剩余时间切换，但不对应分数承诺。</p>
   <ul style="margin:0;padding-left:20px;color:#78350f;font-size:13px;line-height:1.8;">
     <li>本复习方案由AI辅助生成，仅供参考学习使用，不保证与实际考试100%重合。</li>
     <li>建议结合老师课件、课堂笔记和平时作业综合复习，不要完全依赖本方案。</li>
@@ -2111,15 +2126,131 @@ body[data-feedback-mode="quiet"] .srs-due-indicator { animation: none !important
   <div class="micro-quiz-box" id="microQuizBox"></div>
 </div>
 
+<script type="application/json" id="courseReviewContract">
+{
+  "contractVersion": "1.0",
+  "skill": { "name": "course-review", "version": "5.1.0" },
+  "course": { "name": "高等数学2", "slug": "calculus2" },
+  "evidence": {
+    "level": "generic",
+    "summary": "当前模板未绑定试卷或课程资料，考试相关性未知。",
+    "sources": []
+  },
+  "coverage": { "mode": "standard-coverage", "remainingMinutes": null },
+  "path": {
+    "objectives": [
+      {
+        "id": "c1",
+        "title": "多元函数极限",
+        "priorityReason": "建立多元微积分的基础语言，并为后续偏导和积分区域判断提供前置框架。",
+        "evidenceBasis": "通用学科依赖结构",
+        "uncertainty": "未绑定本课程资料，实际考试相关性未知。",
+        "prerequisiteIds": []
+      },
+      {
+        "id": "c2",
+        "title": "偏导数",
+        "priorityReason": "连接多元函数变化率、全微分和极值判定，具有较高的前置杠杆。",
+        "evidenceBasis": "通用学科依赖结构",
+        "uncertainty": "未绑定本课程资料，题型和难度未知。",
+        "prerequisiteIds": ["c1"]
+      },
+      {
+        "id": "c3",
+        "title": "全微分",
+        "priorityReason": "巩固偏导之间的组合关系，并支持近似计算和后续综合应用。",
+        "evidenceBasis": "通用学科依赖结构",
+        "uncertainty": "未绑定本课程资料，实际权重未知。",
+        "prerequisiteIds": ["c2"]
+      },
+      {
+        "id": "c4",
+        "title": "多元极值",
+        "priorityReason": "综合使用偏导和二阶信息，帮助学习者形成从计算到判别的完整步骤。",
+        "evidenceBasis": "通用学科依赖结构",
+        "uncertainty": "未绑定本课程资料，考查深度和题型未知。",
+        "prerequisiteIds": ["c3"]
+      },
+      {
+        "id": "c5",
+        "title": "二重积分(直角坐标)",
+        "priorityReason": "建立积分区域、次序和累次积分的基础框架，为坐标变换提供参照。",
+        "evidenceBasis": "通用学科依赖结构",
+        "uncertainty": "未绑定本课程资料，区域类型和计算要求未知。",
+        "prerequisiteIds": ["c1"]
+      },
+      {
+        "id": "c6",
+        "title": "二重积分(极坐标)",
+        "priorityReason": "在直角坐标积分基础上学习圆形区域的坐标选择和面积元素变换。",
+        "evidenceBasis": "通用学科依赖结构",
+        "uncertainty": "未绑定本课程资料，坐标变换权重未知。",
+        "prerequisiteIds": ["c5"]
+      },
+      {
+        "id": "c7",
+        "title": "三重积分",
+        "priorityReason": "把区域描述与坐标变换迁移到三维，需要先稳定掌握二重积分框架。",
+        "evidenceBasis": "通用学科依赖结构",
+        "uncertainty": "未绑定本课程资料，柱面或球面坐标要求未知。",
+        "prerequisiteIds": ["c6"]
+      },
+      {
+        "id": "c8",
+        "title": "曲线积分",
+        "priorityReason": "整合参数化、方向和区域关系，适合在基础计算框架形成后学习。",
+        "evidenceBasis": "通用学科依赖结构",
+        "uncertainty": "未绑定本课程资料，格林公式及综合题要求未知。",
+        "prerequisiteIds": ["c7"]
+      }
+    ],
+    "nextAction": {
+      "objectiveId": "c1",
+      "label": "完成多元函数极限基础检测",
+      "durationMinutes": 8
+    },
+    "cutoffRule": "时间不足时先完成前置概念和代表性练习，跳过扩展难题并保留复测时间。"
+  },
+  "learningMemory": {
+    "storageKeySuffix": "learning_profile",
+    "masteryRequiresMultipleSignals": true,
+    "singleAnswerCanMaster": false,
+    "provisionalGapMinutes": 5,
+    "stableGapMinutes": 30
+  },
+  "externalAI": {
+    "enabled": true,
+    "practiceOnly": true,
+    "teacherReviewed": false,
+    "promptPreviewRequired": true,
+    "anonymousByDefault": true,
+    "affectsMastery": false
+  },
+  "claims": {
+    "scorePrediction": false,
+    "passGuarantee": false,
+    "inferredFrequencyClaims": false
+  }
+}
+</script>
+
 <script>
 /* ============================================================
-   Course Review Skill v3.1 — 核心JS
+   Course Review Skill v5.1 — 核心JS
    所有功能用IIFE封装，避免全局污染
    ============================================================ */
 (function(){
 'use strict';
 
-// ==================== 课程元信息配置（v4.2新增） ====================
+var REVIEW_CONTRACT = (function(){
+  try {
+    return JSON.parse(document.getElementById('courseReviewContract').textContent);
+  } catch(e) {
+    return { evidence:{ sources:[] }, path:{ objectives:[] } };
+  }
+})();
+
+// ==================== 课程元信息配置 ====================
 var COURSE_META = {
   courseName: '高等数学2',
   courseSlug: 'calculus2',
@@ -2128,13 +2259,14 @@ var COURSE_META = {
   chapters: '第1章至第8章',
   evidenceLevel: 'generic', // exam-grounded / course-grounded / generic
   evidenceSummary: '当前模板未绑定试卷或课程资料，考试相关性未知。',
+  evidenceSources: REVIEW_CONTRACT.evidence.sources,
   coverageMode: 'standard-coverage',
   remainingMinutes: null,
   school: '',           // 学校名（可选，填写后Header显示专属徽章）
   major: '',            // 专业名（可选）
   studentName: '',      // 使用者姓名（可选，填写后欢迎页显示）
   examDate: '',         // 考试日期 YYYY-MM-DD（可选，填写后显示倒计时）
-  version: '5.0'
+  version: '5.1'
 };
 var SLUG = COURSE_META.courseSlug;
 var LS = function(key){ return SLUG + '_' + key; };
@@ -2352,6 +2484,8 @@ function escapeHTML(value){
 var LearningMemory = (function(){
   var PROFILE_KEY = 'learning_profile';
   var MAX_ATTEMPTS = 500;
+  var PROVISIONAL_MASTERY_GAP_MS = 5 * 60 * 1000;
+  var STABLE_MASTERY_GAP_MS = 30 * 60 * 1000;
   var ERROR_KEYS = ['concept','formula','calc','method','read','prereq','unknown'];
 
   function emptyErrors(){
@@ -2362,7 +2496,7 @@ var LearningMemory = (function(){
     return {
       name: name || '', state: 'unseen', attempts: 0,
       firstAttemptCorrect: 0, independentCorrect: 0, hintUses: 0,
-      recentResults: [], lastPracticedAt: null, confidence: 'unknown',
+      recentResults: [], independentSuccessTimes: [], lastPracticedAt: null, confidence: 'unknown',
       confirmedErrors: emptyErrors(), stateEvidence: []
     };
   }
@@ -2379,7 +2513,7 @@ var LearningMemory = (function(){
       evidence: {
         level: COURSE_META.evidenceLevel || 'generic',
         summary: COURSE_META.evidenceSummary || '',
-        sources: []
+        sources: COURSE_META.evidenceSources || []
       },
       coverageMode: COURSE_META.coverageMode || 'standard-coverage',
       timeBudget: { remainingMinutes: COURSE_META.remainingMinutes || null, dailyMinutes: null },
@@ -2418,6 +2552,11 @@ var LearningMemory = (function(){
     if(!profile || profile.version !== 1) return migrateLegacy();
     profile.concepts = profile.concepts || {};
     profile.attempts = Array.isArray(profile.attempts) ? profile.attempts : [];
+    profile.attempts.forEach(function(attempt){
+      if(typeof attempt.affectsMastery !== 'boolean'){
+        attempt.affectsMastery = attempt.sourceBasis !== 'ai-import';
+      }
+    });
     profile.errorHistory = Array.isArray(profile.errorHistory) ? profile.errorHistory : [];
     profile.preferences = profile.preferences || { feedbackMode:'encouraging', shareRawWrongQuestions:false };
     profile.evidence = profile.evidence || { level:'generic', summary:'', sources:[] };
@@ -2425,11 +2564,18 @@ var LearningMemory = (function(){
       if(!profile.concepts[node.id]) profile.concepts[node.id] = emptyConcept(node.name);
       profile.concepts[node.id].name = node.name;
       if(!profile.concepts[node.id].confirmedErrors) profile.concepts[node.id].confirmedErrors = emptyErrors();
+      if(!Array.isArray(profile.concepts[node.id].independentSuccessTimes)){
+        profile.concepts[node.id].independentSuccessTimes = [];
+      }
     });
     return profile;
   }
 
-  function get(){ return normalize(lsGet(PROFILE_KEY, null)); }
+  function get(){
+    var profile = normalize(lsGet(PROFILE_KEY, null));
+    lsSet(PROFILE_KEY, profile);
+    return profile;
+  }
   function save(profile){ lsSet(PROFILE_KEY, normalize(profile)); }
 
   function conceptIdsFor(question){
@@ -2447,11 +2593,13 @@ var LearningMemory = (function(){
     if(concept.state === 'excluded') return;
     if(concept.attempts === 0){ concept.state = 'unseen'; return; }
     var recent = concept.recentResults || [];
+    var successTimes = concept.independentSuccessTimes || [];
+    var successSpan = successTimes.length > 1 ? successTimes[successTimes.length-1] - successTimes[0] : 0;
     if(recent.length && recent[recent.length-1] === false){ concept.state = 'unstable'; return; }
-    if(concept.independentCorrect >= 3 && recent.slice(-3).length === 3 && recent.slice(-3).every(Boolean)){
+    if(concept.independentCorrect >= 3 && successSpan >= STABLE_MASTERY_GAP_MS && recent.slice(-3).length === 3 && recent.slice(-3).every(Boolean)){
       concept.state = 'mastered'; return;
     }
-    if(concept.independentCorrect >= 2 && recent.slice(-2).length === 2 && recent.slice(-2).every(Boolean)){
+    if(concept.independentCorrect >= 2 && successSpan >= PROVISIONAL_MASTERY_GAP_MS && recent.slice(-2).length === 2 && recent.slice(-2).every(Boolean)){
       concept.state = 'provisional'; return;
     }
     concept.state = 'learning';
@@ -2460,30 +2608,38 @@ var LearningMemory = (function(){
   function recordAttempt(question, correct, hintUsed, firstAttempt){
     var profile = get();
     var conceptIds = conceptIdsFor(question);
+    var practiceOnly = question.diagnosticUse === false || question.sourceBasis === 'ai-import' || question.source === 'ai-import' || question._source === 'AI生成';
     var event = {
       questionId: String(question.id || ''), conceptIds: conceptIds,
       correct: !!correct, firstAttempt: firstAttempt !== false, hintUsed: !!hintUsed,
       difficulty: question.difficulty || 'unknown',
-      sourceBasis: question.sourceBasis || (question.source === 'ai-import' ? 'ai-import' : 'source'),
+      sourceBasis: practiceOnly ? 'ai-import' : (question.sourceBasis || 'source'),
+      affectsMastery: !practiceOnly,
       suggestedErrorCategory: question.suggestedErrorCategory || question.errorCategory || null,
       userConfirmedErrorCategory: null, timestamp: Date.now()
     };
     profile.attempts.push(event);
     if(profile.attempts.length > MAX_ATTEMPTS) profile.attempts = profile.attempts.slice(-MAX_ATTEMPTS);
-    conceptIds.forEach(function(id){
-      var node = knowledgeGraph.find(function(n){ return n.id === id; });
-      var concept = profile.concepts[id] || emptyConcept(node ? node.name : id);
-      concept.attempts++;
-      if(event.firstAttempt && event.correct) concept.firstAttemptCorrect++;
-      if(event.correct && !event.hintUsed) concept.independentCorrect++;
-      if(event.hintUsed) concept.hintUses++;
-      concept.recentResults.push(event.correct);
-      concept.recentResults = concept.recentResults.slice(-10);
-      concept.lastPracticedAt = event.timestamp;
-      recomputeState(concept);
-      concept.stateEvidence = ['attempt-history'];
-      profile.concepts[id] = concept;
-    });
+    if(event.affectsMastery){
+      conceptIds.forEach(function(id){
+        var node = knowledgeGraph.find(function(n){ return n.id === id; });
+        var concept = profile.concepts[id] || emptyConcept(node ? node.name : id);
+        concept.attempts++;
+        if(event.firstAttempt && event.correct) concept.firstAttemptCorrect++;
+        if(event.correct && !event.hintUsed){
+          concept.independentCorrect++;
+          concept.independentSuccessTimes.push(event.timestamp);
+          concept.independentSuccessTimes = concept.independentSuccessTimes.slice(-10);
+        }
+        if(event.hintUsed) concept.hintUses++;
+        concept.recentResults.push(event.correct);
+        concept.recentResults = concept.recentResults.slice(-10);
+        concept.lastPracticedAt = event.timestamp;
+        recomputeState(concept);
+        concept.stateEvidence = ['attempt-history'];
+        profile.concepts[id] = concept;
+      });
+    }
     save(profile);
   }
 
@@ -2492,12 +2648,15 @@ var LearningMemory = (function(){
     var profile = get();
     for(var i = profile.attempts.length - 1; i >= 0; i--){
       if(profile.attempts[i].questionId === String(questionId)){
-        profile.attempts[i].userConfirmedErrorCategory = category;
-        profile.attempts[i].conceptIds.forEach(function(id){
-          var concept = profile.concepts[id];
-          if(concept){ concept.confirmedErrors[category] = (concept.confirmedErrors[category] || 0) + 1; }
-        });
-        profile.errorHistory.push({ questionId:String(questionId), conceptIds:profile.attempts[i].conceptIds, category:category, timestamp:Date.now() });
+        var event = profile.attempts[i];
+        event.userConfirmedErrorCategory = category;
+        if(event.affectsMastery){
+          event.conceptIds.forEach(function(id){
+            var concept = profile.concepts[id];
+            if(concept){ concept.confirmedErrors[category] = (concept.confirmedErrors[category] || 0) + 1; }
+          });
+          profile.errorHistory.push({ questionId:String(questionId), conceptIds:event.conceptIds, category:category, affectsMastery:true, timestamp:Date.now() });
+        }
         break;
       }
     }
@@ -2508,7 +2667,12 @@ var LearningMemory = (function(){
     var profile = get();
     var node = knowledgeGraph.find(function(n){ return n.id === conceptId; });
     var concept = profile.concepts[conceptId] || emptyConcept(node ? node.name : conceptId);
-    concept.state = state || 'provisional';
+    state = state || 'provisional';
+    if(state === 'mastered'){
+      recomputeState(concept);
+      if(concept.state !== 'mastered') state = 'provisional';
+    }
+    concept.state = state;
     concept.stateEvidence = [reason || 'micro-check'];
     profile.concepts[conceptId] = concept;
     save(profile);
@@ -2545,8 +2709,22 @@ var LearningMemory = (function(){
     'course-grounded':'课程资料支持',
     'generic':'通用知识推测'
   };
+  notice.dataset.evidenceLevel = evidence.level;
   notice.textContent = '证据等级：' + (labels[evidence.level] || evidence.level) + '。' + evidence.summary;
 })();
+
+function renderCoverageNotice(mode){
+  var notice = document.getElementById('coverageNotice');
+  if(!notice) return;
+  var labels = {
+    'minimum-core':'最小核心路径',
+    'standard-coverage':'标准覆盖路径',
+    'extended-improvement':'扩展提升路径'
+  };
+  notice.dataset.coverageMode = mode;
+  notice.textContent = '覆盖模式：' + (labels[mode] || mode) + '。可根据剩余时间切换，但不对应分数承诺。';
+}
+renderCoverageNotice(LearningMemory.get().coverageMode || COURSE_META.coverageMode);
 
 // ==================== 暗黑模式 ====================
 (function(){
@@ -2573,6 +2751,7 @@ var LearningMemory = (function(){
     var profile = LearningMemory.get();
     profile.coverageMode = coverageModes[depth] || 'standard-coverage';
     LearningMemory.save(profile);
+    renderCoverageNotice(profile.coverageMode);
     var labels = { survival:'🧭 最小核心路径', standard:'✅ 标准覆盖路径', advanced:'🚀 扩展提升路径' };
     showToast('已切换到' + labels[depth] + '模式');
   }
@@ -2719,6 +2898,7 @@ function renderKnowledgeMap(){
   container.innerHTML = '';
   var readyCount = 0;
   knowledgeGraph.forEach(function(node){
+    var contractObjective = (REVIEW_CONTRACT.path.objectives || []).find(function(item){ return item.id === node.id; });
     var nodeState = apState[node.id];
     var isProvisional = nodeState === 'provisional' || node._diagMastered;
     var isStable = nodeState === 'mastered';
@@ -2738,6 +2918,8 @@ function renderKnowledgeMap(){
       '<div class="kmap-status">'+icon+'</div>' +
       '<div class="kmap-name">'+node.name+'</div>' +
       '<div class="kmap-ch">第'+node.chapter+'章 · '+({easy:'简单',medium:'中等',hard:'困难'}[node.difficulty])+'</div>' +
+      (contractObjective ? '<div class="kmap-reason"><strong>优先理由：</strong>'+escapeHTML(contractObjective.priorityReason)+'</div>' : '') +
+      (contractObjective ? '<div class="kmap-uncertainty"><strong>不确定性：</strong>'+escapeHTML(contractObjective.uncertainty)+'</div>' : '') +
       action + '</div>';
   });
   document.getElementById('apCount').textContent = readyCount;
@@ -3995,138 +4177,7 @@ var SmartJSON = {
   }
 };
 
-// ---------- 提示词生成器 ----------
-var PromptGenerator = {
-  COURSE_META: {
-    name: '高等数学2',
-    type: '计算型',
-    examFormat: '选择题/判断题/计算题为主',
-    chapters: '第1章 多元函数极限、第2章 偏导数、第3章 全微分、第4章 多元极值、第5章 二重积分(直角坐标)、第6章 二重积分(极坐标)、第7章 三重积分、第8章 曲线积分(格林公式)'
-  },
-  build: function(opts){
-    opts = opts || {};
-    var ctx = this.collectContext(opts);
-    return this.fillTemplate(ctx);
-  },
-  collectContext: function(opts){
-    var depth = lsGet('depth', 'standard');
-    var depthLabels = { survival:'最小核心路径', standard:'标准覆盖路径', advanced:'扩展提升路径' };
-    var depthDiff = { survival:{e:70,m:30,h:0}, standard:{e:30,m:50,h:20}, advanced:{e:10,m:40,h:50} };
-    var learningSummary = LearningMemory.summary();
-    var mastered = learningSummary.mastered.map(function(n){ return n.name; });
-    var weak = learningSummary.weak.map(function(n){ return n.name; });
-    var wb = [];
-    try { wb = JSON.parse(localStorage.getItem(LS('wrongbook')) || '[]'); } catch(e){}
-    var errStats = { concept:0, formula:0, calc:0, method:0, read:0, prereq:0, unknown:0 };
-    wb.forEach(function(w){ if(errStats[w.category]!==undefined) errStats[w.category]++; });
-    var totalErr = wb.length || 1;
-    var errPct = {};
-    Object.keys(errStats).forEach(function(k){ errPct[k] = Math.round(errStats[k]/totalErr*100); });
-    // 范围
-    var range = opts.range || 'weak';
-    var knowledgeList = '';
-    if(range === 'weak' && weak.length){
-      knowledgeList = '重点薄弱知识点（请优先围绕这些出题）：\n' + weak.map(function(n){return'- '+n;}).join('\n');
-    } else if(range === 'wrong' && wb.length){
-      var wrongChapters = {};
-      wb.forEach(function(w){ if(w.chapter) wrongChapters[w.chapter] = true; });
-      knowledgeList = '错题相关章节：\n' + Object.keys(wrongChapters).map(function(c){return'- '+c;}).join('\n');
-    } else {
-      knowledgeList = '全部章节：'+this.COURSE_META.chapters;
-    }
-    var diff = opts.difficulty || 'auto';
-    var diffDist = diff === 'easy' ? {e:70,m:30,h:0} : (diff === 'hard' ? {e:10,m:40,h:50} : depthDiff[depth]);
-    var typePref = opts.type || 'mixed';
-    var typeDist = typePref === 'choice' ? '选择题80%，判断题20%' :
-                   typePref === 'calc' ? '计算题60%，选择题30%，判断题10%' :
-                   '选择题30%，判断题10%，计算题40%，简答题20%';
-    return {
-      courseName: this.COURSE_META.name,
-      courseType: this.COURSE_META.type,
-      examFormat: this.COURSE_META.examFormat,
-      depthLabel: depthLabels[depth] || '标准覆盖路径',
-      knowledgeList: knowledgeList,
-      mastered: mastered.length ? mastered.join('、') : '刚开始复习',
-      weak: weak.length ? weak.join('、') : '暂无',
-      errPct: errPct,
-      accuracy: this.getAccuracy(),
-      count: opts.count || 10,
-      easyPct: diffDist.e,
-      mediumPct: diffDist.m,
-      hardPct: diffDist.h,
-      typeDistribution: typeDist
-    };
-  },
-  getAccuracy: function(){
-    var attempts = LearningMemory.get().attempts.filter(function(a){ return a.sourceBasis !== 'ai-import'; });
-    if(!attempts.length) return null;
-    return Math.round(attempts.filter(function(a){ return a.correct; }).length / attempts.length * 100);
-  },
-  fillTemplate: function(c){
-    return '═══════════════════════════════════════\n' +
-'你是一位资深的' + c.courseType + '应试辅导老师，正在为一位大学生\n' +
-'生成《' + c.courseName + '》的个性化练习题。请严格按照以下要求出题。\n' +
-'═══════════════════════════════════════\n\n' +
-'【一、课程信息】\n' +
-'- 课程名称：' + c.courseName + '\n' +
-'- 课程类型：' + c.courseType + '\n' +
-'- 考试形式：' + c.examFormat + '\n' +
-'- 当前覆盖深度：' + c.depthLabel + '\n\n' +
-'【二、知识范围（请只在以下范围内出题）】\n' +
-'全部章节：' + this.COURSE_META.chapters + '\n' +
-c.knowledgeList + '\n\n' +
-'【三、学生画像（非常重要！请据此调整难度和侧重点）】\n' +
-'- 已掌握知识点：' + c.mastered + '\n' +
-'- 薄弱/未掌握知识点：' + c.weak + '\n' +
-'- 近期错题分布：\n' +
-'  · 概念误解：' + c.errPct.concept + '% → 多出道义辨析/易混淆对比题\n' +
-'  · 公式记错：' + c.errPct.formula + '% → 多出公式应用题、变形题\n' +
-'  · 计算失误：' + c.errPct.calc + '% → 多出带陷阱的计算题\n' +
-'  · 方法选错：' + c.errPct.method + '% → 多出"看到XX信号选XX方法"的决策题\n' +
-'  · 审题失误：' + c.errPct.read + '% → 多出带干扰条件的题目\n' +
-'  · 前置薄弱：' + c.errPct.prereq + '% → 前置知识点相关基础题\n' +
-'- 历史正确率约：' + c.accuracy + '%（请据此调整题目难度分布）\n\n' +
-'【四、出题要求】\n' +
-'1. 题目数量：' + c.count + '道\n' +
-'2. 难度分布：\n' +
-'   - 基础题（占' + c.easyPct + '%）：考察核心概念/公式直接应用\n' +
-'   - 中档题（占' + c.mediumPct + '%）：考察综合应用/常见变式\n' +
-'   - 拔高题（占' + c.hardPct + '%）：考察多知识点综合/方法选择\n' +
-'3. 题型分布：' + c.typeDistribution + '\n' +
-'4. 题目要求：\n' +
-'   - 每道题必须标注 chapter（章节名）、difficulty（easy/medium/hard）\n' +
-'   - 选择题必须有4个选项，错误选项要有迷惑性（不能明显离谱）\n' +
-'   - 每道题必须有详细解析（explanation），讲清"为什么对/为什么错"\n' +
-'   - 每道题必须有提示（hint），给学生"怎么想到的"线索\n' +
-'   - 每道题必须标注 errorCategory（concept/formula/calc/method/read/prereq）\n' +
-'   - 计算题关键结果要清晰，可分步给出\n' +
-'   - 禁止出超纲题、偏题、怪题，以考试常见题型为准\n' +
-'   - 数学公式用$...$包裹（LaTeX格式），如$f_x$、$\\frac{\\partial z}{\\partial x}$\n\n' +
-'【五、输出格式（严格遵守，不要输出其他多余内容）】\n' +
-'请只输出一个JSON数组，不要有任何解释文字，不要加markdown代码块标记（```json），直接输出纯JSON：\n' +
-'[\n' +
-'  {\n' +
-'    "type": "choice",\n' +
-'    "chapter": "第2章",\n' +
-'    "difficulty": "medium",\n' +
-'    "question": "题目内容",\n' +
-'    "options": ["选项A", "选项B", "选项C", "选项D"],\n' +
-'    "answer": 0,\n' +
-'    "explanation": "详细解析",\n' +
-'    "hint": "提示：看到XX关键词应该想到XX方法",\n' +
-'    "errorCategory": "concept"\n' +
-'  }\n' +
-']\n\n' +
-'注意：\n' +
-'- type可选值：choice(选择题)/tf(判断题)/calc(计算题)/short(简答题)\n' +
-'- answer：选择题填0-3，判断题填true/false，计算/简答题填参考答案字符串\n' +
-'- 请确保JSON格式合法，可以被JSON.parse()直接解析\n' +
-'═══════════════════════════════════════';
-  }
-};
-
-// ---------- 题目导入引擎 ----------
-// ---------- v5.0 evidence-aware prompt generator ----------
+// ---------- v5.1 evidence-aware prompt generator ----------
 var PromptGeneratorV5 = {
   build: function(opts){ return this.fillTemplate(this.collectContext(opts || {})); },
   collectContext: function(opts){
@@ -4246,7 +4297,7 @@ var PromptGeneratorV5 = {
     ].join('\n');
   }
 };
-PromptGenerator = PromptGeneratorV5;
+var PromptGenerator = PromptGeneratorV5;
 
 var QuestionImporter = {
   importQuestions: function(questions){
@@ -4268,7 +4319,7 @@ var QuestionImporter = {
           difficultyReason: q.difficultyReason || '',
           suggestedErrorCategory: q.suggestedErrorCategory || q.errorCategory || 'unknown',
           errorCategory: 'unknown',
-          sourceBasis: q.sourceBasis || 'generic',
+          sourceBasis: 'ai-import',
           diagnosticUse: false,
           targetsMemory: q.targetsMemory || { observedNeed:'unspecified' },
           selfCheck: q.selfCheck || { conditionsSufficient:false, answerRecalculated:false, uniqueAnswer:false },

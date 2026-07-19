@@ -1,9 +1,9 @@
 ---
 name: course-review
-description: Generate evidence-aware, time-constrained, interactive course review applications for learners with limited preparation time or weak foundations. Use when an AI needs to turn a course name, chapter scope, available materials, exam date, or learner history into a single-file review app, a minimum effective learning path, active-recall practice, or privacy-aware prompts for external AI question generation. Do not use it for score prediction, formal exam authoring, or teacher review workflows.
+description: Generate and validate evidence-aware, time-constrained, interactive course review applications for learners with limited preparation time or weak foundations. Use when an AI needs to turn a course name, chapter scope, available materials, exam date, or learner history into a single-file review app, a minimum effective learning path, active-recall practice, or privacy-aware prompts for external AI question generation. Do not use it for score prediction, formal exam authoring, or teacher review workflows.
 ---
 
-# Course Review Skill v5.0
+# Course Review Skill v5.1
 
 Build the smallest useful learning loop for the learner's remaining time. Produce a learning application, not a long static document.
 
@@ -83,7 +83,11 @@ Do not mark a concept mastered from one answer. Use the mastery states and signa
 
 ### 5. Build the application
 
-Default to one self-contained HTML file with progressive enhancement. Include only the minimum core:
+Read [references/output-contract.md](references/output-contract.md). Adapt `template.html` rather than reconstructing its state and trust boundaries from memory. Default to one self-contained HTML file with progressive enhancement.
+
+Embed and complete `#courseReviewContract` using [schemas/review-plan.schema.json](schemas/review-plan.schema.json). Keep it synchronized with `COURSE_META`, the visible evidence notice, and the immediate next-action card.
+
+Include only the minimum core:
 
 - evidence and uncertainty notice;
 - short diagnostic when useful;
@@ -122,11 +126,19 @@ Imported AI questions are unverified practice material. They must not alone mark
 
 ### 8. Validate
 
-Run:
+Validate the skill repository:
 
 ```bash
 python scripts/validate_repo.py
 ```
+
+Validate every generated HTML artifact before delivery:
+
+```bash
+python scripts/validate_output.py path/to/generated-review.html
+```
+
+Do not deliver an artifact when the output validator fails. Report the command and pass result with the generated file.
 
 Also open the template in a browser and verify:
 
@@ -150,6 +162,8 @@ Also open the template in a browser and verify:
 8. Keep unverified AI questions out of high-impact path decisions.
 9. Provide quiet, encouraging, and sprint feedback modes.
 10. Use course-specific learning loops.
+11. Embed the generated-output contract and keep it synchronized with visible behavior.
+12. Treat `validate_output.py` as a mandatory release gate.
 
 ## Acceptance criteria
 
@@ -161,4 +175,5 @@ Also open the template in a browser and verify:
 - Produces concept-level, privacy-aware question prompts.
 - Labels provenance and trust on every imported AI question.
 - Does not require teacher review.
-- Passes repository validation and browser smoke checks.
+- Embeds a valid, synchronized review-plan contract.
+- Passes repository validation, generated-output validation, regression tests, and browser smoke checks.

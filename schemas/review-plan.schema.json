@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yzh5310/course-review-skill/schemas/review-plan.schema.json",
+  "title": "Course Review Generated Output Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "skill",
+    "course",
+    "evidence",
+    "coverage",
+    "path",
+    "learningMemory",
+    "externalAI",
+    "claims"
+  ],
+  "properties": {
+    "contractVersion": { "const": "1.0" },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "const": "course-review" },
+        "version": { "type": "string", "pattern": "^5\\.[0-9]+(?:\\.[0-9]+)?$" }
+      }
+    },
+    "course": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "slug"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "summary", "sources"],
+      "properties": {
+        "level": { "enum": ["exam-grounded", "course-grounded", "generic"] },
+        "summary": { "type": "string", "minLength": 8 },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "label"],
+            "properties": {
+              "type": { "enum": ["past-paper", "scope", "rubric", "slide", "assignment", "textbook", "topic-list", "other"] },
+              "label": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "remainingMinutes"],
+      "properties": {
+        "mode": { "enum": ["minimum-core", "standard-coverage", "extended-improvement"] },
+        "remainingMinutes": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["objectives", "nextAction", "cutoffRule"],
+      "properties": {
+        "objectives": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "title", "priorityReason", "evidenceBasis", "uncertainty", "prerequisiteIds"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "title": { "type": "string", "minLength": 1 },
+              "priorityReason": { "type": "string", "minLength": 8 },
+              "evidenceBasis": { "type": "string", "minLength": 4 },
+              "uncertainty": { "type": "string", "minLength": 4 },
+              "prerequisiteIds": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "nextAction": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["objectiveId", "label", "durationMinutes"],
+          "properties": {
+            "objectiveId": { "type": "string", "minLength": 1 },
+            "label": { "type": "string", "minLength": 4 },
+            "durationMinutes": { "type": "integer", "minimum": 5, "maximum": 10 }
+          }
+        },
+        "cutoffRule": { "type": "string", "minLength": 8 }
+      }
+    },
+    "learningMemory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["storageKeySuffix", "masteryRequiresMultipleSignals", "singleAnswerCanMaster", "provisionalGapMinutes", "stableGapMinutes"],
+      "properties": {
+        "storageKeySuffix": { "const": "learning_profile" },
+        "masteryRequiresMultipleSignals": { "const": true },
+        "singleAnswerCanMaster": { "const": false },
+        "provisionalGapMinutes": { "type": "integer", "minimum": 5 },
+        "stableGapMinutes": { "type": "integer", "minimum": 30 }
+      }
+    },
+    "externalAI": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "practiceOnly", "teacherReviewed", "promptPreviewRequired", "anonymousByDefault", "affectsMastery"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "practiceOnly": { "const": true },
+        "teacherReviewed": { "const": false },
+        "promptPreviewRequired": { "const": true },
+        "anonymousByDefault": { "const": true },
+        "affectsMastery": { "const": false }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scorePrediction", "passGuarantee", "inferredFrequencyClaims"],
+      "properties": {
+        "scorePrediction": { "const": false },
+        "passGuarantee": { "const": false },
+        "inferredFrequencyClaims": { "const": false }
+      }
+    }
+  }
+}

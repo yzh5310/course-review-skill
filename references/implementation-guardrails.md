@@ -31,3 +31,6 @@
 - Parse every inline script in the template.
 - Check that all local references from `SKILL.md` exist.
 - Search for legacy score-promise labels and document intentional compatibility uses.
+- Embed `#courseReviewContract` and keep it synchronized with the visible artifact.
+- Run `python scripts/validate_output.py <generated.html>` for every generated application.
+- Do not deliver, publish, or describe an artifact as complete when output validation fails.

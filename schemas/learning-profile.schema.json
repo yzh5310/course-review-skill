@@ -23,7 +23,24 @@
       "properties": {
         "level": { "enum": ["exam-grounded", "course-grounded", "generic"] },
         "summary": { "type": "string" },
-        "sources": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+        "sources": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              {
+                "type": "object",
+                "required": ["type", "label"],
+                "properties": {
+                  "type": { "enum": ["past-paper", "scope", "rubric", "slide", "assignment", "textbook", "topic-list", "other"] },
+                  "label": { "type": "string", "minLength": 1 }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
       },
       "additionalProperties": false
     },
@@ -40,7 +57,7 @@
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "required": ["name", "state", "attempts", "independentCorrect", "hintUses", "recentResults", "confirmedErrors"],
+        "required": ["name", "state", "attempts", "independentCorrect", "hintUses", "recentResults", "independentSuccessTimes", "confirmedErrors"],
         "properties": {
           "name": { "type": "string" },
           "state": { "enum": ["unseen", "learning", "unstable", "provisional", "mastered", "excluded", "insufficient-data"] },
@@ -49,6 +66,7 @@
           "independentCorrect": { "type": "integer", "minimum": 0 },
           "hintUses": { "type": "integer", "minimum": 0 },
           "recentResults": { "type": "array", "maxItems": 10, "items": { "type": "boolean" } },
+          "independentSuccessTimes": { "type": "array", "maxItems": 10, "items": { "type": "integer", "minimum": 0 } },
           "lastPracticedAt": { "type": ["integer", "null"], "minimum": 0 },
           "confidence": { "enum": ["unknown", "low", "medium", "high"] },
           "confirmedErrors": {
@@ -66,7 +84,7 @@
       "maxItems": 500,
       "items": {
         "type": "object",
-        "required": ["questionId", "conceptIds", "correct", "hintUsed", "sourceBasis", "timestamp"],
+        "required": ["questionId", "conceptIds", "correct", "hintUsed", "sourceBasis", "affectsMastery", "timestamp"],
         "properties": {
           "questionId": { "type": "string" },
           "conceptIds": { "type": "array", "items": { "type": "string" }, "maxItems": 3 },
@@ -75,6 +93,7 @@
           "hintUsed": { "type": "boolean" },
           "difficulty": { "enum": ["easy", "medium", "hard", "unknown"] },
           "sourceBasis": { "enum": ["source", "derived", "generic", "ai-import"] },
+          "affectsMastery": { "type": "boolean" },
           "suggestedErrorCategory": { "type": ["string", "null"] },
           "userConfirmedErrorCategory": { "type": ["string", "null"] },
           "timestamp": { "type": "integer", "minimum": 0 }
@@ -82,7 +101,22 @@
         "additionalProperties": false
       }
     },
-    "errorHistory": { "type": "array", "items": { "type": "object" } },
+    "errorHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["questionId", "conceptIds", "category", "timestamp"],
+        "properties": {
+          "questionId": { "type": "string" },
+          "conceptIds": { "type": "array", "items": { "type": "string" }, "maxItems": 3 },
+          "category": { "type": "string" },
+          "affectsMastery": { "type": "boolean" },
+          "timestamp": { "type": "integer", "minimum": 0 },
+          "migrated": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
     "reviewSchedule": { "type": "object" },
     "preferences": {
       "type": "object",

@@ -109,13 +109,22 @@ def validate_template() -> None:
         if token in text:
             fail(f"template.html still contains a score-promise coverage label: {token}")
 
+    legacy_prompt_tokens = ["你是一位资深的", "历史正确率约：", "以考试常见题型为准"]
+    for token in legacy_prompt_tokens:
+        if token in text:
+            fail(f"template.html still contains the retired v4 prompt generator: {token}")
+
     parser = IdCollector()
     parser.feed(text)
     duplicates = sorted({item for item in parser.ids if parser.ids.count(item) > 1})
     if duplicates:
         fail("Duplicate HTML ids: " + ", ".join(duplicates))
 
-    scripts = re.findall(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", text, re.I | re.S)
+    scripts = re.findall(
+        r"<script(?![^>]*(?:\bsrc=|\btype=[\"']application/json))[^>]*>(.*?)</script>",
+        text,
+        re.I | re.S,
+    )
     if not scripts:
         fail("No inline scripts found in template.html")
         return
@@ -137,12 +146,20 @@ def validate_template() -> None:
 
 def validate_metadata() -> None:
     data = json.loads((ROOT / "skill.json").read_text(encoding="utf-8"))
-    if data.get("version") != "5.0.0":
-        fail("skill.json version must be 5.0.0")
+    if data.get("version") != "5.1.0":
+        fail("skill.json version must be 5.1.0")
     for relative in data.get("references", []):
         if not (ROOT / relative).exists():
             fail(f"skill.json references missing file: {relative}")
-    for relative in ["agents/openai.yaml", "schemas/learning-profile.schema.json", "schemas/question.schema.json"]:
+    for relative in [
+        "agents/openai.yaml",
+        "schemas/learning-profile.schema.json",
+        "schemas/question.schema.json",
+        "schemas/review-plan.schema.json",
+        "references/output-contract.md",
+        "scripts/validate_output.py",
+        "scripts/test_validate_output.py",
+    ]:
         if not (ROOT / relative).exists():
             fail(f"Missing required v5 file: {relative}")
 
@@ -152,12 +169,31 @@ def validate_metadata() -> None:
     if "\ufffd" in openai_yaml:
         fail("agents/openai.yaml contains replacement characters from broken encoding")
 
+    entrypoints = ["AGENTS.md", "CLAUDE.md", ".cursorrules", ".windsurfrules", ".clinerules/course-review.md"]
+    for relative in entrypoints:
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        if "scripts/validate_output.py" not in text or "references/output-contract.md" not in text:
+            fail(f"AI entrypoint does not enforce generated-output validation: {relative}")
+
+
+def validate_generated_output_gate() -> None:
+    commands = [
+        [sys.executable, str(ROOT / "scripts/validate_output.py"), str(ROOT / "template.html")],
+        [sys.executable, str(ROOT / "scripts/test_validate_output.py")],
+    ]
+    for command in commands:
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+        if result.returncode:
+            output = (result.stdout + "\n" + result.stderr).strip()
+            fail(f"Generated-output release gate failed: {' '.join(command[1:])}: {output}")
+
 
 def main() -> int:
     validate_json_files()
     validate_skill()
     validate_template()
     validate_metadata()
+    validate_generated_output_gate()
 
     for message in WARNINGS:
         print(f"WARNING: {message}")

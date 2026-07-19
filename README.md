@@ -1,8 +1,8 @@
-# Course Review Skill v5.0
+# Course Review Skill v5.1
 
 一个面向 AI Agent 的课程复习应用生成 Skill：在参考资料可能不足、时间有限的情况下，为基础薄弱或考前焦虑的学习者生成有依据、有不确定性标注的最小有效学习路径。
 
-## v5.0 的核心变化
+## v5.1 的核心变化
 
 - 用“最小核心 / 标准覆盖 / 扩展提升”替代 60/80/90 分结果暗示；
 - 优先考虑剩余时间、资料证据、前置杠杆和真实学习记录；
@@ -12,6 +12,8 @@
 - 外部 AI 题目默认只进入练习区，不直接决定掌握状态或学习路径；
 - 复制提示词前预览将发送的数据，默认匿名且不包含完整历史；
 - 当前版本不承担教师审题、正式命题和成绩预测。
+- 每个生成方案必须携带机器可读的 `courseReviewContract`；
+- `validate_output.py` 会阻止缺少证据说明、保过承诺、单题掌握或 AI 题影响掌握的产物交付。
 
 ## 使用方式
 
@@ -35,6 +37,8 @@ AI 会先判断资料证据等级，再选择覆盖模式和课程类型 Profile
 - `references/accessibility.md`：无障碍与低刺激体验；
 - `schemas/learning-profile.schema.json`：学习档案 Schema；
 - `schemas/question.schema.json`：生成题目 Schema；
+- `schemas/review-plan.schema.json`：生成复习方案的强制输出契约；
+- `scripts/validate_output.py`：任意生成 HTML 的发布门校验器；
 - `template.html`：可运行参考模板。
 
 ## AI 出题助手
@@ -53,9 +57,11 @@ AI 出题助手执行以下闭环：
 
 ```bash
 python scripts/validate_repo.py
+python scripts/validate_output.py template.html
+python scripts/test_validate_output.py
 ```
 
-然后在浏览器中打开 `template.html`，检查状态迁移、答题记录、提示词预览、题目导入、键盘操作、移动端、深色模式和打印模式。
+其他 AI 生成新的 HTML 后，必须把第二条命令中的 `template.html` 替换为实际产物路径。产物校验失败时不得交付。然后在浏览器中检查状态迁移、答题记录、提示词预览、题目导入、键盘操作、移动端、深色模式和打印模式。
 
 ## License
 

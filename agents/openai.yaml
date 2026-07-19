@@ -1,4 +1,4 @@
 interface:
-  display_name: "Course Review v5"
-  short_description: "基于证据的限时复习路径、学习记忆与个性化练习应用"
-  default_prompt: "Use $course-review to build an evidence-aware review path and a single-file practice app for my course."
+  display_name: "Course Review v5.1"
+  short_description: "生成并强制校验基于证据的限时复习路径与个性化练习应用"
+  default_prompt: "Use $course-review to build and validate an evidence-aware review path and a single-file practice app for my course."
