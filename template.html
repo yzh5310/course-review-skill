@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>课程名称 - 交互式复习方案</title>
+<link rel="icon" href="data:,">
 
 <!-- KaTeX（数学/计算型课程启用，文科课程可删除） -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -1179,6 +1180,18 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 .gap-12 { gap: 12px; }
 .items-center { align-items: center; }
 .justify-between { justify-content: space-between; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+body[data-feedback-mode="quiet"] .confetti,
+body[data-feedback-mode="quiet"] .hero-btn.primary,
+body[data-feedback-mode="quiet"] .kmap-node.ready,
+body[data-feedback-mode="quiet"] .srs-due-indicator { animation: none !important; }
 </style>
 </head>
 
@@ -1190,13 +1203,13 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 <!-- ===================== HEADER ===================== -->
 <header class="hero">
   <h1 id="courseTitle">高等数学2</h1>
-  <p class="subtitle" id="courseSubtitle">多元函数微积分 · 1天速通 · 从零基础到及格</p>
+  <p class="subtitle" id="courseSubtitle">多元函数微积分 · 限时复习 · 从基础框架开始</p>
   <div id="schoolBadge" style="display:none;margin-bottom:10px;"></div>
 
   <div class="depth-selector" id="depthSelector">
-    <button class="depth-btn" data-depth="survival">🆘 补考救命(60分)</button>
-    <button class="depth-btn active" data-depth="standard">✅ 稳过及格(80分)</button>
-    <button class="depth-btn" data-depth="advanced">🚀 冲刺高分(90+)</button>
+    <button class="depth-btn" data-depth="survival">🧭 最小核心路径</button>
+    <button class="depth-btn active" data-depth="standard">✅ 标准覆盖路径</button>
+    <button class="depth-btn" data-depth="advanced">🚀 扩展提升路径</button>
     <span class="countdown-badge" id="countdownBadge" style="display:none;"></span>
   </div>
 
@@ -1227,7 +1240,7 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 <!-- ===================== 1. 新手引导 ===================== -->
 <section class="card" id="beginner">
   <h2><span class="emoji">🌱</span>零基础？从这里开始！</h2>
-  <p class="card-desc">适合高数2挂科边缘、补考冲刺、期末前1天速成的同学。所有内容采用"例题驱动"模式，先看题再学概念。</p>
+  <p class="card-desc">适合基础薄弱、参考资料有限、考试临近的同学。所有内容采用“例题驱动”模式，先看题再学概念。</p>
 
   <div class="beginner-steps">
     <div class="step-card">
@@ -1288,7 +1301,7 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 <!-- ===================== 3. 自适应学习路径 ===================== -->
 <section class="card" id="path">
   <h2><span class="emoji">🧭</span>自适应学习路径</h2>
-  <p class="card-desc">按知识依赖顺序学习。🟢已掌握 → 🟡可学习 → ⚪未解锁。完成微检测才能解锁下一个知识点。</p>
+  <p class="card-desc">按知识依赖顺序学习。🟣初步掌握 → 🟡可学习 → ⚪未解锁；稳定掌握需要跨时复测证据。</p>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
     <span class="muted" style="font-size:13px;">进度：<b id="apCount">0</b>/<b id="apTotal">0</b></span>
     <button class="btn btn-ghost btn-sm" id="apReset">🔄 重置路径</button>
@@ -1900,12 +1913,13 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 <!-- ===================== 免责声明 ===================== -->
 <div class="disclaimer-section" style="margin:20px 20px 0;padding:20px;background:#fef3c7;border-radius:12px;border-left:4px solid #f59e0b;max-width:900px;margin-left:auto;margin-right:auto;">
   <h3 style="margin:0 0 10px 0;color:#92400e;font-size:16px;">📌 使用须知</h3>
+  <p id="evidenceNotice" style="margin:0 0 8px;color:#78350f;font-size:13px;font-weight:700;">证据等级将在应用启动后显示。</p>
   <ul style="margin:0;padding-left:20px;color:#78350f;font-size:13px;line-height:1.8;">
     <li>本复习方案由AI辅助生成，仅供参考学习使用，不保证与实际考试100%重合。</li>
     <li>建议结合老师课件、课堂笔记和平时作业综合复习，不要完全依赖本方案。</li>
     <li>往年题/例题来源已标注，未标注内容为基于通用知识的总结。</li>
     <li>如有发现错误或内容过时，欢迎反馈以便持续改进。</li>
-    <li>祝考试顺利，一次过！💪</li>
+    <li>请结合实际课程资料核对内容，并根据剩余时间调整复习范围。</li>
   </ul>
 </div>
 
@@ -1914,7 +1928,7 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
   <div class="psych-tips">
     <div class="breath">🫁</div>
     <p><strong>💡 考前最后提醒：</strong></p>
-    <p>深呼吸3次，吸气4秒-屏息4秒-呼气6秒。你已经复习了最核心的考点，及格绝对没问题。</p>
+    <p>深呼吸3次，吸气4秒-屏息4秒-呼气6秒。你已经完成当前路径中的核心内容，接下来按行动建议继续巩固。</p>
     <p>遇到不会的题先跳过，把会做的都做对就赢了。计算时每一步都写清楚，不要跳步。加油！💪</p>
   </div>
 </footer>
@@ -2002,7 +2016,12 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
             </div>
           </div>
         </details>
-        <button class="ai-copy-btn" id="aiGenerateBtn" style="margin-top:16px;">📋 生成并复制提示词</button>
+        <div class="ai-config-group" id="aiPreviewGroup" style="display:none;">
+          <label class="ai-config-label" for="aiPromptPreview">发送给外部AI的数据预览</label>
+          <textarea class="ai-import-textarea" id="aiPromptPreview" rows="9" readonly></textarea>
+          <p style="font-size:12px;color:var(--muted);margin-top:6px;">默认仅发送匿名的概念级学习摘要，不包含姓名、学校、摘录或完整答题历史。请确认后再复制。</p>
+        </div>
+        <button class="ai-copy-btn" id="aiGenerateBtn" style="margin-top:16px;">🔎 生成并预览提示词</button>
       </div>
 
       <!-- 步骤3：复制后跳转 -->
@@ -2104,11 +2123,18 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
 var COURSE_META = {
   courseName: '高等数学2',
   courseSlug: 'calculus2',
+  courseType: 'quantitative',
+  examFormat: 'mixed',
+  chapters: '第1章至第8章',
+  evidenceLevel: 'generic', // exam-grounded / course-grounded / generic
+  evidenceSummary: '当前模板未绑定试卷或课程资料，考试相关性未知。',
+  coverageMode: 'standard-coverage',
+  remainingMinutes: null,
   school: '',           // 学校名（可选，填写后Header显示专属徽章）
   major: '',            // 专业名（可选）
   studentName: '',      // 使用者姓名（可选，填写后欢迎页显示）
   examDate: '',         // 考试日期 YYYY-MM-DD（可选，填写后显示倒计时）
-  version: '1.0'
+  version: '5.0'
 };
 var SLUG = COURSE_META.courseSlug;
 var LS = function(key){ return SLUG + '_' + key; };
@@ -2316,6 +2342,211 @@ function lsGet(key, def){
 function lsSet(key, val){
   try { localStorage.setItem(LS(key), JSON.stringify(val)); } catch(e){}
 }
+function escapeHTML(value){
+  return String(value === undefined || value === null ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// ==================== v5.0 canonical learning memory ====================
+var LearningMemory = (function(){
+  var PROFILE_KEY = 'learning_profile';
+  var MAX_ATTEMPTS = 500;
+  var ERROR_KEYS = ['concept','formula','calc','method','read','prereq','unknown'];
+
+  function emptyErrors(){
+    return { concept:0, formula:0, calc:0, method:0, read:0, prereq:0, unknown:0 };
+  }
+
+  function emptyConcept(name){
+    return {
+      name: name || '', state: 'unseen', attempts: 0,
+      firstAttemptCorrect: 0, independentCorrect: 0, hintUses: 0,
+      recentResults: [], lastPracticedAt: null, confidence: 'unknown',
+      confirmedErrors: emptyErrors(), stateEvidence: []
+    };
+  }
+
+  function createProfile(){
+    return {
+      version: 1,
+      course: {
+        name: COURSE_META.courseName,
+        slug: COURSE_META.courseSlug,
+        type: COURSE_META.courseType || '',
+        examDate: COURSE_META.examDate || null
+      },
+      evidence: {
+        level: COURSE_META.evidenceLevel || 'generic',
+        summary: COURSE_META.evidenceSummary || '',
+        sources: []
+      },
+      coverageMode: COURSE_META.coverageMode || 'standard-coverage',
+      timeBudget: { remainingMinutes: COURSE_META.remainingMinutes || null, dailyMinutes: null },
+      concepts: {}, attempts: [], errorHistory: [], reviewSchedule: {},
+      preferences: { feedbackMode: 'encouraging', shareRawWrongQuestions: false },
+      migration: { migratedFrom: [], migratedAt: Date.now() }
+    };
+  }
+
+  function migrateLegacy(){
+    var profile = createProfile();
+    var legacyPath = lsGet('ap', {});
+    var legacyWrongbook = lsGet('wrongbook', []);
+    knowledgeGraph.forEach(function(node){
+      var concept = emptyConcept(node.name);
+      if(legacyPath[node.id] === 'mastered' || node._diagMastered){
+        concept.state = 'provisional';
+        concept.stateEvidence.push('legacy-path');
+      }
+      profile.concepts[node.id] = concept;
+    });
+    legacyWrongbook.forEach(function(item){
+      profile.errorHistory.push({
+        questionId: item.id || '', conceptIds: conceptIdsFor(item),
+        category: item.category || 'unknown', timestamp: item.time || Date.now(),
+        migrated: true
+      });
+    });
+    if(Object.keys(legacyPath).length) profile.migration.migratedFrom.push('ap');
+    if(legacyWrongbook.length) profile.migration.migratedFrom.push('wrongbook');
+    lsSet(PROFILE_KEY, profile);
+    return profile;
+  }
+
+  function normalize(profile){
+    if(!profile || profile.version !== 1) return migrateLegacy();
+    profile.concepts = profile.concepts || {};
+    profile.attempts = Array.isArray(profile.attempts) ? profile.attempts : [];
+    profile.errorHistory = Array.isArray(profile.errorHistory) ? profile.errorHistory : [];
+    profile.preferences = profile.preferences || { feedbackMode:'encouraging', shareRawWrongQuestions:false };
+    profile.evidence = profile.evidence || { level:'generic', summary:'', sources:[] };
+    knowledgeGraph.forEach(function(node){
+      if(!profile.concepts[node.id]) profile.concepts[node.id] = emptyConcept(node.name);
+      profile.concepts[node.id].name = node.name;
+      if(!profile.concepts[node.id].confirmedErrors) profile.concepts[node.id].confirmedErrors = emptyErrors();
+    });
+    return profile;
+  }
+
+  function get(){ return normalize(lsGet(PROFILE_KEY, null)); }
+  function save(profile){ lsSet(PROFILE_KEY, normalize(profile)); }
+
+  function conceptIdsFor(question){
+    if(question && Array.isArray(question.conceptIds) && question.conceptIds.length){
+      return question.conceptIds.slice(0, 2);
+    }
+    var chapter = question ? String(question.chapter || '') : '';
+    var match = knowledgeGraph.find(function(node){
+      return chapter === String(node.chapter) || chapter.indexOf(String(node.chapter)) !== -1;
+    });
+    return match ? [match.id] : [];
+  }
+
+  function recomputeState(concept){
+    if(concept.state === 'excluded') return;
+    if(concept.attempts === 0){ concept.state = 'unseen'; return; }
+    var recent = concept.recentResults || [];
+    if(recent.length && recent[recent.length-1] === false){ concept.state = 'unstable'; return; }
+    if(concept.independentCorrect >= 3 && recent.slice(-3).length === 3 && recent.slice(-3).every(Boolean)){
+      concept.state = 'mastered'; return;
+    }
+    if(concept.independentCorrect >= 2 && recent.slice(-2).length === 2 && recent.slice(-2).every(Boolean)){
+      concept.state = 'provisional'; return;
+    }
+    concept.state = 'learning';
+  }
+
+  function recordAttempt(question, correct, hintUsed, firstAttempt){
+    var profile = get();
+    var conceptIds = conceptIdsFor(question);
+    var event = {
+      questionId: String(question.id || ''), conceptIds: conceptIds,
+      correct: !!correct, firstAttempt: firstAttempt !== false, hintUsed: !!hintUsed,
+      difficulty: question.difficulty || 'unknown',
+      sourceBasis: question.sourceBasis || (question.source === 'ai-import' ? 'ai-import' : 'source'),
+      suggestedErrorCategory: question.suggestedErrorCategory || question.errorCategory || null,
+      userConfirmedErrorCategory: null, timestamp: Date.now()
+    };
+    profile.attempts.push(event);
+    if(profile.attempts.length > MAX_ATTEMPTS) profile.attempts = profile.attempts.slice(-MAX_ATTEMPTS);
+    conceptIds.forEach(function(id){
+      var node = knowledgeGraph.find(function(n){ return n.id === id; });
+      var concept = profile.concepts[id] || emptyConcept(node ? node.name : id);
+      concept.attempts++;
+      if(event.firstAttempt && event.correct) concept.firstAttemptCorrect++;
+      if(event.correct && !event.hintUsed) concept.independentCorrect++;
+      if(event.hintUsed) concept.hintUses++;
+      concept.recentResults.push(event.correct);
+      concept.recentResults = concept.recentResults.slice(-10);
+      concept.lastPracticedAt = event.timestamp;
+      recomputeState(concept);
+      concept.stateEvidence = ['attempt-history'];
+      profile.concepts[id] = concept;
+    });
+    save(profile);
+  }
+
+  function confirmError(questionId, category){
+    if(ERROR_KEYS.indexOf(category) === -1) category = 'unknown';
+    var profile = get();
+    for(var i = profile.attempts.length - 1; i >= 0; i--){
+      if(profile.attempts[i].questionId === String(questionId)){
+        profile.attempts[i].userConfirmedErrorCategory = category;
+        profile.attempts[i].conceptIds.forEach(function(id){
+          var concept = profile.concepts[id];
+          if(concept){ concept.confirmedErrors[category] = (concept.confirmedErrors[category] || 0) + 1; }
+        });
+        profile.errorHistory.push({ questionId:String(questionId), conceptIds:profile.attempts[i].conceptIds, category:category, timestamp:Date.now() });
+        break;
+      }
+    }
+    save(profile);
+  }
+
+  function recordMastery(conceptId, state, reason){
+    var profile = get();
+    var node = knowledgeGraph.find(function(n){ return n.id === conceptId; });
+    var concept = profile.concepts[conceptId] || emptyConcept(node ? node.name : conceptId);
+    concept.state = state || 'provisional';
+    concept.stateEvidence = [reason || 'micro-check'];
+    profile.concepts[conceptId] = concept;
+    save(profile);
+  }
+
+  function summary(){
+    var profile = get();
+    var mastered = [], weak = [], unseen = [], excluded = [];
+    Object.keys(profile.concepts).forEach(function(id){
+      var c = profile.concepts[id];
+      var row = { id:id, name:c.name, state:c.state, attempts:c.attempts,
+        independentAccuracy:c.attempts ? Math.round(c.independentCorrect/c.attempts*100) : null,
+        hintUses:c.hintUses, lastPracticedAt:c.lastPracticedAt, confirmedErrors:c.confirmedErrors };
+      if(c.state === 'mastered' || c.state === 'provisional') mastered.push(row);
+      else if(c.state === 'unstable' || c.state === 'learning') weak.push(row);
+      else if(c.state === 'excluded') excluded.push(row);
+      else unseen.push(row);
+    });
+    return { profile:profile, mastered:mastered, weak:weak, unseen:unseen, excluded:excluded };
+  }
+
+  return { get:get, save:save, summary:summary, recordAttempt:recordAttempt,
+    confirmError:confirmError, recordMastery:recordMastery, conceptIdsFor:conceptIdsFor };
+})();
+
+(function renderEvidenceNotice(){
+  var notice = document.getElementById('evidenceNotice');
+  if(!notice) return;
+  var evidence = LearningMemory.get().evidence;
+  var feedbackMode = LearningMemory.get().preferences.feedbackMode || 'encouraging';
+  document.body.setAttribute('data-feedback-mode', feedbackMode);
+  var labels = {
+    'exam-grounded':'考试资料支持',
+    'course-grounded':'课程资料支持',
+    'generic':'通用知识推测'
+  };
+  notice.textContent = '证据等级：' + (labels[evidence.level] || evidence.level) + '。' + evidence.summary;
+})();
 
 // ==================== 暗黑模式 ====================
 (function(){
@@ -2338,7 +2569,11 @@ function lsSet(key, val){
     document.body.setAttribute('data-depth', depth);
     btns.forEach(function(b){ b.classList.toggle('active', b.dataset.depth===depth); });
     lsSet('depth', depth);
-    var labels = { survival:'🆘 补考救命', standard:'✅ 稳过及格', advanced:'🚀 冲刺高分' };
+    var coverageModes = { survival:'minimum-core', standard:'standard-coverage', advanced:'extended-improvement' };
+    var profile = LearningMemory.get();
+    profile.coverageMode = coverageModes[depth] || 'standard-coverage';
+    LearningMemory.save(profile);
+    var labels = { survival:'🧭 最小核心路径', standard:'✅ 标准覆盖路径', advanced:'🚀 扩展提升路径' };
     showToast('已切换到' + labels[depth] + '模式');
   }
   btns.forEach(function(b){
@@ -2455,7 +2690,7 @@ window.toggleExample = function(btn, type){
         }).join('') + '</div>' : '');
     document.getElementById('diagSubmit').style.display = 'none';
     document.getElementById('diagReset').style.display = '';
-    // 答对的标记为已掌握
+// 单次答对只记为初步掌握，不作为稳定掌握证据
     diagQuestions.forEach(function(q, idx){
       if(answers[idx] === q.answer){
         var node = knowledgeGraph.find(function(n){return n.id===q.blind;});
@@ -2482,17 +2717,21 @@ var apState = lsGet('ap', {});
 function renderKnowledgeMap(){
   var container = document.getElementById('kmap');
   container.innerHTML = '';
-  var mastered = 0;
+  var readyCount = 0;
   knowledgeGraph.forEach(function(node){
-    if(apState[node.id] === 'mastered' || node._diagMastered) mastered++;
+    var nodeState = apState[node.id];
+    var isProvisional = nodeState === 'provisional' || node._diagMastered;
+    var isStable = nodeState === 'mastered';
+    if(isProvisional || isStable) readyCount++;
     var isReady = node.prereqs.every(function(p){
-      return apState[p] === 'mastered' || knowledgeGraph.find(function(n){return n.id===p;})._diagMastered;
+      var prereq = knowledgeGraph.find(function(n){return n.id===p;});
+      return apState[p] === 'provisional' || apState[p] === 'mastered' || (prereq && prereq._diagMastered);
     });
-    var isMastered = apState[node.id] === 'mastered' || node._diagMastered;
-    var isLocked = !isReady && !isMastered;
+    var isLocked = !isReady && !isProvisional && !isStable;
     var cls = 'kmap-node ';
     var icon = '⚪', action = '';
-    if(isMastered){ cls += 'mastered'; icon = '🟢'; action = ''; }
+    if(isStable){ cls += 'mastered'; icon = '🟢'; action = ''; }
+    else if(isProvisional){ cls += 'mastered'; icon = '🟣'; action = '<button class="kmap-action" onclick="startLearn(\''+node.id+'\')">继续巩固</button>'; }
     else if(isReady){ cls += 'ready'; icon = '🟡'; action = '<button class="kmap-action" onclick="startLearn(\''+node.id+'\')">去学习</button>'; }
     else { cls += 'locked'; icon = '⚪'; }
     container.innerHTML += '<div class="'+cls+'">' +
@@ -2501,9 +2740,9 @@ function renderKnowledgeMap(){
       '<div class="kmap-ch">第'+node.chapter+'章 · '+({easy:'简单',medium:'中等',hard:'困难'}[node.difficulty])+'</div>' +
       action + '</div>';
   });
-  document.getElementById('apCount').textContent = mastered;
+  document.getElementById('apCount').textContent = readyCount;
   document.getElementById('apTotal').textContent = knowledgeGraph.length;
-  document.getElementById('apBar').style.width = (mastered/knowledgeGraph.length*100) + '%';
+  document.getElementById('apBar').style.width = (readyCount/knowledgeGraph.length*100) + '%';
 }
 
 window.startLearn = function(nodeId){
@@ -2536,22 +2775,35 @@ function showMicroQuiz(node){
       box.querySelectorAll('[data-mqi]').forEach(function(b){b.disabled=true;});
       if(i === mq.answer){
         btn.classList.add('correct');
-        apState[node.id] = 'mastered';
+        apState[node.id] = 'provisional';
         lsSet('ap', apState);
+        LearningMemory.recordAttempt({
+          id: 'micro-' + node.id,
+          conceptIds: [node.id],
+          difficulty: node.difficulty,
+          sourceBasis: 'source'
+        }, true, false, true);
+        LearningMemory.recordMastery(node.id, 'provisional', 'micro-check');
         celebrateConfetti();
-        showToast('🎉 已掌握：'+node.name, 2500, '继续', function(){
+        showToast('🎉 初步掌握：'+node.name+'，还需复测确认', 2500, '继续', function(){
           overlay.classList.remove('show');
           // 找下一个可学节点
           renderKnowledgeMap();
           updateGlobalProgress();
           var next = knowledgeGraph.find(function(n){
-            return apState[n.id] !== 'mastered' && !n._diagMastered &&
-              n.prereqs.every(function(p){return apState[p]==='mastered';});
+            return !apState[n.id] && !n._diagMastered &&
+              n.prereqs.every(function(p){return apState[p]==='provisional' || apState[p]==='mastered';});
           });
           if(next) startLearn(next.id);
         });
       } else {
         btn.classList.add('wrong');
+        LearningMemory.recordAttempt({
+          id: 'micro-' + node.id,
+          conceptIds: [node.id],
+          difficulty: node.difficulty,
+          sourceBasis: 'source'
+        }, false, false, true);
         box.querySelectorAll('[data-mqi]')[mq.answer].classList.add('correct');
         showToast('❌ 再回去看看吧', 2500, '回看', function(){
           overlay.classList.remove('show');
@@ -3006,11 +3258,11 @@ var TermDictionary = {
 (function(){
   document.getElementById('exportProgressBtn').addEventListener('click', function(){
     var data = {};
-    var keys = ['apState','diagDone','diagResults','wrongbook','srs','checks','dark','depth','excerpts','flipMarks'];
+    var keys = ['learning_profile','ap','wrongbook','sr','checks','dark','depth','excerpts','flip_marks','custom_questions','ai_config'];
     keys.forEach(function(k){ data[k] = lsGet(k, null); });
     data._exported = new Date().toISOString();
     data._slug = SLUG;
-    data._version = '3.1';
+    data._version = '5.0';
     var blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -3027,6 +3279,7 @@ var TermDictionary = {
     reader.onload = function(ev){
       try {
         var data = JSON.parse(ev.target.result);
+        if(data._slug && data._slug !== SLUG && !confirm('该进度文件来自其他课程，仍要导入吗？')) return;
         Object.keys(data).forEach(function(k){
           if(k.startsWith('_')) return;
           lsSet(k, data[k]);
@@ -3040,7 +3293,7 @@ var TermDictionary = {
   });
   document.getElementById('resetProgressBtn').addEventListener('click', function(){
     if(!confirm('确定要重置全部学习进度吗？此操作不可撤销。')) return;
-    var keys = ['apState','diagDone','diagResults','wrongbook','srs','checks','excerpts','flipMarks'];
+    var keys = ['learning_profile','ap','wrongbook','sr','checks','dark','depth','excerpts','flip_marks','custom_questions','ai_config'];
     keys.forEach(function(k){ try { localStorage.removeItem(LS(k)); } catch(e){} });
     showToast('🗑️ 进度已重置，刷新页面生效', 2500, '刷新', function(){ location.reload(); });
   });
@@ -3055,6 +3308,7 @@ var QuizSystem = (function(){
     current: 0,
     correct: 0, wrong: 0,
     answered: false,
+    hintUsed: false,
     examAnswers: {},
     focusedQuestions: null  // v4.0: 聚焦特定题目集（如AI新题）
   };
@@ -3108,6 +3362,7 @@ var QuizSystem = (function(){
     }
     var q = state.questions[state.current];
     state.answered = false;
+    state.hintUsed = false;
     var typeTag = document.getElementById('qbTypeTag');
     typeTag.textContent = {choice:'选择题',tf:'判断题',calc:'计算题',short:'简答题',material:'材料题'}[q.type] || '题目';
     typeTag.className = 'qb-type-tag' + (q.source === 'ai-import' ? ' ai-imported' : '');
@@ -3243,6 +3498,10 @@ var QuizSystem = (function(){
       }
     }
 
+    if(q.type === 'choice' || q.type === 'tf'){
+      LearningMemory.recordAttempt(q, isCorrect, state.hintUsed, true);
+    }
+
     fb.className = 'qb-feedback show ' + (isCorrect ? 'correct' : 'wrong');
     fb.innerHTML = (isCorrect ? '✅ 回答正确！' : '❌ 答错了。') +
       '<div style="margin-top:8px;">' + (q.explanation || '查看解析') + '</div>';
@@ -3269,7 +3528,8 @@ var QuizSystem = (function(){
       return;
     }
     wb.push({ id:q.id, question:q.question, explanation:q.explanation,
-      category: category, chapter: q.chapter, time: Date.now() });
+      category: category, suggestedErrorCategory:q.suggestedErrorCategory || q.errorCategory || 'unknown',
+      conceptIds:LearningMemory.conceptIdsFor(q), chapter: q.chapter, time: Date.now() });
     lsSet('wrongbook', wb);
     renderWrongbook();
   }
@@ -3294,7 +3554,8 @@ var QuizSystem = (function(){
     });
     overlay.classList.add('show');
     document.getElementById('confirmReasonBtn').onclick = function(){
-      addToWrongbook(q, selected || q.errorCategory || 'unknown');
+      addToWrongbook(q, selected || 'unknown');
+      if(selected) LearningMemory.confirmError(q.id, selected);
       overlay.classList.remove('show');
       showToast('📕 已加入错题本（'+(selected?errorCategories.find(function(c){return c.key===selected;}).label:'未分类')+'）', 2500, '查看', function(){ scrollToSection('wrongbook'); });
     };
@@ -3334,8 +3595,9 @@ var QuizSystem = (function(){
       if(isRight) correct++;
       else {
         wrong++;
-        addToWrongbook(q, q.errorCategory || 'unknown');
+        addToWrongbook(q, 'unknown');
       }
+      LearningMemory.recordAttempt(q, isRight, false, true);
     });
     state.correct = correct; state.wrong = wrong;
     ExamTimer.stop();
@@ -3348,7 +3610,7 @@ var QuizSystem = (function(){
     var pct = Math.round(state.correct/total*100);
     var msg = pct>=90?'🏆 优秀！基础很扎实！':
               pct>=75?'👍 不错！继续保持！':
-              pct>=60?'💪 及格了，但还有提升空间。':
+              pct>=60?'💪 本轮正确率达到60%，仍有提升空间。':
               '😢 别灰心，回到路径针对性复习。';
     var sum = document.getElementById('qbSummary');
     sum.innerHTML = '<div class="qb-summary-score">'+pct+'分</div>' +
@@ -3385,6 +3647,7 @@ var QuizSystem = (function(){
     if(state.current > 0){ state.current--; renderQuestion(); updateStats(); }
   });
   document.getElementById('hintBtn').addEventListener('click', function(){
+    state.hintUsed = true;
     document.getElementById('hintBox').classList.toggle('show');
   });
   document.querySelectorAll('.qb-tab').forEach(function(tab){
@@ -3513,14 +3776,14 @@ function renderWrongbook(){
     var cat = errorCategories.find(function(c){return c.key===w.category;});
     var chapter = w.chapter ? '第'+w.chapter+'章' : '';
     return '<div class="wrongbook-item">' +
-      '<div class="wrongbook-q">'+(i+1)+'. '+w.question+'</div>' +
+      '<div class="wrongbook-q">'+(i+1)+'. '+escapeHTML(w.question)+'</div>' +
       '<div class="wrongbook-meta">'+(chapter?'📖 '+chapter+' · ':'')+(cat?getReasonEmoji(w.category)+' '+cat.label:'❓ 未分类')+'</div>' +
       '<div class="error-tags">' +
         errorCategories.map(function(c){
           return '<span class="error-tag'+(w.category===c.key?' selected':'')+'" onclick="setErrorCategory('+i+',\''+c.key+'\')">'+getReasonEmoji(c.key)+c.label+'</span>';
         }).join('') +
       '</div>' +
-      '<div style="font-size:13px;color:var(--muted);margin-top:6px;">'+(w.explanation||'')+'</div>' +
+      '<div style="font-size:13px;color:var(--muted);margin-top:6px;">'+escapeHTML(w.explanation||'')+'</div>' +
       '<div class="wb-actions">' +
         (w.chapter ? '<button class="btn btn-ghost btn-sm" onclick="scrollToSection(\'concepts\')">📚 回看知识点</button>' : '') +
         '<button class="btn btn-ghost btn-sm" onclick="removeWrongbook('+i+')">✅ 已掌握，移除</button>' +
@@ -3532,6 +3795,7 @@ window.setErrorCategory = function(i, cat){
   var wb = lsGet('wrongbook', []);
   wb[i].category = cat;
   lsSet('wrongbook', wb);
+  LearningMemory.confirmError(wb[i].id, cat);
   renderWrongbook();
 };
 window.removeWrongbook = function(i){
@@ -3583,18 +3847,17 @@ function updateGlobalProgress(){
   }
   // 路径40%
   var apTotal = knowledgeGraph.length;
-  var apDone = Object.keys(apState).filter(function(k){return apState[k]==='mastered';}).length;
-  apDone += knowledgeGraph.filter(function(n){return n._diagMastered && apState[n.id]!=='mastered';}).length;
+  var apDone = Object.keys(apState).filter(function(k){return apState[k]==='provisional' || apState[k]==='mastered';}).length;
+  apDone += knowledgeGraph.filter(function(n){return n._diagMastered && !apState[n.id];}).length;
   apScore = apTotal > 0 ? apDone/apTotal : 0;
   // 清单25%
   var checks = document.querySelectorAll('#checklistItems input');
   var checksDone = Array.from(checks).filter(function(c){return c.checked;}).length;
   checkScore = checks.length > 0 ? checksDone/checks.length : 0;
   // 题库20%
-  var qbTotal = quizBank.length;
-  var wb = lsGet('wrongbook', []);
-  var qbDone = Math.max(0, qbTotal - wb.length); // 简化：总题数-错题数
-  qbScore = qbTotal > 0 ? Math.min(1, qbDone/qbTotal) : 0;
+  var qbTotal = Math.max(10, quizBank.length);
+  var attempts = LearningMemory.get().attempts;
+  qbScore = attempts.length ? Math.min(1, attempts.length/qbTotal) : 0;
 
   var total = diagScore*0.15 + apScore*0.4 + checkScore*0.25 + qbScore*0.2;
   var pct = Math.round(total*100);
@@ -3683,11 +3946,27 @@ var SmartJSON = {
     var valid = [];
     var dups = 0;
     var existing = QuizSystem.getAllQuestions();
+    function fingerprint(q){
+      var ids = Array.isArray(q.conceptIds) ? q.conceptIds.slice().sort().join(',') : '';
+      var normalized = String(q.question || '').replace(/[0-9]+(?:\.[0-9]+)?/g, '#').replace(/\s+/g, '').toLowerCase();
+      return [ids, q.type || '', q.difficulty || '', normalized].join('|');
+    }
+    var existingFingerprints = {};
+    existing.forEach(function(q){ existingFingerprints[fingerprint(q)] = true; });
     questions.forEach(function(q, i){
       var idx = i+1;
       if(!q.type){ errors.push('第'+idx+'题：缺少type字段'); return; }
       if(!q.question){ errors.push('第'+idx+'题：缺少question字段'); return; }
-      if(q.answer === undefined && q.answer === null){ errors.push('第'+idx+'题：缺少answer字段'); return; }
+      if(q.answer === undefined || q.answer === null){ errors.push('第'+idx+'题：缺少answer字段'); return; }
+      if(!Array.isArray(q.conceptIds) || q.conceptIds.length < 1 || q.conceptIds.length > 2){ errors.push('第'+idx+'题：conceptIds必须包含1-2个知识点ID'); return; }
+      if(!q.learningObjective){ errors.push('第'+idx+'题：缺少learningObjective'); return; }
+      if(!q.difficultyReason){ errors.push('第'+idx+'题：缺少difficultyReason'); return; }
+      if(['source','derived','generic'].indexOf(q.sourceBasis) === -1){ errors.push('第'+idx+'题：sourceBasis无效'); return; }
+      if(q.diagnosticUse !== false){ errors.push('第'+idx+'题：外部AI题目的diagnosticUse必须为false'); return; }
+      if(!q.targetsMemory || !q.targetsMemory.observedNeed){ errors.push('第'+idx+'题：缺少targetsMemory.observedNeed'); return; }
+      if(!q.selfCheck || q.selfCheck.conditionsSufficient !== true || q.selfCheck.answerRecalculated !== true || q.selfCheck.uniqueAnswer !== true){
+        errors.push('第'+idx+'题：selfCheck未通过'); return;
+      }
       if(['choice','tf','calc','short','material'].indexOf(q.type) === -1){
         errors.push('第'+idx+'题：type必须是choice/tf/calc/short/material之一');
         return;
@@ -3707,7 +3986,7 @@ var SmartJSON = {
         else { errors.push('第'+idx+'题：判断题answer必须是true/false'); return; }
       }
       // 去重检查
-      var isDup = existing.some(function(eq){ return eq.question === q.question; });
+      var isDup = existing.some(function(eq){ return eq.question === q.question; }) || !!existingFingerprints[fingerprint(q)];
       if(isDup) dups++;
       q._duplicate = isDup;
       valid.push(q);
@@ -3731,15 +4010,11 @@ var PromptGenerator = {
   },
   collectContext: function(opts){
     var depth = lsGet('depth', 'standard');
-    var depthLabels = { survival:'60分及格（补考救命）', standard:'80分稳过', advanced:'90+冲刺高分' };
+    var depthLabels = { survival:'最小核心路径', standard:'标准覆盖路径', advanced:'扩展提升路径' };
     var depthDiff = { survival:{e:70,m:30,h:0}, standard:{e:30,m:50,h:20}, advanced:{e:10,m:40,h:50} };
-    var adaptive = [];
-    try { adaptive = JSON.parse(localStorage.getItem(LS('adaptive_path')) || '[]'); } catch(e){}
-    var mastered = [], weak = [];
-    adaptive.forEach(function(n){
-      if(n.status === 'mastered') mastered.push(n.name);
-      else weak.push(n.name);
-    });
+    var learningSummary = LearningMemory.summary();
+    var mastered = learningSummary.mastered.map(function(n){ return n.name; });
+    var weak = learningSummary.weak.map(function(n){ return n.name; });
     var wb = [];
     try { wb = JSON.parse(localStorage.getItem(LS('wrongbook')) || '[]'); } catch(e){}
     var errStats = { concept:0, formula:0, calc:0, method:0, read:0, prereq:0, unknown:0 };
@@ -3769,7 +4044,7 @@ var PromptGenerator = {
       courseName: this.COURSE_META.name,
       courseType: this.COURSE_META.type,
       examFormat: this.COURSE_META.examFormat,
-      depthLabel: depthLabels[depth] || '80分稳过',
+      depthLabel: depthLabels[depth] || '标准覆盖路径',
       knowledgeList: knowledgeList,
       mastered: mastered.length ? mastered.join('、') : '刚开始复习',
       weak: weak.length ? weak.join('、') : '暂无',
@@ -3783,14 +4058,9 @@ var PromptGenerator = {
     };
   },
   getAccuracy: function(){
-    try {
-      // 简单估算：从错题数和答题数
-      var prog = JSON.parse(localStorage.getItem(LS('qb_progress')) || '{}');
-      if(prog.correct+prog.wrong > 0){
-        return Math.round(prog.correct/(prog.correct+prog.wrong)*100);
-      }
-    } catch(e){}
-    return 50;
+    var attempts = LearningMemory.get().attempts.filter(function(a){ return a.sourceBasis !== 'ai-import'; });
+    if(!attempts.length) return null;
+    return Math.round(attempts.filter(function(a){ return a.correct; }).length / attempts.length * 100);
   },
   fillTemplate: function(c){
     return '═══════════════════════════════════════\n' +
@@ -3801,7 +4071,7 @@ var PromptGenerator = {
 '- 课程名称：' + c.courseName + '\n' +
 '- 课程类型：' + c.courseType + '\n' +
 '- 考试形式：' + c.examFormat + '\n' +
-'- 当前目标档位：' + c.depthLabel + '\n\n' +
+'- 当前覆盖深度：' + c.depthLabel + '\n\n' +
 '【二、知识范围（请只在以下范围内出题）】\n' +
 '全部章节：' + this.COURSE_META.chapters + '\n' +
 c.knowledgeList + '\n\n' +
@@ -3856,6 +4126,128 @@ c.knowledgeList + '\n\n' +
 };
 
 // ---------- 题目导入引擎 ----------
+// ---------- v5.0 evidence-aware prompt generator ----------
+var PromptGeneratorV5 = {
+  build: function(opts){ return this.fillTemplate(this.collectContext(opts || {})); },
+  collectContext: function(opts){
+    var summary = LearningMemory.summary();
+    var profile = summary.profile;
+    var targets = [];
+    if(opts.range === 'wrong' && profile.errorHistory.length){
+      var ids = {};
+      profile.errorHistory.slice(-20).forEach(function(e){
+        (e.conceptIds || []).forEach(function(id){ ids[id] = true; });
+      });
+      targets = Object.keys(ids).map(function(id){ return profile.concepts[id]; }).filter(Boolean);
+    } else if(opts.range === 'all'){
+      targets = Object.keys(profile.concepts).map(function(id){ return profile.concepts[id]; })
+        .filter(function(c){ return c.state !== 'excluded'; });
+    } else {
+      targets = summary.weak.length ? summary.weak : summary.unseen;
+    }
+    targets = targets.slice(0, 3);
+
+    var totalAttempts = 0, weightedAccuracy = 0;
+    targets.forEach(function(c){
+      totalAttempts += c.attempts || 0;
+      if(c.independentAccuracy !== null) weightedAccuracy += c.independentAccuracy * (c.attempts || 0);
+    });
+    var observedAccuracy = totalAttempts ? Math.round(weightedAccuracy / totalAttempts) : null;
+    var mode = profile.coverageMode || 'standard-coverage';
+    var modeDiff = {
+      'minimum-core': { easy:70, medium:30, hard:0 },
+      'standard-coverage': { easy:40, medium:50, hard:10 },
+      'extended-improvement': { easy:20, medium:50, hard:30 }
+    };
+    var diff = modeDiff[mode] || modeDiff['standard-coverage'];
+    if(opts.difficulty === 'easy') diff = { easy:75, medium:25, hard:0 };
+    if(opts.difficulty === 'hard') diff = { easy:15, medium:50, hard:35 };
+
+    var typeDist = opts.type === 'choice' ? 'choice 80%, tf 20%' :
+      (opts.type === 'calc' ? 'calc 60%, choice 30%, short 10%' : 'choice 35%, tf 10%, calc 35%, short 20%');
+
+    return {
+      courseName: profile.course.name,
+      courseType: profile.course.type || COURSE_META.courseType,
+      evidenceLevel: profile.evidence.level,
+      evidenceSummary: profile.evidence.summary || 'No verified exam material is attached.',
+      coverageMode: mode,
+      remainingMinutes: profile.timeBudget.remainingMinutes,
+      targets: targets,
+      excluded: summary.excluded,
+      observedAccuracy: observedAccuracy,
+      count: opts.count || 10,
+      difficulty: diff,
+      typeDistribution: typeDist
+    };
+  },
+  targetText: function(targets){
+    if(!targets.length) return '- No concept has enough evidence. Generate low-cost foundation checks and do not label any concept weak.';
+    return targets.map(function(c){
+      var errors = Object.keys(c.confirmedErrors || {}).filter(function(k){ return c.confirmedErrors[k] > 0; })
+        .map(function(k){ return k + ':' + c.confirmedErrors[k]; }).join(', ') || 'none confirmed';
+      var accuracy = c.independentAccuracy !== null ? c.independentAccuracy + '%' : 'insufficient data';
+      return '- ' + c.name + ': state=' + c.state + ', attempts=' + c.attempts +
+        ', independent accuracy=' + accuracy + ', hint uses=' + c.hintUses + ', confirmed errors=' + errors;
+    }).join('\n');
+  },
+  fillTemplate: function(c){
+    var sourceBasis = c.evidenceLevel === 'exam-grounded' ? 'derived' :
+      (c.evidenceLevel === 'course-grounded' ? 'derived' : 'generic');
+    var evidenceRules = c.evidenceLevel === 'generic' ?
+      '- Only generate general foundation practice. Do not call anything high-frequency, must-test, predicted, or a mock exam.\n' :
+      '- Stay within the supplied evidence summary. Do not claim a topic will appear on the exam.\n';
+    return [
+      'You create unverified personal practice questions for ' + c.courseName + '. You are not writing a formal exam and the questions are not teacher-reviewed.',
+      '',
+      '[Evidence]',
+      '- level: ' + c.evidenceLevel,
+      '- summary: ' + c.evidenceSummary,
+      evidenceRules.trim(),
+      '',
+      '[Learning context]',
+      '- coverage mode: ' + c.coverageMode,
+      '- remaining study minutes: ' + (c.remainingMinutes === null ? 'unknown' : c.remainingMinutes),
+      '- concept-level evidence:',
+      this.targetText(c.targets),
+      '- observed independent accuracy: ' + (c.observedAccuracy === null ? 'insufficient data; do not invent a percentage' : c.observedAccuracy + '%'),
+      '- excluded concepts: ' + (c.excluded.length ? c.excluded.map(function(x){return x.name;}).join(', ') : 'none'),
+      '',
+      '[Generation request]',
+      '- count: ' + c.count,
+      '- type distribution: ' + c.typeDistribution,
+      '- difficulty distribution: easy ' + c.difficulty.easy + '%, medium ' + c.difficulty.medium + '%, hard ' + c.difficulty.hard + '%',
+      '- focus on one explicit learning objective per question and at most two concept IDs.',
+      '- generate each question, then independently solve it and complete selfCheck.',
+      '- if conditions are insufficient or the answer is ambiguous, replace the question.',
+      '',
+      '[Output]',
+      'Return only a valid JSON array. Every object must contain:',
+      '{',
+      '  "type":"choice|tf|calc|short|material",',
+      '  "conceptIds":["concept-id"],',
+      '  "learningObjective":"observable objective",',
+      '  "chapter":"chapter or topic",',
+      '  "difficulty":"easy|medium|hard",',
+      '  "difficultyReason":"why this difficulty fits",',
+      '  "question":"question text",',
+      '  "options":["A","B","C","D"],',
+      '  "answer":0,',
+      '  "explanation":"worked explanation",',
+      '  "hint":"method cue without revealing the answer",',
+      '  "sourceBasis":"' + sourceBasis + '",',
+      '  "diagnosticUse":false,',
+      '  "suggestedErrorCategory":"concept|formula|calc|method|read|prereq|unknown",',
+      '  "targetsMemory":{"observedNeed":"the evidence this question addresses"},',
+      '  "selfCheck":{"conditionsSufficient":true,"answerRecalculated":true,"uniqueAnswer":true,"notes":""}',
+      '}',
+      '',
+      'For choice questions use four options and an integer answer from 0 to 3. For true/false use a boolean answer. Do not include personal data or commentary outside JSON.'
+    ].join('\n');
+  }
+};
+PromptGenerator = PromptGeneratorV5;
+
 var QuestionImporter = {
   importQuestions: function(questions){
     var existing = [];
@@ -3871,8 +4263,16 @@ var QuestionImporter = {
         answer: q.answer,
         explanation: q.explanation || '',
         hint: q.hint || '',
-        errorCategory: q.errorCategory || 'unknown',
-        source: 'ai-import',
+          conceptIds: Array.isArray(q.conceptIds) ? q.conceptIds.slice(0, 2) : [],
+          learningObjective: q.learningObjective || '',
+          difficultyReason: q.difficultyReason || '',
+          suggestedErrorCategory: q.suggestedErrorCategory || q.errorCategory || 'unknown',
+          errorCategory: 'unknown',
+          sourceBasis: q.sourceBasis || 'generic',
+          diagnosticUse: false,
+          targetsMemory: q.targetsMemory || { observedNeed:'unspecified' },
+          selfCheck: q.selfCheck || { conditionsSufficient:false, answerRecalculated:false, uniqueAnswer:false },
+          source: 'ai-import',
         importedAt: Date.now()
       };
     });
@@ -3899,6 +4299,7 @@ var AIAssistant = (function(){
   var hasOnboarded = localStorage.getItem(LS('ai_onboarded')) === '1';
   var config = { range:'weak', count:10, difficulty:'auto', type:'mixed' };
   var parsedQuestions = null;
+  var pendingPrompt = '';
 
   function $(id){ return document.getElementById(id); }
 
@@ -3925,6 +4326,8 @@ var AIAssistant = (function(){
   }
 
   function open(){
+    // 学习记忆可能在面板关闭期间变化；每次打开都要求重新预览最新摘要。
+    invalidatePrompt();
     $('aiPanelOverlay').classList.add('show');
     showStep(hasOnboarded ? 2 : 1);
     if(!hasOnboarded){
@@ -3935,9 +4338,8 @@ var AIAssistant = (function(){
     // 根据当前状态智能预填范围
     var wb = [];
     try { wb = JSON.parse(localStorage.getItem(LS('wrongbook')) || '[]'); } catch(e){}
-    var adaptive = [];
-    try { adaptive = JSON.parse(localStorage.getItem(LS('adaptive_path')) || '[]'); } catch(e){}
-    var weakNodes = adaptive.filter(function(n){ return n.status !== 'mastered'; });
+    var learningSummary = LearningMemory.summary();
+    var weakNodes = learningSummary.weak;
     // 默认选最需要的范围
     if(wb.length >= 3){
       selectOpt('aiRangeOpts', 'wrong');
@@ -3970,6 +4372,12 @@ var AIAssistant = (function(){
     });
   }
 
+  function invalidatePrompt(){
+    pendingPrompt = '';
+    if($('aiPreviewGroup')) $('aiPreviewGroup').style.display = 'none';
+    if($('aiGenerateBtn')) $('aiGenerateBtn').textContent = '🔎 生成并预览提示词';
+  }
+
   function bindEvents(){
     // FAB点击
     $('aiFab').addEventListener('click', open);
@@ -3990,6 +4398,7 @@ var AIAssistant = (function(){
       document.querySelectorAll('#aiRangeOpts .ai-config-opt').forEach(function(x){ x.classList.remove('selected'); });
       b.classList.add('selected');
       config.range = b.dataset.range;
+      invalidatePrompt();
     });
     // 难度选择
     $('aiDiffOpts').addEventListener('click', function(e){
@@ -3998,6 +4407,7 @@ var AIAssistant = (function(){
       document.querySelectorAll('#aiDiffOpts .ai-config-opt').forEach(function(x){ x.classList.remove('selected'); });
       b.classList.add('selected');
       config.difficulty = b.dataset.diff;
+      invalidatePrompt();
     });
     // 题型选择
     $('aiTypeOpts').addEventListener('click', function(e){
@@ -4006,23 +4416,33 @@ var AIAssistant = (function(){
       document.querySelectorAll('#aiTypeOpts .ai-config-opt').forEach(function(x){ x.classList.remove('selected'); });
       b.classList.add('selected');
       config.type = b.dataset.type;
+      invalidatePrompt();
     });
     // 数量滑块
     $('aiCountSlider').addEventListener('input', function(){
       config.count = parseInt(this.value);
       $('aiCountVal').textContent = config.count;
+      invalidatePrompt();
     });
     // 生成并复制
     $('aiGenerateBtn').addEventListener('click', function(){
-      var prompt = PromptGenerator.build(config);
-      copyToClipboard(prompt).then(function(ok){
+      var btn = $('aiGenerateBtn');
+      if(!pendingPrompt){
+        pendingPrompt = PromptGenerator.build(config);
+        $('aiPromptPreview').value = pendingPrompt;
+        $('aiPreviewGroup').style.display = '';
+        btn.textContent = '✅ 确认并复制提示词';
+        return;
+      }
+      copyToClipboard(pendingPrompt).then(function(ok){
         if(ok){
-          var btn = $('aiGenerateBtn');
-          btn.textContent = '✅ 已复制到剪贴板！';
+          btn.textContent = '✅ 已复制到剪贴板';
           btn.classList.add('copied');
           setTimeout(function(){
-            btn.textContent = '📋 生成并复制提示词';
+            btn.textContent = '🔎 生成并预览提示词';
             btn.classList.remove('copied');
+            pendingPrompt = '';
+            $('aiPreviewGroup').style.display = 'none';
             showStep(3);
           }, 800);
         } else {
@@ -4300,16 +4720,16 @@ window.AIAssistant = AIAssistant;
   if(localStorage.getItem(WELCOME_KEY)) return;
   var overlay = document.createElement('div');
   overlay.className = 'welcome-overlay';
-  var welcomeSubtitle = COURSE_META.studentName ? '为' + COURSE_META.studentName + '准备的复习方案' : '选择你的目标档位，系统会自动推荐最适合你的复习路径';
+  var welcomeSubtitle = COURSE_META.studentName ? '为' + COURSE_META.studentName + '准备的复习方案' : '选择覆盖深度，系统会结合证据等级和剩余时间组织复习路径';
   overlay.innerHTML = '<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;">' +
     '<div style="background:var(--card);color:var(--text);border-radius:20px;padding:32px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">' +
     '<div style="font-size:48px;margin-bottom:16px;">🎓</div>' +
     '<h2 style="margin:0 0 8px 0;font-size:22px;">欢迎使用交互式复习方案</h2>' +
     '<p style="color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 24px 0;">' + welcomeSubtitle + '。所有进度自动保存，随时可以继续。</p>' +
     '<div style="text-align:left;background:var(--bg);border-radius:12px;padding:16px;margin-bottom:20px;font-size:13px;line-height:1.8;">' +
-    '<div>🆘 <b>补考救命</b>：只学最核心考点</div>' +
-    '<div>✅ <b>稳过及格</b>：核心+变式+陷阱</div>' +
-    '<div>🚀 <b>冲刺高分</b>：全部内容含难题</div>' +
+    '<div>🧭 <b>最小核心路径</b>：优先完成关键概念和前置知识</div>' +
+    '<div>📚 <b>标准覆盖路径</b>：核心概念、常见变式与易错点</div>' +
+    '<div>🧩 <b>扩展提升路径</b>：增加综合应用和迁移练习</div>' +
     '</div>' +
     '<button id="welcomeStartBtn" style="width:100%;padding:14px;background:linear-gradient(135deg,#7c3aed,#2563eb);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;">开始复习 →</button>' +
     '</div></div>';
