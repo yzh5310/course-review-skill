@@ -937,6 +937,20 @@ body.printing-cheatsheet .excerpt-section { page-break-before: auto; }
   .mobile-bottom-nav a .mbn-icon { font-size: 18px; }
   .hero h1 { font-size: 24px; }
   .error-reason-box { padding: 18px; }
+  .term-tooltip {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 80px;
+    width: auto;
+    max-width: none;
+    transform: none;
+    visibility: hidden;
+    overflow-wrap: anywhere;
+  }
+  .term:hover .term-tooltip { visibility: visible; }
+  .diag-q-text, .info-box { min-width: 0; overflow-wrap: anywhere; }
+  .diag-q-text .katex, .info-box .katex { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
 }
 
 /* ============================================================
@@ -2129,7 +2143,7 @@ body[data-feedback-mode="quiet"] .srs-due-indicator { animation: none !important
 <script type="application/json" id="courseReviewContract">
 {
   "contractVersion": "1.0",
-  "skill": { "name": "course-review", "version": "5.1.0" },
+  "skill": { "name": "course-review", "version": "5.2.0" },
   "course": { "name": "高等数学2", "slug": "calculus2" },
   "evidence": {
     "level": "generic",
@@ -2236,7 +2250,7 @@ body[data-feedback-mode="quiet"] .srs-due-indicator { animation: none !important
 
 <script>
 /* ============================================================
-   Course Review Skill v5.1 — 核心JS
+   Course Review Skill v5.2 — 核心JS
    所有功能用IIFE封装，避免全局污染
    ============================================================ */
 (function(){
@@ -2266,7 +2280,7 @@ var COURSE_META = {
   major: '',            // 专业名（可选）
   studentName: '',      // 使用者姓名（可选，填写后欢迎页显示）
   examDate: '',         // 考试日期 YYYY-MM-DD（可选，填写后显示倒计时）
-  version: '5.1'
+  version: '5.2'
 };
 var SLUG = COURSE_META.courseSlug;
 var LS = function(key){ return SLUG + '_' + key; };
@@ -3685,8 +3699,11 @@ var QuizSystem = (function(){
     }
 
     fb.className = 'qb-feedback show ' + (isCorrect ? 'correct' : 'wrong');
-    fb.innerHTML = (isCorrect ? '✅ 回答正确！' : '❌ 答错了。') +
-      '<div style="margin-top:8px;">' + (q.explanation || '查看解析') + '</div>';
+    fb.textContent = isCorrect ? '✅ 回答正确！' : '❌ 答错了。';
+    var explanation = document.createElement('div');
+    explanation.style.marginTop = '8px';
+    explanation.textContent = q.explanation || '查看解析';
+    fb.appendChild(explanation);
 
     document.getElementById('qbSubmit').disabled = true;
     if(state.current < state.questions.length - 1){
@@ -4177,7 +4194,7 @@ var SmartJSON = {
   }
 };
 
-// ---------- v5.1 evidence-aware prompt generator ----------
+// ---------- v5.2 evidence-aware prompt generator ----------
 var PromptGeneratorV5 = {
   build: function(opts){ return this.fillTemplate(this.collectContext(opts || {})); },
   collectContext: function(opts){
@@ -4594,10 +4611,20 @@ var AIAssistant = (function(){
   function renderPreview(questions){
     var container = $('aiImportPreview');
     var typeNames = {choice:'选择',tf:'判断',calc:'计算',short:'简答'};
-    container.innerHTML = questions.map(function(q){
-      var cls = 'ai-import-qitem' + (q._duplicate ? ' dup' : '');
-      return '<div class="'+cls+'"><span class="qi-type">'+(typeNames[q.type]||q.type)+'</span><span class="qi-text">'+(q.question||'').substring(0,50)+(q.question&&q.question.length>50?'...':'')+'</span></div>';
-    }).join('');
+    container.replaceChildren();
+    questions.forEach(function(q){
+      var item = document.createElement('div');
+      item.className = 'ai-import-qitem' + (q._duplicate ? ' dup' : '');
+      var type = document.createElement('span');
+      type.className = 'qi-type';
+      type.textContent = typeNames[q.type] || q.type || '未知';
+      var question = document.createElement('span');
+      question.className = 'qi-text';
+      question.textContent = (q.question || '').substring(0, 50) + (q.question && q.question.length > 50 ? '...' : '');
+      item.appendChild(type);
+      item.appendChild(question);
+      container.appendChild(item);
+    });
   }
 
   function tryAutoPaste(){

@@ -38,6 +38,29 @@ class OutputValidatorTests(unittest.TestCase):
         broken = TEMPLATE.replace("</main>", "<p>保证及格</p></main>", 1)
         self.assert_rejected(broken, "pass guarantee")
 
+    def test_one_day_pass_guarantee_is_rejected(self) -> None:
+        broken = TEMPLATE.replace("</main>", "<p>考前1天保证通过</p></main>", 1)
+        self.assert_rejected(broken, "pass guarantee")
+
+    def test_no_fail_claim_is_rejected(self) -> None:
+        broken = TEMPLATE.replace("</main>", "<p>跟着学就不挂科</p></main>", 1)
+        self.assert_rejected(broken, "pass guarantee")
+
+    def test_ai_preview_uses_text_nodes(self) -> None:
+        self.assertIn("container.replaceChildren();", TEMPLATE)
+        self.assertIn("question.textContent", TEMPLATE)
+        self.assertNotIn("container.innerHTML = questions.map", TEMPLATE)
+
+    def test_ai_explanation_uses_text_nodes(self) -> None:
+        self.assertIn("explanation.textContent = q.explanation", TEMPLATE)
+        self.assertNotIn("(q.explanation || '查看解析') + '</div>'", TEMPLATE)
+
+    def test_mobile_tooltips_are_viewport_bounded(self) -> None:
+        self.assertIn("position: fixed;", TEMPLATE)
+        self.assertIn("left: 16px;", TEMPLATE)
+        self.assertIn("right: 16px;", TEMPLATE)
+        self.assertIn(".term:hover .term-tooltip { visibility: visible; }", TEMPLATE)
+
     def test_generic_frequency_claim_is_rejected(self) -> None:
         broken = TEMPLATE.replace("</main>", "<p>这是必考高频考点</p></main>", 1)
         self.assert_rejected(broken, "Generic-evidence output")

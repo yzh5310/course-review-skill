@@ -1,4 +1,4 @@
-# Course Review Skill v5.1
+# Course Review Skill v5.2
 
 The authoritative entrypoint is `SKILL.md`. Read it before generating or modifying a course review application.
 
@@ -32,3 +32,5 @@ Validate repository changes with:
 python scripts/validate_repo.py
 python scripts/validate_output.py path/to/generated-review.html
 ```
+
+Platform adapters must defer to this file instead of copying its rules. Generated HTML remains releasable only after deterministic validation; an Agent saying it self-checked is not sufficient.

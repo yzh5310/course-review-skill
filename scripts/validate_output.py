@@ -247,7 +247,7 @@ def _validate_contract(contract: dict[str, Any], report: ValidationReport) -> No
 
 def _check_forbidden_claims(visible_text: str, evidence_level: str | None, report: ValidationReport) -> None:
     pass_patterns = {
-        "pass guarantee": r"(?:稳过|保过|包过|必过|及格绝对没问题|(?<!不)保证.{0,12}(?:及格|通过))",
+        "pass guarantee": r"(?:稳过|保过|包过|必过|不挂科|及格绝对没问题|(?<!不)保证.{0,12}(?:及格|通过))",
         "score prediction": r"(?:预测分数|预计.{0,8}(?:得分|分数|考到)\s*\d+|通过率\s*\d+%|predicted score|will score\s*\d+)",
     }
     for label, pattern in pass_patterns.items():
