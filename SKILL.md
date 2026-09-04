@@ -3,9 +3,9 @@ name: course-review
 description: Generate and validate evidence-aware, time-constrained, interactive course review applications for learners with limited preparation time or weak foundations. Use when an AI needs to turn a course name, chapter scope, available materials, exam date, or learner history into a single-file review app, a minimum effective learning path, active-recall practice, or privacy-aware prompts for external AI question generation. Do not use it for score prediction, formal exam authoring, or teacher review workflows.
 ---
 
-# Course Review Skill v5.1
+# Course Review Skill v5.2
 
-Build the smallest useful learning loop for the learner's remaining time. Produce a learning application, not a long static document.
+Build the smallest useful learning loop for the learner's remaining time. Produce a learning application, not a long static document. The product supports attention by reducing choice and shortening actions; it does not diagnose or guarantee attention, learning gains, scores, or passing.
 
 ## Product promise
 
@@ -164,6 +164,7 @@ Also open the template in a browser and verify:
 10. Use course-specific learning loops.
 11. Embed the generated-output contract and keep it synchronized with visible behavior.
 12. Treat `validate_output.py` as a mandatory release gate.
+13. Treat Agent instructions as adapters, not enforcement; use the same contract and validator on every platform.
 
 ## Acceptance criteria
 

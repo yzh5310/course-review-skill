@@ -1,6 +1,6 @@
 {
   "name": "course-review",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "Evidence-aware, time-constrained course review application generator with a machine-readable output contract, deterministic release validation, canonical learning memory, and privacy-aware external-AI practice generation.",
   "author": "SOLO AI Assistant",
   "license": "MIT",
@@ -8,7 +8,7 @@
     "direct": "AI agents that generate or adapt interactive review applications",
     "ultimate": "Learners with weak foundations, incomplete materials, exam anxiety, or limited preparation time"
   },
-  "productPromise": "Generate the smallest useful, explainable learning path from available evidence and observed learning history without predicting scores or implying teacher review.",
+  "productPromise": "Generate the smallest useful, explainable learning path from available evidence and observed learning history, supporting attention through short next actions without guaranteeing attention, scores, or passing.",
   "evidenceLevels": [
     "exam-grounded",
     "course-grounded",

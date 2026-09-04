@@ -146,8 +146,8 @@ def validate_template() -> None:
 
 def validate_metadata() -> None:
     data = json.loads((ROOT / "skill.json").read_text(encoding="utf-8"))
-    if data.get("version") != "5.1.0":
-        fail("skill.json version must be 5.1.0")
+    if data.get("version") != "5.2.0":
+        fail("skill.json version must be 5.2.0")
     for relative in data.get("references", []):
         if not (ROOT / relative).exists():
             fail(f"skill.json references missing file: {relative}")
@@ -169,11 +169,25 @@ def validate_metadata() -> None:
     if "\ufffd" in openai_yaml:
         fail("agents/openai.yaml contains replacement characters from broken encoding")
 
-    entrypoints = ["AGENTS.md", "CLAUDE.md", ".cursorrules", ".windsurfrules", ".clinerules/course-review.md"]
+    entrypoints = [
+        "AGENTS.md",
+        ".cursorrules",
+        ".windsurfrules",
+        ".clinerules/course-review.md",
+        ".cursor/rules/course-review.mdc",
+        ".windsurf/rules/course-review.md",
+    ]
     for relative in entrypoints:
         text = (ROOT / relative).read_text(encoding="utf-8")
         if "scripts/validate_output.py" not in text or "references/output-contract.md" not in text:
             fail(f"AI entrypoint does not enforce generated-output validation: {relative}")
+
+    claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    if "@AGENTS.md" not in claude:
+        fail("CLAUDE.md must import the canonical AGENTS.md instructions")
+
+    if not (ROOT / "LICENSE").exists():
+        fail("Missing LICENSE file declared by skill.json")
 
 
 def validate_generated_output_gate() -> None:
