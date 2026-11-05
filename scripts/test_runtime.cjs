@@ -24,6 +24,7 @@ function setup() {
   vm.runInContext(code('var LearningMemory = (function(){','(function renderEvidenceNotice'),ctx);
   vm.runInContext(code('var PromptGeneratorV5 = {','var QuestionImporter ='),ctx);
   vm.runInContext(code('var LearningFlow = {','(function setupLearningFlow'),ctx);
+  vm.runInContext(code('var HandoffLauncher = {','// ---------- AI出题助手UI控制器'),ctx);
   return ctx;
 }
 function attempt(c,id='q1',correct=false,hint=false,source='source',concept='c1') {
@@ -108,4 +109,40 @@ test('legacy state migrates once and later legacy mutations cannot override cano
   assert.notEqual(first.concepts.c1.state,'mastered');
   c.lsSet('ap',{c2:'mastered'});assert.equal(c.LearningMemory.get().concepts.c2.state,'unseen');
   assert.equal(c.LearningMemory.get().preferences.feedbackMode,'quiet');
+});
+
+test('one handoff initiates copying before opening and navigates only after success',async()=>{
+  const c=setup(),events=[];const tab={opener:'initial',location:{href:'about:blank'},close(){events.push('close');}};
+  let finishCopy;const pending=new Promise(resolve=>finishCopy=resolve);
+  const done=c.HandoffLauncher.launch('CURRENT_PROBLEM','https://example.test/',{copy(text){events.push('copy:'+text);return pending;},open(){events.push('open');return tab;}});
+  assert.deepEqual(events,['copy:CURRENT_PROBLEM','open']);assert.equal(tab.location.href,'about:blank');
+  finishCopy(true);const result=await done;assert(result.copied&&result.opened);
+  assert.equal(tab.location.href,'https://example.test/');assert.equal(tab.opener,null);
+});
+test('copy failure closes only the blank tab and never opens a provider',async()=>{
+  const c=setup();let closed=false;const tab={location:{href:'about:blank'},close(){closed=true;}};
+  const result=await c.HandoffLauncher.launch('private text','https://example.test/',{copy:()=>Promise.reject(Error('denied')),open:()=>tab});
+  assert.equal(result.copied,false);assert.equal(result.opened,false);assert(closed);assert.equal(tab.location.href,'about:blank');
+});
+test('popup blocking retains a successful copy for the manual open path',async()=>{
+  const c=setup();let copied='';const result=await c.HandoffLauncher.launch('prepared prompt','https://example.test/',{copy:text=>{copied=text;return true;},open:()=>null});
+  assert.equal(copied,'prepared prompt');assert(result.copied&&!result.opened);
+});
+test('synchronous clipboard and window failures do not claim successful handoff',async()=>{
+  const c=setup();const result=await c.HandoffLauncher.launch('prompt','https://example.test/',{copy(){throw Error('copy denied');},open(){throw Error('popup denied');}});
+  assert(!result.copied&&!result.opened);
+});
+
+test('legacy clipboard fallback honors a false return instead of claiming success',async()=>{
+  const c=setup();
+  c.navigator={clipboard:{writeText:()=>Promise.reject(Error('denied'))}};
+  c.document={createElement:()=>({style:{},select(){}}),body:{appendChild(){},removeChild(){}},execCommand:()=>false};
+  vm.runInContext(code('  function copyToClipboard(text){','  // 主动触发：题刷完时提示'),c);
+  assert.equal(await c.copyToClipboard('not copied'),false);
+});
+test('legacy copying remains available when modern clipboard is absent',async()=>{
+  const c=setup();let selected=false;
+  c.navigator={};c.document={createElement:()=>({style:{},select(){selected=true;}}),body:{appendChild(){},removeChild(){}},execCommand:()=>true};
+  vm.runInContext(code('  function copyToClipboard(text){','  // 主动触发：题刷完时提示'),c);
+  assert.equal(await c.copyToClipboard('copied'),true);assert(selected);
 });

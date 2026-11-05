@@ -146,8 +146,8 @@ def validate_template() -> None:
 
 def validate_metadata() -> None:
     data = json.loads((ROOT / "skill.json").read_text(encoding="utf-8"))
-    if data.get("version") != "5.3.0":
-        fail("skill.json version must be 5.3.0")
+    if data.get("version") != "5.3.1":
+        fail("skill.json version must be 5.3.1")
     for relative in data.get("references", []):
         if not (ROOT / relative).exists():
             fail(f"skill.json references missing file: {relative}")

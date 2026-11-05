@@ -3,7 +3,7 @@ name: course-review
 description: Generate and validate evidence-aware, time-constrained, interactive course review applications for learners with limited preparation time or weak foundations. Use when an AI needs to turn a course name, chapter scope, available materials, exam date, or learner history into a single-file review app, a minimum effective learning path, active-recall practice, or privacy-aware external-AI tutoring handoffs. Do not use it for score prediction, formal exam authoring, or teacher review workflows.
 ---
 
-# Course Review Skill v5.3
+# Course Review Skill v5.3.1
 
 Build the smallest useful learning loop for the learner's remaining time. Produce a learning application, not a long static document. The product supports attention by reducing choice and shortening actions; it does not diagnose or guarantee attention, learning gains, scores, or passing.
 
@@ -123,7 +123,9 @@ Before copying a prompt:
 2. include evidence limitations;
 3. use concept-level history instead of a single overall score;
 4. preview what will be shared;
-5. exclude personal data and raw wrong questions by default.
+5. exclude personal data, unrelated excerpts, and full history; include the current question only in a disclosed contextual handoff that the learner chooses to copy.
+
+Prepare prompts automatically from the current question/selected text or local task. Show a short sharing summary and expandable full preview. Remember the preferred AI and combine copying/opening into one action; do not require retyping the question, selecting its concept, checking a sharing box, or clicking generate and confirm separately. Keep optional controls collapsed. Provide honest clipboard/popup fallbacks and leave paste/send to the learner.
 
 Imported AI questions are unverified practice material. They must not alone mark mastery, lock a path, confirm an error cause, or claim exam authenticity.
 

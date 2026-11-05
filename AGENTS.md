@@ -1,4 +1,4 @@
-# Course Review Skill v5.3
+# Course Review Skill v5.3.1
 
 The authoritative entrypoint is `SKILL.md`. Read it before generating or modifying a course review application.
 

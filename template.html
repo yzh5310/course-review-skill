@@ -1214,6 +1214,16 @@ body[data-feedback-mode="quiet"] #countdownBadge { animation: none !important; }
 body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, body[data-feedback-mode="quiet"] *::after { animation:none !important; }
 .term:focus .term-tooltip, .term.term-open .term-tooltip { opacity:1;visibility:visible; }
 .term:focus-visible { outline:2px solid var(--primary);outline-offset:3px; }
+.ai-quick-intents { display:flex;gap:6px;flex-wrap:wrap; }
+.ai-quick-intents .ai-config-opt { min-height:44px;flex:1;padding:10px 6px;white-space:nowrap; }
+.ai-launch-row { display:flex;gap:10px;align-items:end;margin-top:12px; }
+.ai-launch-row #aiQuickLaunch { flex:1;min-width:0; }
+.ai-platform-choice { font-size:12px;color:var(--muted);max-width:110px; }
+#aiPlatform { display:block;width:100%;min-height:44px; }
+#aiPreviewGroup,#aiAdjustments { margin-top:14px;padding-top:10px;border-top:1px solid var(--border); }
+#aiPreviewGroup summary,#aiAdjustments summary { cursor:pointer;min-height:36px;font-size:13px;color:var(--muted); }
+#aiContextSummary { overflow-wrap:anywhere; }
+[hidden] { display:none !important; }
 .ai-panel select { color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px; }
 @media print { #feedbackMode, #aiFab, .section-check { display:none !important; } }
 </style>
@@ -1981,16 +1991,16 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
 <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
 
 <!-- ===================== v4.0 AI出题助手 ===================== -->
-<button class="ai-fab" id="aiFab" title="外部AI学习助手">
+<button class="ai-fab" id="aiFab" title="请教AI">
   🤖
   <span class="ai-fab-label">学习求助</span>
 </button>
 
 <!-- AI出题主面板 -->
 <div class="ai-panel-overlay" id="aiPanelOverlay">
-  <div class="ai-panel" id="aiPanel" role="dialog" aria-modal="true" aria-label="外部AI学习助手">
+  <div class="ai-panel" id="aiPanel" role="dialog" aria-modal="true" aria-label="请教AI">
     <div class="ai-panel-header">
-      <h3>🤖 外部AI学习助手</h3>
+      <h3>🤖 请教AI</h3>
       <button class="ai-panel-close" id="aiPanelClose" aria-label="关闭学习助手">✕</button>
     </div>
     <div class="ai-panel-body">
@@ -2028,14 +2038,28 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
 
       <!-- 步骤2：配置 -->
       <div class="ai-step" id="aiStepConfig">
-        <p style="font-size:13px;line-height:1.7;">复制提示词到常用AI，在那里继续学习即可。外部对话不会自动更新本页记录。</p>
+        <div class="ai-quick-intents" role="group" aria-label="求助方式">
+          <button class="ai-config-opt" data-help-intent="explain">讲懂这题</button>
+          <button class="ai-config-opt" data-help-intent="prerequisite">补一下基础</button>
+          <button class="ai-config-opt" data-help-intent="practice">再练几题</button>
+        </div>
+        <p id="aiContextSummary" style="font-size:14px;line-height:1.7;margin:14px 0 8px;" aria-live="polite"></p>
+        <p id="aiShareNotice" style="font-size:12px;color:var(--muted);line-height:1.7;"></p>
+        <button class="btn btn-ghost btn-sm" id="aiRemoveProblem" type="button" hidden>不带原题，只带知识点</button>
+        <div class="ai-launch-row"><button class="ai-copy-btn" id="aiQuickLaunch">复制并打开豆包 →</button>
+          <label class="ai-platform-choice">使用的AI<select id="aiPlatform" aria-label="使用的AI"><option value="doubao">豆包</option><option value="deepseek">DeepSeek</option><option value="kimi">Kimi</option><option value="wenxin">文心一言</option></select></label>
+        </div>
+        <p id="aiHandoffStatus" role="status" style="font-size:13px;line-height:1.6;">打开后粘贴发送，在那里继续学，无需返回。</p>
+        <a id="aiManualOpen" class="btn btn-ghost btn-sm" target="_blank" rel="noopener" hidden>手动复制后，打开AI →</a>
+        <details id="aiPreviewGroup"><summary>查看将复制的内容</summary><textarea class="ai-import-textarea" id="aiPromptPreview" aria-label="将复制的内容" rows="6" readonly></textarea></details>
+        <details id="aiAdjustments"><summary>需要时再调整</summary>
         <div class="ai-config-group"><label class="ai-config-label" for="aiIntent">现在需要什么帮助？</label>
           <select id="aiIntent" style="width:100%;min-height:44px;"><option value="practice">再练几题，一次一道</option><option value="explain">这一步看不懂</option><option value="prerequisite">先补必要的基础</option></select>
         </div>
         <div class="ai-config-group"><label class="ai-config-label" for="aiTarget">知识点</label><select id="aiTarget" style="width:100%;min-height:44px;"><option value="">按本地记录推荐</option></select></div>
         <div class="ai-config-group" id="aiProblemGroup" style="display:none;"><label class="ai-config-label" for="aiProblemText">题目或卡住的步骤（可选）</label>
           <textarea id="aiProblemText" class="ai-import-textarea" rows="3" placeholder="只填写本次求助所需的题目或步骤，不要填姓名等个人信息。"></textarea>
-          <label style="font-size:13px;"><input type="checkbox" id="aiShareProblem"> 将这段内容加入提示词预览</label>
+          <p style="font-size:12px;color:var(--muted);">填写后将加入下方主按钮复制的内容；可在预览中核对。</p>
         </div>
         <details class="ai-practice-settings"><summary>调整练习范围、数量与难度（可选）</summary>
         <div class="ai-config-group" style="margin-top:12px;">
@@ -2073,12 +2097,8 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
             </div>
           </div>
         </details>
-        <div class="ai-config-group" id="aiPreviewGroup" style="display:none;">
-          <label class="ai-config-label" for="aiPromptPreview">发送给外部AI的数据预览</label>
-          <textarea class="ai-import-textarea" id="aiPromptPreview" rows="9" readonly></textarea>
-          <p style="font-size:12px;color:var(--muted);margin-top:6px;">默认仅发送匿名的概念级学习摘要，不包含姓名、学校、摘录或完整答题历史。请确认后再复制。</p>
-        </div>
-        <button class="ai-copy-btn" id="aiGenerateBtn" style="margin-top:16px;">🔎 生成并预览提示词</button>
+        <button class="btn btn-ghost btn-sm" id="aiGenerateBtn" style="margin-top:16px;">只复制，不打开</button>
+        </details>
       </div>
 
       <!-- 步骤3：复制后跳转 -->
@@ -2171,7 +2191,7 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
 <script type="application/json" id="courseReviewContract">
 {
   "contractVersion": "1.0",
-  "skill": { "name": "course-review", "version": "5.3.0" },
+  "skill": { "name": "course-review", "version": "5.3.1" },
   "course": { "name": "高等数学2", "slug": "calculus2" },
   "evidence": {
     "level": "generic",
@@ -2310,7 +2330,7 @@ var COURSE_META = {
   major: '',            // 专业名（可选）
   studentName: '',      // 使用者姓名（可选，填写后欢迎页显示）
   examDate: '',         // 考试日期 YYYY-MM-DD（可选，填写后显示倒计时）
-  version: '5.3'
+  version: '5.3.1'
 };
 var SLUG = COURSE_META.courseSlug;
 var LS = function(key){ return SLUG + '_' + key; };
@@ -3964,7 +3984,8 @@ var QuizSystem = (function(){
     if(index < 0) return false;
     state.current = index; renderQuestion(); updateStats(); return true;
   }
-  return { resumeQuestion:resumeQuestion, start: start, refreshBank: refreshBank, getBankSize: getBankSize, getAllQuestions: getAllQuestions,
+  function getCurrentQuestion(){ return state.questions[state.current] || null; }
+  return { getCurrentQuestion:getCurrentQuestion, resumeQuestion:resumeQuestion, start: start, refreshBank: refreshBank, getBankSize: getBankSize, getAllQuestions: getAllQuestions,
            getDepth: getDepth, getWrongCount: getWrongCount, getWrongbook: getWrongbook,
            getUnmasteredConcepts: getUnmasteredConcepts, focusQuestions: focusQuestions, exitFocus: exitFocus };
 })();
@@ -4453,6 +4474,24 @@ var QuestionImporter = {
   }
 };
 
+// Copy/open uses one user gesture; keep prompt text out of URLs.
+var HandoffLauncher = {
+  launch: function(prompt, url, env){
+    var tab=null;
+    var copyTask;
+    try { copyTask=env.copy(prompt); } catch(e){ copyTask=false; }
+    try { tab=env.open(); } catch(e){}
+    return Promise.resolve(copyTask).catch(function(){return false;}).then(function(copied){
+      if(!copied){ if(tab){try{tab.close();}catch(e){}} return {copied:false,opened:false}; }
+      if(tab){
+        try { tab.opener=null;tab.location.href=url;return {copied:true,opened:true}; }
+        catch(e){try{tab.close();}catch(ignore){}}
+      }
+      return {copied:true,opened:false};
+    });
+  }
+};
+
 // ---------- AI出题助手UI控制器 ----------
 var AIAssistant = (function(){
   var currentStep = 1;
@@ -4460,6 +4499,11 @@ var AIAssistant = (function(){
   var config = { range:'weak', count:3, difficulty:'auto', type:'mixed', intent:'practice', output:'dialogue', targetId:'', shareProblem:false, problemText:'' };
   var parsedQuestions = null;
   var pendingPrompt = '';
+  var busy=false;
+  var selectionText='';
+  var platforms={doubao:{name:'豆包',url:'https://www.doubao.com'},deepseek:{name:'DeepSeek',url:'https://chat.deepseek.com'},kimi:{name:'Kimi',url:'https://kimi.moonshot.cn'},wenxin:{name:'文心一言',url:'https://yiyan.baidu.com'}};
+  var preferredPlatform=LearningMemory.get().preferences.externalAIPlatform;
+  if(!platforms[preferredPlatform]) preferredPlatform='doubao';
 
   function $(id){ return document.getElementById(id); }
 
@@ -4485,30 +4529,31 @@ var AIAssistant = (function(){
     currentStep = n;
   }
 
+  function syncFields(){
+    $('aiIntent').value=config.intent;$('aiTarget').value=config.targetId;
+    $('aiOutput').value=config.output;$('aiProblemText').value=config.problemText;
+    $('aiProblemGroup').style.display=config.intent === 'practice' ? 'none' : '';
+    $('aiPlatform').value=preferredPlatform;
+  }
   function open(){
-    // 学习记忆可能在面板关闭期间变化；每次打开都要求重新预览最新摘要。
-    invalidatePrompt();
-    $('aiPanelOverlay').classList.add('show');
-    showStep(2);
-    $('aiPanel').scrollTop=0;
-    saveLocalResume();
-    $('aiIntent').focus({preventScroll:true});
-    // 根据当前状态智能预填范围
-    var wb = [];
-    try { wb = JSON.parse(localStorage.getItem(LS('wrongbook')) || '[]'); } catch(e){}
-    var learningSummary = LearningMemory.summary();
-    var weakNodes = learningSummary.weak;
-    // 默认选最需要的范围
-    if(wb.length >= 3){
-      selectOpt('aiRangeOpts', 'wrong');
-      config.range = 'wrong';
-    } else if(weakNodes.length > 0){
-      selectOpt('aiRangeOpts', 'weak');
-      config.range = 'weak';
-    } else {
-      selectOpt('aiRangeOpts', 'all');
-      config.range = 'all';
-    }
+    config.intent='practice';config.output='dialogue';config.problemText='';config.shareProblem=false;config.targetId='';
+    var profile=LearningMemory.get(),prefs=profile.preferences;
+    var question=QuizSystem.getCurrentQuestion();
+    if(selectionText){
+      config.intent='explain';config.problemText=selectionText;config.shareProblem=true;
+      config.targetId=prefs.resumeObjectiveId || '';
+    } else if(prefs.resumeSection === 'quiz' && question){
+      config.intent='explain';config.problemText=question.question;
+      config.shareProblem=true;config.targetId=LearningMemory.conceptIdsFor(question)[0] || '';
+      if($('qbFeedback').classList.contains('show') && question.explanation) config.problemText+='\n解析：'+question.explanation;
+    } else { config.targetId=prefs.resumeObjectiveId || ''; }
+    if((profile.concepts[config.targetId] || {}).state === 'excluded') config.targetId='';
+    selectionText='';
+    syncFields();
+    $('aiPanelOverlay').classList.add('show');showStep(2);$('aiPanel').scrollTop=0;
+    $('aiAdjustments').open=false;$('aiPreviewGroup').open=false;
+    saveLocalResume();invalidatePrompt();
+    $('aiQuickLaunch').focus({preventScroll:true});
   }
 
   function close(){
@@ -4532,21 +4577,54 @@ var AIAssistant = (function(){
   }
 
   function invalidatePrompt(){
-    pendingPrompt = '';
-    if($('aiPreviewGroup')) $('aiPreviewGroup').style.display = 'none';
-    if($('aiGenerateBtn')) $('aiGenerateBtn').textContent = '🔎 生成并预览提示词';
+    pendingPrompt=PromptGenerator.build(config);
+    $('aiPromptPreview').value=pendingPrompt;
+    $('aiGenerateBtn').textContent='只复制，不打开';
+    $('aiGotoImport').style.display=config.output === 'agent-json' ? '' : 'none';
+    $('aiManualOpen').hidden=true;$('aiManualOpen').href=platforms[preferredPlatform].url;
+    $('aiQuickLaunch').textContent='复制并打开'+platforms[preferredPlatform].name+' →';
+    var context=PromptGenerator.collectContext(config);
+    var names=context.targets.map(function(c){return c.name;}).join('、');
+    var labels={explain:'讲懂当前内容',prerequisite:'补上必要基础',practice:'再练几题，一次一道'};
+    $('aiContextSummary').textContent=(names ? names+' · ' : '')+labels[config.intent];
+    if(config.shareProblem && config.problemText){
+      $('aiContextSummary').textContent+='\n'+config.problemText.slice(0,160)+(config.problemText.length>160?'…':'');
+    }
+    $('aiShareNotice').textContent=config.shareProblem && config.problemText ?
+      '点击下方按钮将复制当前题目／选中文字和匿名学习摘要。不主动加入姓名、学校或完整记录。' :
+      '点击下方按钮将复制知识点和匿名学习摘要。不含原题、姓名、学校或完整记录。';
+    $('aiRemoveProblem').hidden=!(config.shareProblem && config.problemText);
+    document.querySelectorAll('[data-help-intent]').forEach(function(b){b.classList.toggle('selected',b.dataset.helpIntent===config.intent);});
+    $('aiHandoffStatus').textContent='打开后粘贴发送，在那里继续学，无需返回。';
+  }
+  function openHelp(intent, targetId, problem){
+    open();config.intent=intent || 'practice';config.targetId=targetId || '';
+    config.problemText=problem || '';config.shareProblem=!!config.problemText;
+    syncFields();invalidatePrompt();$('aiPanel').scrollTop=0;
+  }
+  function quickLaunch(){
+    if(busy) return;
+    busy=true;$('aiQuickLaunch').disabled=true;saveLocalResume();
+    $('aiManualOpen').hidden=true;
+    $('aiHandoffStatus').textContent='正在复制并打开常用AI…';
+    var prompt=pendingPrompt,platform=platforms[preferredPlatform];
+    return HandoffLauncher.launch(prompt,platform.url,{
+      open:function(){return window.open('about:blank','_blank');},copy:copyToClipboard
+    }).then(function(result){
+      if(result.copied && result.opened){
+        $('aiHandoffStatus').textContent='已复制并打开'+platform.name+'，粘贴发送即可。';
+      } else if(result.copied){
+        $('aiHandoffStatus').textContent='已复制，浏览器未允许打开新窗口。点击下方入口后粘贴发送。';
+        $('aiManualOpen').textContent='已复制，打开'+platform.name+' →';$('aiManualOpen').hidden=false;
+      } else {
+        $('aiHandoffStatus').textContent='浏览器未允许自动复制。请复制下方文字，再点入口打开AI。';
+        $('aiPreviewGroup').open=true;$('aiPromptPreview').focus();$('aiPromptPreview').select();
+        $('aiManualOpen').textContent='手动复制后，打开'+platform.name+' →';$('aiManualOpen').hidden=false;
+      }
+      return result;
+    }).finally(function(){busy=false;$('aiQuickLaunch').disabled=false;});
   }
 
-  function openHelp(intent, targetId, problem){
-    open();
-    config.intent = intent || 'practice'; config.targetId = targetId || '';
-    config.problemText = problem || ''; config.shareProblem = false;
-    $('aiIntent').value = config.intent; $('aiTarget').value = config.targetId;
-    $('aiProblemText').value = config.problemText; $('aiShareProblem').checked = false;
-    $('aiProblemGroup').style.display=config.intent === 'practice' ? 'none' : '';
-    $('aiPanel').scrollTop=0;
-    invalidatePrompt();
-  }
   function saveLocalResume(){
     var profile = LearningMemory.get();
     profile.preferences.lastHandoffAt = Date.now();
@@ -4566,16 +4644,24 @@ var AIAssistant = (function(){
       if((LearningMemory.get().concepts[node.id] || {}).state === 'excluded') return;
       var opt = document.createElement('option'); opt.value = node.id; opt.textContent = node.name; $('aiTarget').appendChild(opt);
     });
-    ['aiIntent','aiTarget','aiOutput','aiShareProblem','aiProblemText'].forEach(function(id){
+    $('aiFab').addEventListener('pointerdown',function(){selectionText=String(window.getSelection ? window.getSelection() : '').slice(0,2500);});
+    $('aiQuickLaunch').addEventListener('click',quickLaunch);
+    $('aiPlatform').addEventListener('change',function(){
+      preferredPlatform=platforms[$('aiPlatform').value] ? $('aiPlatform').value : 'doubao';
+      var profile=LearningMemory.get();profile.preferences.externalAIPlatform=preferredPlatform;LearningMemory.save(profile);invalidatePrompt();
+    });
+    document.querySelectorAll('[data-help-intent]').forEach(function(button){button.addEventListener('click',function(){config.intent=button.dataset.helpIntent;syncFields();invalidatePrompt();});});
+    $('aiRemoveProblem').addEventListener('click',function(){config.problemText='';config.shareProblem=false;syncFields();invalidatePrompt();});
+    ['aiIntent','aiTarget','aiOutput','aiProblemText'].forEach(function(id){
       $(id).addEventListener(id === 'aiProblemText' ? 'input' : 'change',function(){
         config.intent=$('aiIntent').value; config.targetId=$('aiTarget').value;
-        config.output=$('aiOutput').value; config.shareProblem=$('aiShareProblem').checked;
-        config.problemText=$('aiProblemText').value;
+        config.output=$('aiOutput').value;
+        config.problemText=$('aiProblemText').value;config.shareProblem=!!config.problemText;
         $('aiProblemGroup').style.display=config.intent === 'practice' ? 'none' : '';
         invalidatePrompt();
       });
     });
-    $('aiOptionalImport').addEventListener('click',function(){ config.output='agent-json'; $('aiOutput').value='agent-json'; showStep(4); });
+    $('aiOptionalImport').addEventListener('click',function(){ config.output='agent-json'; $('aiOutput').value='agent-json'; invalidatePrompt(); showStep(4); });
     document.querySelectorAll('.ai-shortcut-btn').forEach(function(link){link.addEventListener('click',saveLocalResume);});
     // FAB点击
     $('aiFab').addEventListener('click', open);
@@ -4622,35 +4708,15 @@ var AIAssistant = (function(){
       $('aiCountVal').textContent = config.count;
       invalidatePrompt();
     });
-    // 生成并复制
-    $('aiGenerateBtn').addEventListener('click', function(){
-      var btn = $('aiGenerateBtn');
-      if(!pendingPrompt){
-        pendingPrompt = PromptGenerator.build(config);
-        $('aiGotoImport').style.display = config.output === 'agent-json' ? '' : 'none';
-        $('aiPromptPreview').value = pendingPrompt;
-        $('aiPreviewGroup').style.display = '';
-        btn.textContent = '✅ 确认并复制提示词';
-        return;
-      }
+    // Optional copy-only action; preview is already prepared.
+    $('aiGenerateBtn').addEventListener('click',function(){
       copyToClipboard(pendingPrompt).then(function(ok){
-        if(ok){
-          btn.textContent = '✅ 已复制到剪贴板';
-          btn.classList.add('copied');
-          setTimeout(function(){
-            btn.textContent = '🔎 生成并预览提示词';
-            btn.classList.remove('copied');
-            pendingPrompt = '';
-            $('aiPreviewGroup').style.display = 'none';
-            showStep(3);
-          }, 800);
-        } else {
-          showToast('复制失败，请手动复制', 2000);
-        }
+        if(ok){$('aiHandoffStatus').textContent='已复制，在你常用的AI中粘贴发送即可。';showStep(3);}
+        else {$('aiHandoffStatus').textContent='自动复制失败，请手动复制。';$('aiPreviewGroup').open=true;$('aiPromptPreview').focus();$('aiPromptPreview').select();}
       });
     });
     // 返回配置
-    $('aiBackToConfig').addEventListener('click', function(){ showStep(2); });
+    $('aiBackToConfig').addEventListener('click', function(){ showStep(2);invalidatePrompt(); });
     // Optional import only; preserve any failed draft when revisiting.
     $('aiGotoImport').addEventListener('click', function(){
       showStep(4);
@@ -4782,7 +4848,7 @@ var AIAssistant = (function(){
     ta.style.left = '-9999px';
     document.body.appendChild(ta);
     ta.select();
-    try { document.execCommand('copy'); document.body.removeChild(ta); return true; }
+    try { var copied=document.execCommand('copy'); document.body.removeChild(ta); return copied === true; }
     catch(e){ document.body.removeChild(ta); return false; }
   }
 

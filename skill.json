@@ -1,6 +1,6 @@
 {
   "name": "course-review",
-  "version": "5.3.0",
+  "version": "5.3.1",
   "description": "Generate learner-fit, attention-friendly course review apps with resumable local learning and previewable external-AI tutoring handoffs; no return or API integration required.",
   "author": "SOLO AI Assistant",
   "license": "MIT",
