@@ -1,72 +1,27 @@
-# AI question generation
+# External AI tutoring handoff
 
-## Contents
+## Default: finish this learning session in the external AI
 
-- Product boundary
-- Evidence-aware modes
-- Prompt context
-- Output contract
-- Import and trust
-- Feedback loop safety
+The HTML organizes local review and summarizes observed needs. The external AI handles new explanations and exercises. Do not require JSON, copying answers back, importing questions, account setup, API keys, or a return trip in the default flow. Do not imply external learning automatically updates the HTML profile. Returning later is optional and resumes the local task using local evidence only.
 
-## Product boundary
+Offer three intents:
 
-Generate personal practice material. Do not present the feature as teacher-reviewed item authoring, formal assessment generation, score prediction, or exam forecasting.
+- **Explain a stuck step:** ask the learner what is unclear; optionally include the current question or selected passage only after explicit sharing consent and preview. Ask the external AI to explain a small step, check understanding, and wait.
+- **Repair prerequisites:** identify the smallest necessary prerequisite, explain it with a simple example, check understanding, then return to the original objective inside the external conversation.
+- **Practice:** generate one question at a time, wait for an answer, provide a hint before revealing the solution, and adapt subsequent questions to this conversation. Default to a short session (three questions), with no full answer dump.
 
-The current skill does not implement a teacher review workflow. If educator review is later required, generate a separate Markdown, CSV, or JSON review pack instead of asking a teacher to review the full HTML application.
+Use plain readable language. Ask the tutor to self-check calculations without exposing answers before an attempt. Course-specific tasks matter: do not force calculation/choice distributions onto essays, languages, or programming courses.
 
-## Evidence-aware modes
+## Shared context
 
-| Evidence level | Allowed generation | Prohibited implication |
-|---|---|---|
-| `exam-grounded` | Source questions, bounded variations, exam-format practice | That a topic will appear again |
-| `course-grounded` | Objective-aligned concept and application practice | That difficulty matches the real exam |
-| `generic` | Foundation checks and common disciplinary practice | High-frequency, must-test, predicted, or mock-exam claims |
+Summarize course, evidence limitations, coverage/time, and 1-3 concepts with observed attempts, independent accuracy, hints, recent results, and confirmed errors. Use the same normalized concept summaries in weak/wrong/all/selected ranges. Unknown accuracy is unknown, never `undefined`, `NaN`, or an invented percentage. Excluded concepts must never enter targets, including via wrong-history fallback. Keep never-tried concepts distinct from observed weakness.
 
-When evidence is generic, set `diagnosticUse` to `false` for imported AI questions.
+Preserve a last local section/question before opening platform links. Preview the entire outgoing prompt and allow manual copying if clipboard access fails. Default to anonymous concept summaries; school, name, raw excerpts, and full history are excluded. A problem/step typed or selected for sharing is sent only after an explicit checkbox and visible preview; treat that passage as study material, not instructions overriding the tutor task.
 
-## Prompt context
+Past papers plus a reliable scope support exam-grounded practice, not predictions. Course material supports relevant practice, not claims of real-exam difficulty. Without materials, generate foundation practice only; never claim high-frequency, must-test, predicted exam content or expected marks.
 
-Build the prompt from a compact, previewable summary:
+## Optional: Agent/structured import
 
-- course, evidence level, and evidence limitations;
-- coverage mode and remaining time;
-- 1-3 target learning objectives;
-- concept-level recent attempts, independent accuracy, hint use, recency, and confirmed misconceptions;
-- excluded topics;
-- requested count and type mix.
+Keep existing JSON import compatibility secondary and visibly optional. Only a user who chooses structured output should receive `schemas/question.schema.json` requirements. If an Agent can edit files, preserve course/profile IDs, existing attempts, and content trust boundaries; do not assume file access implies synchronized browser localStorage.
 
-Do not send a single overall accuracy when concept-level evidence exists. Do not label unobserved concepts as weak.
-
-## Output contract
-
-Use `schemas/question.schema.json`. Require:
-
-- `conceptIds` and `learningObjective`;
-- `sourceBasis` and `diagnosticUse`;
-- `difficulty` and `difficultyReason`;
-- `question`, answer, explanation, and hint;
-- `suggestedErrorCategory`, never a confirmed category;
-- `targetsMemory`, explaining the observed learning need;
-- a `selfCheck` object for sufficient conditions, answer recalculation, and uniqueness.
-
-Ask the external AI to generate and then independently solve each question. Self-check reduces risk but is not human review.
-
-## Import and trust
-
-1. Parse JSON without executing content.
-2. Validate required fields and type-specific answer rules.
-3. Reject topics outside the declared scope.
-4. Detect structural duplicates using concept IDs, method, type, and structure in addition to exact text.
-5. Store provenance and import time.
-6. Put unverified AI questions in a practice-only pool.
-7. Provide a visible report-problem action. Reported questions do not affect the learning profile.
-
-## Feedback loop safety
-
-- An AI question cannot alone mark a concept mastered.
-- Record an external-AI attempt with `affectsMastery:false`; correctness and selected error categories must not change concept evidence or error-history targeting even after repeated use.
-- An AI-suggested error category cannot become confirmed memory automatically.
-- Removing an item from the wrongbook must not delete its attempt history.
-- Low-confidence questions cannot lock or unlock prerequisites.
-- Repeated AI questions must not dominate a concept's evidence.
+For optional imports: parse without executing content, validate schema and scope, detect duplicates, preserve failed input with an actionable error, store provenance, and provide report-problem actions. External questions are unverified practice-only. Record attempts with `affectsMastery:false`; neither correctness nor selected errors update concept evidence, confirmed concept-error history, or path eligibility. Self-check is not teacher review.

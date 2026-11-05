@@ -219,12 +219,22 @@ def _validate_contract(contract: dict[str, Any], report: ValidationReport) -> No
         report.fail("learningMemory.stableGapMinutes must be at least 30")
 
     external = _expect_mapping(contract.get("externalAI"), "externalAI", report)
+    version_parts = str(skill.get("version", "0.0")).split(".")
+    handoff_contract = len(version_parts) > 1 and version_parts[1].isdigit() and int(version_parts[1]) >= 3
+    external_keys = {"enabled", "practiceOnly", "teacherReviewed", "promptPreviewRequired", "anonymousByDefault", "affectsMastery"}
+    if handoff_contract:
+        external_keys.update({"defaultWorkflow", "externalActivityAutoSynced"})
     _expect_exact_keys(
         external,
         "externalAI",
-        {"enabled", "practiceOnly", "teacherReviewed", "promptPreviewRequired", "anonymousByDefault", "affectsMastery"},
+        external_keys,
         report,
     )
+    if handoff_contract:
+        if external.get("defaultWorkflow") != "external-dialogue-no-return":
+            report.fail("externalAI.defaultWorkflow must be external-dialogue-no-return")
+        if external.get("externalActivityAutoSynced") is not False:
+            report.fail("externalAI.externalActivityAutoSynced must be false")
     if not isinstance(external.get("enabled"), bool):
         report.fail("externalAI.enabled must be a boolean")
     if external.get("practiceOnly") is not True:
@@ -283,7 +293,7 @@ def _validate_javascript(text: str, report: ValidationReport) -> None:
             handle.write(script)
             temp_path = Path(handle.name)
         try:
-            result = subprocess.run([node, "--check", str(temp_path)], capture_output=True, text=True)
+            result = subprocess.run([node, "--check", str(temp_path)], capture_output=True, text=True, encoding="utf-8", errors="replace")
             if result.returncode:
                 report.fail(f"Inline script {index} has invalid JavaScript: {result.stderr.strip()}")
         finally:

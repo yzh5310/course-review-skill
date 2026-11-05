@@ -82,7 +82,7 @@ class OutputValidatorTests(unittest.TestCase):
         self.assert_rejected(broken, "Practice-only AI errors")
 
     def test_single_answer_mastery_is_rejected(self) -> None:
-        broken = TEMPLATE.replace("apState[node.id] = 'provisional';", "apState[node.id] = 'mastered';", 1)
+        broken = TEMPLATE.replace("LearningMemory.recordMastery(node.id, 'provisional', 'micro-check');", "apState[node.id] = 'mastered';", 1)
         self.assert_rejected(broken, "direct path action")
 
     def test_mastery_clamp_is_required(self) -> None:
@@ -95,8 +95,8 @@ class OutputValidatorTests(unittest.TestCase):
 
     def test_direct_mastery_request_must_recompute_evidence(self) -> None:
         broken = TEMPLATE.replace(
-            "if(state === 'mastered'){\n      recomputeState(concept);",
-            "if(state === 'mastered'){\n      concept.state = 'mastered';",
+            "else recomputeState(concept);",
+            "else concept.state = state;",
             1,
         )
         self.assert_rejected(broken, "recomputed from stored evidence")
@@ -129,6 +129,14 @@ class OutputValidatorTests(unittest.TestCase):
     def test_contract_rejects_extra_fields(self) -> None:
         broken = TEMPLATE.replace('"contractVersion": "1.0",', '"contractVersion": "1.0",\n  "unexpected": true,', 1)
         self.assert_rejected(broken, "unsupported keys")
+
+    def test_handoff_cannot_require_return_by_default(self) -> None:
+        broken = TEMPLATE.replace('"defaultWorkflow": "external-dialogue-no-return"', '"defaultWorkflow": "return-and-import"', 1)
+        self.assert_rejected(broken, "externalAI.defaultWorkflow")
+
+    def test_handoff_cannot_claim_automatic_sync(self) -> None:
+        broken = TEMPLATE.replace('"externalActivityAutoSynced": false', '"externalActivityAutoSynced": true', 1)
+        self.assert_rejected(broken, "externalAI.externalActivityAutoSynced")
 
 
 if __name__ == "__main__":

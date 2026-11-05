@@ -1,7 +1,7 @@
 {
   "name": "course-review",
-  "version": "5.2.0",
-  "description": "Evidence-aware, time-constrained course review application generator with a machine-readable output contract, deterministic release validation, canonical learning memory, and privacy-aware external-AI practice generation.",
+  "version": "5.3.0",
+  "description": "Generate learner-fit, attention-friendly course review apps with resumable local learning and previewable external-AI tutoring handoffs; no return or API integration required.",
   "author": "SOLO AI Assistant",
   "license": "MIT",
   "targetAudience": {
@@ -43,7 +43,7 @@
     "spaced practice",
     "detailed error analytics",
     "knowledge exclusion",
-    "external-AI question generation",
+    "external-AI tutoring handoff (default dialogue; optional Agent JSON import)",
     "Canvas visualization",
     "advanced dashboards"
   ],
@@ -64,7 +64,9 @@
     "schema": "schemas/question.schema.json",
     "externalAIQuestionsArePracticeOnly": true,
     "previewBeforeSharing": true,
-    "anonymousByDefault": true
+    "anonymousByDefault": true,
+    "defaultWorkflow": "external-dialogue-no-return",
+    "externalLearningAutoSynced": false
   },
   "generatedOutputContract": {
     "schema": "schemas/review-plan.schema.json",
@@ -73,6 +75,7 @@
     "releaseGate": true
   },
   "references": [
+    "references/learner-intake.md",
     "references/path-generation.md",
     "references/learning-profile.md",
     "references/question-generation.md",
@@ -84,6 +87,7 @@
   "validation": {
     "repository": "python scripts/validate_repo.py",
     "generatedOutput": "python scripts/validate_output.py <generated-review.html>",
-    "regression": "python scripts/test_validate_output.py"
+    "regression": "python scripts/test_validate_output.py",
+    "runtime": "node scripts/test_runtime.cjs"
   }
 }

@@ -21,16 +21,16 @@ The contract must record:
 - ordered objectives with a priority reason, evidence basis, uncertainty note, and prerequisites;
 - one immediate 5-10 minute action and a time-cutoff rule;
 - canonical learning-memory rules;
-- external-AI practice boundaries;
+- external-AI boundaries, including `defaultWorkflow: "external-dialogue-no-return"` and `externalActivityAutoSynced: false` for v5.3;
 - explicit false values for score prediction, pass guarantees, and unsupported frequency claims.
 
 ## Synchronization rules
 
 1. The visible evidence notice must agree with the manifest.
-2. The visible next action must use the same objective ID and duration as the manifest.
+2. The initial visible next action must use the same objective ID and duration as the manifest. At runtime, local canonical evidence and the saved task may advance this action; keep its displayed objective consistent with that runtime recommendation.
 3. Every knowledge-graph node must have a manifest objective in the same order, and the UI must expose its priority reason and uncertainty.
 4. `COURSE_META` must use the same course, evidence level, coverage mode, and remaining time.
-5. If external-AI generation is enabled, prompt preview, anonymous sharing, practice-only imports, and no concept-evidence impact are mandatory.
+5. If external-AI help is enabled, default to conversational tutoring with no required return. Prompt preview, anonymous sharing, and no automatic cross-platform memory are mandatory. Optional structured imports remain practice-only with no concept-evidence impact.
 6. Stable mastery must require repeated independent success across a time gap; immediate repeated answers are insufficient.
 7. A generic-evidence application must not use high-frequency, must-test, predicted-exam, or mock-exam language.
 8. Do not deliver an artifact that fails `python scripts/validate_output.py <artifact.html>`.
@@ -46,3 +46,9 @@ When another AI adapts the template:
 5. report the validation command and result with the delivered file.
 
 The validator is a release gate, not optional advice.
+
+## Learner-fit review
+
+Before delivery, also perform the semantic checks in [learner-intake.md](learner-intake.md): the visible learner summary must agree with the real scope, required workload, explanations, and practice. Use the existing evidence summary, remaining time, objective reasons, uncertainty notes, and cutoff fields to reflect those decisions. Keep unknown remaining time null; do not add undeclared contract fields.
+
+The output validator does not verify the conversation or prove personalization. Report learner-fit review separately from structural validation and do not imply that an automated pass establishes suitability.

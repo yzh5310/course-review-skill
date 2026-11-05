@@ -118,6 +118,8 @@
       "required": ["enabled", "practiceOnly", "teacherReviewed", "promptPreviewRequired", "anonymousByDefault", "affectsMastery"],
       "properties": {
         "enabled": { "type": "boolean" },
+        "defaultWorkflow": { "const": "external-dialogue-no-return" },
+        "externalActivityAutoSynced": { "const": false },
         "practiceOnly": { "const": true },
         "teacherReviewed": { "const": false },
         "promptPreviewRequired": { "const": true },

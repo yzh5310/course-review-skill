@@ -15,4 +15,8 @@ Require:
 - no irreversible time limit;
 - errors associated with the relevant control and accompanied by a recovery action.
 
-Offer three feedback modes: quiet, encouraging, and sprint. Do not assume high-stimulation feedback reduces anxiety for every learner.
+Default to quiet and expose a persistent, keyboard-usable selector for quiet, encouraging, and sprint. Quiet disables celebration particles, pulses, urgency effects, and forced smooth scrolling. Reduced-motion overrides every mode. Sprint may make task timing visible; it must not auto-open quizzes or impose irreversible time pressure.
+
+At the end of a short section, offer “check understanding”, “continue reading”, and “ask for help”. Checks start only on learner action and can be postponed or dismissed. Never interrupt reading after a fixed number of seconds. Restore the last local objective/section/question without erasing attempts. Next-action recommendations must update from the canonical profile; prerequisite hints are guidance, not hard locks. Small-screen users must be able to tap or keyboard-focus term explanations as well as hover them.
+
+Validate with real generated output: time-to-first-action, pause/resume, stuck-step help, external handoff without import, mobile/keyboard operation, and whether feedback itself distracts. Report usage observations without diagnosing attention or claiming measured gains when none were measured.

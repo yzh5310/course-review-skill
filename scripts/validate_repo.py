@@ -137,7 +137,7 @@ def validate_template() -> None:
             handle.write(script)
             temp_path = Path(handle.name)
         try:
-            result = subprocess.run([node, "--check", str(temp_path)], capture_output=True, text=True)
+            result = subprocess.run([node, "--check", str(temp_path)], capture_output=True, text=True, encoding="utf-8", errors="replace")
             if result.returncode:
                 fail(f"Inline script {index} has invalid JavaScript: {result.stderr.strip()}")
         finally:
@@ -146,8 +146,8 @@ def validate_template() -> None:
 
 def validate_metadata() -> None:
     data = json.loads((ROOT / "skill.json").read_text(encoding="utf-8"))
-    if data.get("version") != "5.2.0":
-        fail("skill.json version must be 5.2.0")
+    if data.get("version") != "5.3.0":
+        fail("skill.json version must be 5.3.0")
     for relative in data.get("references", []):
         if not (ROOT / relative).exists():
             fail(f"skill.json references missing file: {relative}")
@@ -194,9 +194,10 @@ def validate_generated_output_gate() -> None:
     commands = [
         [sys.executable, str(ROOT / "scripts/validate_output.py"), str(ROOT / "template.html")],
         [sys.executable, str(ROOT / "scripts/test_validate_output.py")],
+        [shutil.which("node") or "node", str(ROOT / "scripts/test_runtime.cjs")],
     ]
     for command in commands:
-        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
         if result.returncode:
             output = (result.stdout + "\n" + result.stderr).strip()
             fail(f"Generated-output release gate failed: {' '.join(command[1:])}: {output}")

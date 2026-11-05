@@ -18,7 +18,10 @@
 
 ## Interaction
 
-- Show one prominent next action.
+- Show one prominent next action computed from the canonical profile and resume context.
+- Never schedule a micro-quiz popup on a reading timer.
+- Default to quiet feedback; expose all feedback modes and honor reduced motion.
+- Default external help to one-question-at-a-time dialogue; structured import is opt-in.
 - Keep the first useful task under 10 minutes.
 - Respect reduced motion and quiet mode.
 - Preserve attempt history when wrongbook items are resolved.

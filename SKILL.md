@@ -1,9 +1,9 @@
 ---
 name: course-review
-description: Generate and validate evidence-aware, time-constrained, interactive course review applications for learners with limited preparation time or weak foundations. Use when an AI needs to turn a course name, chapter scope, available materials, exam date, or learner history into a single-file review app, a minimum effective learning path, active-recall practice, or privacy-aware prompts for external AI question generation. Do not use it for score prediction, formal exam authoring, or teacher review workflows.
+description: Generate and validate evidence-aware, time-constrained, interactive course review applications for learners with limited preparation time or weak foundations. Use when an AI needs to turn a course name, chapter scope, available materials, exam date, or learner history into a single-file review app, a minimum effective learning path, active-recall practice, or privacy-aware external-AI tutoring handoffs. Do not use it for score prediction, formal exam authoring, or teacher review workflows.
 ---
 
-# Course Review Skill v5.2
+# Course Review Skill v5.3
 
 Build the smallest useful learning loop for the learner's remaining time. Produce a learning application, not a long static document. The product supports attention by reducing choice and shortening actions; it does not diagnose or guarantee attention, learning gains, scores, or passing.
 
@@ -16,7 +16,7 @@ Given incomplete evidence, limited time, and a learner's observed history:
 3. show one immediate next action;
 4. use retrieval practice and feedback;
 5. preserve learning events in a canonical profile;
-6. generate privacy-aware prompts for optional external AI practice questions.
+6. generate previewable prompts for optional external AI tutoring without requiring a return trip.
 
 Never predict a score, promise a pass, call inferred topics high-frequency, or represent AI-generated questions as teacher-reviewed.
 
@@ -31,16 +31,17 @@ Treat teachers and formal item-review workflows as out of scope for this version
 
 ### 1. Collect only decision-critical input
 
-Ask for or infer, in this order:
+Read [references/learner-intake.md](references/learner-intake.md) before first-time generation or when the learner's circumstances change.
 
-1. course name and chapter scope;
-2. remaining time and realistic available study time;
-3. available evidence: past papers, scope, slides, assignments, textbook chapters, or a topic list;
-4. assessment behavior: calculation, explanation, case analysis, code, essay, or mixed;
-5. learner history, if an existing application or profile is available;
-6. desired coverage mode.
+If the user supplies only a course name or a broad request, ask up to three short question groups and wait for the reply before generating the HTML:
 
-Do not block when materials are absent. Continue conservatively and label uncertainty.
+1. purpose, deadline, and realistic available study time;
+2. current preparation, familiar topics, and specific difficulties;
+3. chapter scope, assessment tasks, and available course or exam materials.
+
+Ask only for missing information that would change the plan. Reuse explicit answers already in context; do not repeat intake or ask the learner to choose technical coverage modes. Follow up only on consequential ambiguity, then briefly summarize the situation and proceed without a routine second confirmation.
+
+If the user says they do not know, has no materials, declines questions, or explicitly requests immediate generation, continue with visible assumptions and unknowns. Silence is not permission to invent a deadline, time budget, exam scope, or ability level. Do not infer weak foundations from missing information.
 
 ### 2. Classify evidence and choose coverage
 
@@ -69,6 +70,8 @@ Do not copy quantitative-course structures into law, humanities, language, labor
 ### 4. Build the learning path
 
 Rank objectives using evidence-supported relevance, prerequisite leverage, observed need, transfer value, time cost, and uncertainty.
+
+Apply the intake-to-HTML decisions in `references/learner-intake.md`: adapt scope, required workload, explanation depth, practice difficulty, and session length to the actual answers. Personalization must change the learning activities, not just the heading or introductory text. Keep self-reported preparation separate from demonstrated mastery.
 
 Output:
 
@@ -110,9 +113,9 @@ Use the course-prefixed `learning_profile` localStorage key as the canonical sta
 
 Treat the wrongbook as a current queue. Resolving a wrongbook item must not erase its historical attempt.
 
-### 7. Generate optional external-AI question prompts
+### 7. Hand off optional tutoring to an external AI
 
-Read [references/question-generation.md](references/question-generation.md) and validate imported objects against [schemas/question.schema.json](schemas/question.schema.json).
+Read [references/question-generation.md](references/question-generation.md). Default to a conversational handoff: explain a stuck step, repair prerequisites, or practice one question at a time entirely in the external AI. No API, JSON, return trip, or import is required. External activity does not automatically update the HTML profile. Offer structured imports only as an explicit advanced option for capable Agent/file-editing workflows; validate those objects against [schemas/question.schema.json](schemas/question.schema.json).
 
 Before copying a prompt:
 
@@ -142,10 +145,13 @@ Do not deliver an artifact when the output validator fails. Report the command a
 
 Also open the template in a browser and verify:
 
-- the first useful action is reachable within 60 seconds;
+- the first useful action is reachable within 60 seconds of opening the generated HTML (this is not a limit on intake);
 - legacy learning state migrates without deletion;
 - attempts persist after refresh;
-- prompt preview matches the canonical profile;
+- prompt preview matches finite concept-level data in every range and excludes excluded topics;
+- explanation/prerequisite/practice handoffs work without JSON or importing a reply;
+- a paused learner can resume the last section or question and feedback mode;
+- next actions and the knowledge map read the same canonical profile;
 - generic evidence produces no exam-frequency or score claims;
 - imported AI questions remain practice-only;
 - keyboard, reduced-motion, dark, mobile, and print behavior work.
@@ -160,7 +166,7 @@ Also open the template in a browser and verify:
 6. Preserve historical attempts when current queues change.
 7. Preview data before sending it to an external AI.
 8. Keep unverified AI questions out of high-impact path decisions.
-9. Provide quiet, encouraging, and sprint feedback modes.
+9. Default to quiet feedback, expose quiet/encouraging/sprint controls, and never auto-open a timed micro-quiz. Offer checks at learner-selected stopping points.
 10. Use course-specific learning loops.
 11. Embed the generated-output contract and keep it synchronized with visible behavior.
 12. Treat `validate_output.py` as a mandatory release gate.
@@ -169,11 +175,16 @@ Also open the template in a browser and verify:
 ## Acceptance criteria
 
 - Works with no reference material.
+- A course-name-only request triggers concise intake before HTML generation, unless the user explicitly skips it.
+- The HTML reflects the learner's time, purpose, preparation, and known scope; unconfirmed assumptions remain visible.
+- Required task estimates fit the known study budget, with optional work and a clear cutoff when coverage does not fit.
 - Makes no score or pass guarantee.
 - Explains every path priority and uncertainty.
-- Starts a useful 5-10 minute task within 60 seconds.
+- Starts a useful 5-10 minute task within 60 seconds of opening the HTML, after intake.
 - Uses a versioned canonical learning profile.
-- Produces concept-level, privacy-aware question prompts.
+- Produces concept-level, privacy-aware tutoring prompts; normal learners finish the session in the external AI.
+- Does not claim automatic cross-platform memory or verified attention/score gains.
+- Passes `node scripts/test_runtime.cjs` for prompt ranges, history boundaries, and learner-controlled flow.
 - Labels provenance and trust on every imported AI question.
 - Does not require teacher review.
 - Embeds a valid, synchronized review-plan contract.

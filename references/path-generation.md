@@ -53,8 +53,9 @@ Apply these rules:
 1. Put remaining time and available study time ahead of the requested score.
 2. When evidence is weak, lower the relevance term and raise prerequisite leverage, transfer value, and uncertainty penalty.
 3. Prefer one topic that unlocks several later topics over an isolated hard topic.
-4. Produce a sequence of 5-15 minute next actions. Show one next action prominently.
+4. Produce a sequence of 5-10 minute next actions. Show one next action prominently; update it using canonical concept evidence and the last local task. Prerequisite hints guide learners without blocking direct chapter access.
 5. Recompute priorities after meaningful new evidence, not after every click.
+6. Apply [learner-intake.md](learner-intake.md) to make preparation, purpose, scope, and session limits change the actual activities. Fit the estimated required workload, including practice and recap, to the known budget; separate optional extension work. Unknown time must not become an invented deadline or calendar.
 
 ## Mastery states
 
@@ -90,7 +91,8 @@ For every generated path, include:
 
 - A path can be generated with no reference material.
 - No path makes score or pass guarantees.
-- A user can begin a useful activity within 60 seconds.
+- A user can begin a useful activity within 60 seconds of opening the generated HTML, after intake.
+- The actual scope, required workload, explanation depth, and practice reflect the intake answers; a personalized title alone is insufficient.
 - The first activity fits in 5-10 minutes.
 - Every priority can be explained using stored evidence.
 - Low-confidence AI questions cannot alone mark a concept mastered or block a path.

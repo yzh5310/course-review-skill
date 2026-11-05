@@ -33,3 +33,6 @@ output/playwright/
 
 # Local extracted copies
 course-review-skill-main/
+
+# Local browser inspection sessions
+.playwright-cli/

@@ -26,7 +26,9 @@ The profile contains:
 - one record per concept;
 - append-only attempt events with a bounded retention limit;
 - confirmed error history;
-- review schedule and UI preferences.
+- review schedule and UI preferences, including feedback mode and the last local objective/section/question.
+
+The knowledge map, next action, and prompt targets read this profile. Legacy path flags are migration inputs only. A micro-check records an attempt; it cannot directly grant provisional or stable mastery. Resuming or resetting the current route must not erase attempt history. External conversations do not auto-sync; any self-report is separate from observed local performance.
 
 Do not infer weakness from absence. An untouched concept is `unseen` or `insufficient-data`, not weak.
 
