@@ -76,6 +76,7 @@
   },
   "references": [
     "references/learner-intake.md",
+    "references/chaoxing-intake.md",
     "references/path-generation.md",
     "references/learning-profile.md",
     "references/question-generation.md",

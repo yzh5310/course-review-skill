@@ -3,6 +3,7 @@
 ## Contents
 
 - Evidence levels
+- Course sources and conflicts
 - Coverage modes
 - Priority model
 - Mastery states
@@ -16,10 +17,17 @@ Classify the available evidence before building a path.
 | Level | Available evidence | Allowed claims |
 |---|---|---|
 | `exam-grounded` | Past papers plus an exam scope, rubric, or reliable format description | Rank topics by observed exam relevance. Do not predict a score. |
-| `course-grounded` | Slides, assignments, textbook scope, or a chapter list | Rank topics by course relevance and prerequisite leverage. Do not call topics high-frequency exam topics unless the material says so. |
+| `course-grounded` | This course's slides, class exercises, assignments, assigned textbook scope, or chapter list | Rank topics by course relevance and prerequisite leverage. Do not call topics high-frequency exam topics unless the material says so. |
 | `generic` | Course name, a few concepts, or no course material | Build a conservative foundation path from common disciplinary structure. Label all exam relevance as unknown. |
 
 Never invent frequency, marks, pass probability, or a predicted score. Record the evidence level and a short evidence summary in the generated application.
+
+## Course sources and conflicts
+
+- Use the teacher's confirmed exam scope and requirements to decide exam coverage. Use this class's slides and worked examples for taught definitions, notation, and methods, and its assignments, class exercises, and quizzes for representative tasks and solution expectations. A course with no matching online resources can still be course-grounded from these sources.
+- When a same-name course, textbook, or web resource differs from this class, use the local teaching materials for the main path, worked examples, practice formats, and feedback. Use compatible external explanations to fill conceptual gaps or offer clearly marked optional enrichment. Keep web-only topics out of required coverage unless the user confirms they belong.
+- If materials are partial, use them for the topics they cover and label the rest as provisional. If two local sources materially conflict, prefer the source that explicitly applies to this class and assessment. Ask one focused question if the conflict remains consequential. Flag apparent errors separately from differences in course conventions.
+- The visible evidence notice and existing contract fields should identify the course material behind decisions and distinguish supplemental or AI-generated practice. Regular exercises support alignment with the class. Claims about exam relevance still require the applicable evidence level above.
 
 ## Coverage modes
 

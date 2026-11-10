@@ -9,9 +9,11 @@ Example for a Chinese-speaking learner:
 > 为了让复习内容、每天任务和难度适合你，先了解三点；不知道的可以直接说不知道：
 > 1. 你是准备考试、补基础还是系统重学？什么时候考或希望学完，每天实际能学多久？
 > 2. 目前是基本没学、学过但忘了，还是概念懂但不会做题？哪些章节比较熟、哪些最困难？
-> 3. 要复习哪些章节，主要考计算、简答、论述、代码还是其他题型？有目录、课件、考试范围或往年题吗？没有也可以。
+> 3. 你手头有哪些这门课的资料？老师发的考试范围、复习提纲、课件、习题、往年题或学习通作业链接都可以。有这次考试专用的资料可以优先发。你发过的资料我会先看，再问影响安排的问题。
 
 Omit answered questions and adapt the wording to non-exam purposes. Ask for the course name only if missing. Do not require personal identifiers, grades, diagnoses, or a target score. Do not ask the user to pick a framework, course profile, or internal coverage mode.
+
+If a Chaoxing link is already supplied, attempt to read its visible questions using [chaoxing-intake.md](chaoxing-intake.md). Use readable material before asking the learner to identify chapters or question types. Ask only for material gaps that would change the plan.
 
 Ask a follow-up only if the answer would materially change the output: for example, whether calculus covers single-variable or multivariable topics, or whether “three hours” means per day or in total. Resolve conflicts between the learner's current statement and older records before using the disputed information. Otherwise summarize the confirmed purpose, available time, preparation, scope, and assumptions in a few sentences and generate; the summary is not an approval gate.
 
@@ -33,7 +35,7 @@ Ask a follow-up only if the answer would materially change the output: for examp
 | Previously studied but forgotten | Use brief retrieval checks to choose review versus relearning; do not repeat all introductory teaching by default. |
 | Concepts understood but application difficult | Emphasize worked examples, independent variations, and explanatory feedback on errors. |
 | Known chapters and assessment tasks | Match objectives and practice formats to that scope; do not force calculation exercises into essay or language courses. |
-| Reliable course or exam materials | Tie topic choices to the actual sources and distinguish source facts from inferred priorities. |
+| Reliable course or exam materials | Follow the [course source rules](path-generation.md#course-sources-and-conflicts). Use the teacher's materials to shape the actual lessons, examples, and practice, and distinguish source facts from inferred priorities. |
 | No course materials | Offer a conservative foundation path and mark scope and exam relevance as unverified. |
 | Irregular or short study sessions | Use resumable short tasks with required and optional work rather than an inflexible daily quota. |
 | Systematic relearning rather than exam preparation | Organize by prerequisites and understanding; do not impose an invented exam deadline or sprint. |
@@ -60,5 +62,6 @@ These are review scenarios, not claims of a completed model evaluation. Evaluate
 | “不用问，直接生成高数复习页。” | Generate with visible unknown time, preparation, and scope; no invented exam date or confirmed beginner label. |
 | “时间还没定，基础不知道，也没有资料。” | Continue without repeated intake; offer a provisional ordered path and optional useful diagnostic, with no fabricated calendar. |
 | User has already supplied full details or later corrects one field | Reuse the details, update only affected decisions, preserve history, and do not restart the questionnaire. |
+| The teacher's linear algebra slides use row reduction, assignments practice it, and a same-name online course emphasizes Cramer's rule. | Use row reduction and the class's notation in the required path and practice. Only include the outside method as clearly marked optional context if useful. Cite the slides and assignments and keep exam frequency unknown. |
 
 Before delivery, compare the learner summary against the actual required workload, scope, and learning activities. The deterministic output validator checks structural and trust boundaries; passing it alone does not prove that intake occurred or the HTML suits the learner.

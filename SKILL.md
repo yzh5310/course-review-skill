@@ -33,6 +33,8 @@ Treat teachers and formal item-review workflows as out of scope for this version
 
 Read [references/learner-intake.md](references/learner-intake.md) before first-time generation or when the learner's circumstances change.
 
+Treat a learner-provided Chaoxing (学习通) assignment or chapter-quiz link as course material. Before asking questions the page may answer, follow [references/chaoxing-intake.md](references/chaoxing-intake.md) and use the available browser to attempt a read of the student's visible questions regardless of completion status. Visible question stems alone can support course review; access to answers is optional.
+
 If the user supplies only a course name or a broad request, ask up to three short question groups and wait for the reply before generating the HTML:
 
 1. purpose, deadline, and realistic available study time;
@@ -46,6 +48,8 @@ If the user says they do not know, has no materials, declines questions, or expl
 ### 2. Classify evidence and choose coverage
 
 Read [references/path-generation.md](references/path-generation.md) before generating the path.
+
+Use the learner's own teacher's slides, class exercises, and assignments as the primary basis for taught content and practice. When the web lacks a matching course or conflicts with those materials, follow the course materials for scope, notation, and expected methods. Keep outside explanations supplementary and label unsupported scope as unknown.
 
 Use one evidence level:
 
@@ -72,6 +76,8 @@ Do not copy quantitative-course structures into law, humanities, language, labor
 Rank objectives using evidence-supported relevance, prerequisite leverage, observed need, transfer value, time cost, and uncertainty.
 
 Apply the intake-to-HTML decisions in `references/learner-intake.md`: adapt scope, required workload, explanation depth, practice difficulty, and session length to the actual answers. Personalization must change the learning activities, not just the heading or introductory text. Keep self-reported preparation separate from demonstrated mastery.
+
+When the source is a set of questions, infer the concepts, skills, and prerequisite links before scheduling review. Use representative worked examples and practice with feedback where useful. Generate full item-by-item solutions only when the learner separately requests that output and it is appropriate for the assignment state.
 
 Output:
 

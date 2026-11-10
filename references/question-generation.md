@@ -22,6 +22,8 @@ The default view has contextual help intents, a prepared-context summary, and on
 
 Past papers plus a reliable scope support exam-grounded practice, not predictions. Course material supports relevant practice, not claims of real-exam difficulty. Without materials, generate foundation practice only; never claim high-frequency, must-test, predicted exam content or expected marks.
 
+When the shared context shows the teacher's notation, method, or task format, ask the tutor to follow it in explanations and practice. Use the course scope in the shared context to bound practice and keep generic alternatives optional. Use only the minimal context already allowed by the preview rules.
+
 ## Optional: Agent/structured import
 
 Keep existing JSON import compatibility secondary and visibly optional. Only a user who chooses structured output should receive `schemas/question.schema.json` requirements. If an Agent can edit files, preserve course/profile IDs, existing attempts, and content trust boundaries; do not assume file access implies synchronized browser localStorage.
