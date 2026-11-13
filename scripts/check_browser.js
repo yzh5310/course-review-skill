@@ -4,7 +4,13 @@ async (page) => {
   const demoUrl = new URL('/template.html', page.url()).href;
   await page.goto(demoUrl);
   await page.evaluate(()=>{localStorage.clear();sessionStorage.removeItem('review-test-deny-copy');});await page.reload();
-  await page.getByRole('button',{name:'开始复习 →',exact:true}).click();
+  check(await page.locator('.welcome-overlay').count()===0,'Fresh page must not block the first task with a welcome dialog');
+  await page.locator('header .hero-btn.primary').click();
+  check(new URL(page.url()).hash==='#nextActionCard','The start link must take the learner to the next task');
+  const nextButton=page.locator('#nextActionCard button');
+  await nextButton.click();
+  check(await page.locator('#concept-ch1').evaluate(el=>el.classList.contains('open')),'Fresh page must open the first lesson directly');
+  await page.evaluate(()=>{localStorage.clear();});await page.reload();
   check(await page.locator('#feedbackMode').inputValue()==='quiet','Fresh default must be quiet');
   check(await page.locator('#nextActionCard button').innerText()==='开始一个小任务 →','Fresh page cannot claim a previous task');
   // Real browser copying + popup, but the provider request is fulfilled locally.

@@ -19,6 +19,7 @@
 ## Interaction
 
 - Show one prominent next action computed from the canonical profile and resume context.
+- Let the learner start from that action on first open. Use inline guidance and keep settings optional.
 - Never schedule a micro-quiz popup on a reading timer.
 - Default to quiet feedback; expose all feedback modes and honor reduced motion.
 - Default external help to one-question-at-a-time dialogue; structured import is opt-in.

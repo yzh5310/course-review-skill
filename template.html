@@ -1248,7 +1248,7 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
   </div>
 
   <div class="hero-actions">
-    <a href="#beginner" class="hero-btn primary">🌱 开始复习</a>
+    <a href="#nextActionCard" class="hero-btn primary">🌱 开始复习</a>
     <button class="hero-btn" id="darkModeBtn">🌙 夜间模式</button>
     <a href="#cheatsheet" class="hero-btn">📄 一页纸</a>
   </div>
@@ -1342,7 +1342,7 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
 <!-- ===================== 2. 知识盲区诊断 ===================== -->
 <section class="card" id="diagnostic">
   <h2><span class="emoji">🔍</span>知识盲区诊断</h2>
-  <p class="card-desc">先做6道快速测试题，找到你的薄弱环节。不会就选"🤷 不会"，诚实反映盲区比蒙对答案更有用。</p>
+  <p class="card-desc">想知道从哪里补起，可以做个简短自测。也可以直接开始学习。</p>
   <div id="diagQuestions"></div>
   <div style="text-align:center; margin-top:16px;">
     <button class="btn btn-primary" id="diagSubmit">提交诊断</button>
@@ -1937,7 +1937,7 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
 <!-- ===================== 8. 考前清单 ===================== -->
 <section class="card" id="checklist">
   <h2><span class="emoji">✅</span>考前自测清单</h2>
-  <p class="card-desc">完成6项以上说明具备应试框架；低于4项应回看核心概念。</p>
+  <p class="card-desc">独立做过一项后再勾选。回顾时优先看仍需提示的步骤。</p>
   <div class="checklist" id="checklistItems">
     <!-- === DEMO DATA START === -->
     <label class="check-item"><input type="checkbox"><span>能默写偏导定义、全微分公式、链式法则</span></label>
@@ -4368,7 +4368,7 @@ var PromptGeneratorV5 = {
       '难度倾向：基础'+c.difficulty.easy+'%、常规'+c.difficulty.medium+'%、提升'+c.difficulty.hard+'%；按实际理解情况调整，不把比例当作考试依据。',
       '沿用以上学习目标，不要重新让我填写整套背景。仅在会影响解答时补问必要信息。',
       '题型应符合课程；讲解和练习都分成小步，不要一次输出整套题和答案。出题后自行核对条件与答案，但先不向我揭示答案。',
-      '没有可靠考试资料时只做通用基础练习；不要声称高频、必考、押题、预期分数或教师审核。',
+      '按已确认范围和课程资料设计练习。范围待确认时沿用当前复习目标，并说明其依据和不确定性。避免对考试频率、题目命中、预期分数或教师审核作出推测。',
       '直接在这里完成本轮学习，用可读文本回答，无需JSON、无需返回HTML或导入。这里的对话不会自动更新原HTML的学习记录。'
     ].join('\n\n');
   },
@@ -4942,7 +4942,7 @@ var LearningFlow = {
   });
   document.addEventListener('learning-profile-change',function(){renderKnowledgeMap();LearningFlow.render();});
   document.querySelectorAll('a[href^="#"]').forEach(function(link){link.addEventListener('click',function(){
-    var id=link.getAttribute('href').slice(1); if(!document.getElementById(id)) return;
+    var id=link.getAttribute('href').slice(1); if(id==='nextActionCard' || !document.getElementById(id)) return;
     var profile=LearningMemory.get();profile.preferences.resumeSection=id;LearningMemory.save(profile);
   });});
   LearningFlow.render();
@@ -5045,34 +5045,6 @@ window.AIAssistant = AIAssistant;
   setInterval(update, 60*60*1000);
 })();
 
-// ==================== v4.2 首次使用欢迎浮层 ====================
-(function(){
-  var WELCOME_KEY = 'welcomed';
-  if(lsGet(WELCOME_KEY, false)) return;
-  var overlay = document.createElement('div');
-  overlay.className = 'welcome-overlay';
-  var welcomeSubtitle = COURSE_META.studentName ? '为' + COURSE_META.studentName + '准备的复习方案' : '选择覆盖深度，系统会结合证据等级和剩余时间组织复习路径';
-  overlay.innerHTML = '<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;">' +
-    '<div style="background:var(--card);color:var(--text);border-radius:20px;padding:32px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">' +
-    '<div style="font-size:48px;margin-bottom:16px;">🎓</div>' +
-    '<h2 style="margin:0 0 8px 0;font-size:22px;">欢迎使用交互式复习方案</h2>' +
-    '<p style="color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 24px 0;">' + welcomeSubtitle + '。所有进度自动保存，随时可以继续。</p>' +
-    '<div style="text-align:left;background:var(--bg);border-radius:12px;padding:16px;margin-bottom:20px;font-size:13px;line-height:1.8;">' +
-    '<div>🧭 <b>最小核心路径</b>：优先完成关键概念和前置知识</div>' +
-    '<div>📚 <b>标准覆盖路径</b>：核心概念、常见变式与易错点</div>' +
-    '<div>🧩 <b>扩展提升路径</b>：增加综合应用和迁移练习</div>' +
-    '</div>' +
-    '<button id="welcomeStartBtn" style="width:100%;padding:14px;background:linear-gradient(135deg,#7c3aed,#2563eb);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;">开始复习 →</button>' +
-    '</div></div>';
-  document.body.appendChild(overlay);
-  var btn = overlay.querySelector('#welcomeStartBtn');
-  btn.addEventListener('click', function(){
-    overlay.remove();
-    lsSet(WELCOME_KEY, true);
-    if(typeof showToast === 'function') showToast('开始复习吧！💪');
-  });
-})();
-
 // ==================== v4.2 截图预览模式（URL加?preview=1展开所有内容） ====================
 (function(){
   var isPreview = location.search.indexOf('preview=1') !== -1 || location.hash.indexOf('preview') !== -1;
@@ -5082,8 +5054,6 @@ window.AIAssistant = AIAssistant;
     var content = item.querySelector('.accordion-content');
     if(content) content.style.maxHeight = content.scrollHeight + 'px';
   });
-  var w = document.querySelector('.welcome-overlay');
-  if(w) w.remove();
   var badge = document.createElement('div');
   badge.style.cssText = 'position:fixed;top:10px;right:10px;background:#7c3aed;color:white;padding:4px 12px;border-radius:6px;font-size:11px;z-index:9999;';
   badge.textContent = '📸 截图预览模式';

@@ -17,6 +17,19 @@ If a Chaoxing link is already supplied, attempt to read its visible questions us
 
 Ask a follow-up only if the answer would materially change the output: for example, whether calculus covers single-variable or multivariable topics, or whether “three hours” means per day or in total. Resolve conflicts between the learner's current statement and older records before using the disputed information. Otherwise summarize the confirmed purpose, available time, preparation, scope, and assumptions in a few sentences and generate; the summary is not an approval gate.
 
+## Confirm exam scope
+
+- Reuse the learner's explicit scope and any teacher notice or review material already supplied as the scope. For a midterm, ask about the boundary when it is missing: “老师有明确说这次期中考哪些内容，或者发过范围通知、复习提纲或指定习题吗？” If only a specific topic is uncertain, ask about that topic. Group this with other decision-critical gaps in one reply where practical.
+- Filter assignments by the actual concepts in each question. One assignment can mix material inside and outside the midterm scope. Use the in-scope questions as practice evidence and omit topics outside the confirmed scope from the midterm path and exercises. Assignment dates, chapter titles, textbook contents, and the volume of practice are insufficient to establish coverage.
+- Keep confirmed topics that are missing from the imported questions visible in the plan. Use other supplied materials or clearly labelled supplemental practice within the time budget.
+- If the learner says the scope is unknown or explicitly asks to continue before confirming it, label the result as provisional. Use any confirmed portion and leave uncertain topics outside the required path. If there is no confirmed portion, offer a provisional foundation plan with a visible scope gap. When the learner supplies the scope later, revise the affected objectives and practice.
+
+## Use learner materials before public search
+
+- Prefer learner-provided materials and their explicit account of teaching and scope. Course exercises describe skills practiced. The exam scope comes from an explicit statement or designated material for that assessment. For a consequential conflict between sources about the same assessment, ask one focused question.
+- A supplied or confirmed textbook's contents describe the book. Require a learner-supplied ISBN, title page, or contents excerpt before saying their textbook was verified. Use the contents for orientation and keep exam coverage and teaching progress tied to the learner's statement or materials.
+- When textbook contents, chapter structure, or scope still needs investigation, first ask if the learner has material that could settle it, such as a contents photo, syllabus, or teacher's notice. Reuse an explicit answer already given. Wait for that reply before searching the public web, and label search findings unverified until the learner confirms them. Reading a learner-supplied link is part of inspecting their materials.
+
 ## Unknowns and skipping intake
 
 - “No materials” is a complete answer. Do not repeatedly ask for uploads or block delivery; use `generic` evidence where appropriate and state that exam relevance is unknown.

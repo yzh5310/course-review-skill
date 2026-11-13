@@ -51,4 +51,8 @@ The validator is a release gate, not optional advice.
 
 Before delivery, also perform the semantic checks in [learner-intake.md](learner-intake.md): the visible learner summary must agree with the real scope, required workload, explanations, and practice. Use the existing evidence summary, remaining time, objective reasons, uncertainty notes, and cutoff fields to reflect those decisions. Keep unknown remaining time null; do not add undeclared contract fields.
 
+For an exam-specific plan, check every active surface against the confirmed scope, including the first task, lessons, diagnostics, quiz bank, formula sheet, and optional tutoring targets. Treat a necessary prerequisite as a brief aid to an in-scope skill. Keep out-of-scope topics out of the exam path. Check that scope uncertainty is visible when the plan is provisional.
+
+Check that labels and counts match the generated material. On a fresh browser profile, use the primary start link to reach the next action and open the lesson. The learner can optionally use the diagnostic and help after starting.
+
 The output validator does not verify the conversation or prove personalization. Report learner-fit review separately from structural validation and do not imply that an automated pass establishes suitability.

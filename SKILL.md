@@ -33,7 +33,7 @@ Treat teachers and formal item-review workflows as out of scope for this version
 
 Read [references/learner-intake.md](references/learner-intake.md) before first-time generation or when the learner's circumstances change.
 
-Treat a learner-provided Chaoxing (学习通) assignment or chapter-quiz link as course material. Before asking questions the page may answer, follow [references/chaoxing-intake.md](references/chaoxing-intake.md) and use the available browser to attempt a read of the student's visible questions regardless of completion status. Visible question stems alone can support course review; access to answers is optional.
+Read the learner's supplied materials first. For a Chaoxing (学习通) assignment, course link, or subject requested in the learner's account, follow [references/chaoxing-intake.md](references/chaoxing-intake.md). Visible question stems can support course review. Reuse any confirmed exam scope and ask about missing coverage only when it affects the plan.
 
 If the user supplies only a course name or a broad request, ask up to three short question groups and wait for the reply before generating the HTML:
 
@@ -45,32 +45,11 @@ Ask only for missing information that would change the plan. Reuse explicit answ
 
 If the user says they do not know, has no materials, declines questions, or explicitly requests immediate generation, continue with visible assumptions and unknowns. Silence is not permission to invent a deadline, time budget, exam scope, or ability level. Do not infer weak foundations from missing information.
 
-### 1a. Evidence source priority (user materials first)
-
-Treat the learner's own materials as the primary and highest-authority source. Never let an external source override or redefine what the learner has actually been given or has actually studied.
-
-Priority order:
-
-1. materials the learner supplied (exercise sheets, the teacher's scope statement, slides, past papers, notes);
-2. scope or structure the learner states in conversation (which chapters are in scope, where the class has reached);
-3. the named textbook's table of contents, **only if the learner supplied or confirmed the book**;
-4. public web search — last resort.
-
-Before searching the web for textbook contents, chapter structure, or scope:
-
-1. ask the learner directly whether they have any other materials (textbook TOC photo, syllabus, teacher's notice, slides) that would settle the question;
-2. wait for the answer or an explicit "no, nothing else";
-3. only then search, and label anything found as unverified inference unless the learner confirms it.
-
-A book's table of contents can never tell you which chapters the class has reached, nor which chapters the exam covers. Never infer exam scope or learner progress from a textbook's structure. Ask the learner, or read it from material they supplied.
-
-Do not claim to have confirmed the learner's textbook without an identifier they supplied (ISBN, title page, or TOC excerpt).
-
 ### 2. Classify evidence and choose coverage
 
 Read [references/path-generation.md](references/path-generation.md) before generating the path.
 
-Use the learner's own teacher's slides, class exercises, and assignments as the primary basis for taught content and practice. When the web lacks a matching course or conflicts with those materials, follow the course materials for scope, notation, and expected methods. Keep outside explanations supplementary and label unsupported scope as unknown.
+Use the learner's statement or material that explicitly applies to the upcoming exam to set its scope. Use the learner's course materials for taught content, methods, and practice. Follow the scope and lookup rules in [references/learner-intake.md](references/learner-intake.md) before supplementing gaps.
 
 Use one evidence level:
 
@@ -98,7 +77,7 @@ Rank objectives using evidence-supported relevance, prerequisite leverage, obser
 
 Apply the intake-to-HTML decisions in `references/learner-intake.md`: adapt scope, required workload, explanation depth, practice difficulty, and session length to the actual answers. Personalization must change the learning activities, not just the heading or introductory text. Keep self-reported preparation separate from demonstrated mastery.
 
-When the source is a set of questions, infer the concepts, skills, and prerequisite links before scheduling review. Use representative worked examples and practice with feedback where useful. Generate full item-by-item solutions only when the learner separately requests that output and it is appropriate for the assignment state.
+When the source is a set of questions, identify concepts, skills, and prerequisites, then select questions and topics against the confirmed exam scope. Use representative worked examples and practice with feedback. Generate full item-by-item solutions only when separately requested and appropriate for the assignment state.
 
 Output:
 
@@ -114,6 +93,8 @@ Do not mark a concept mastered from one answer. Use the mastery states and signa
 ### 5. Build the application
 
 Read [references/output-contract.md](references/output-contract.md). Adapt `template.html` rather than reconstructing its state and trust boundaries from memory. Default to one self-contained HTML file with progressive enhancement.
+
+On first open, show the next learning action directly. Use the selected coverage mode and keep the evidence, plan settings, optional diagnostic, and external AI help available without requiring any of them to start.
 
 Embed and complete `#courseReviewContract` using [schemas/review-plan.schema.json](schemas/review-plan.schema.json). Keep it synchronized with `COURSE_META`, the visible evidence notice, and the immediate next-action card.
 
