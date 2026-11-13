@@ -45,6 +45,27 @@ Ask only for missing information that would change the plan. Reuse explicit answ
 
 If the user says they do not know, has no materials, declines questions, or explicitly requests immediate generation, continue with visible assumptions and unknowns. Silence is not permission to invent a deadline, time budget, exam scope, or ability level. Do not infer weak foundations from missing information.
 
+### 1a. Evidence source priority (user materials first)
+
+Treat the learner's own materials as the primary and highest-authority source. Never let an external source override or redefine what the learner has actually been given or has actually studied.
+
+Priority order:
+
+1. materials the learner supplied (exercise sheets, the teacher's scope statement, slides, past papers, notes);
+2. scope or structure the learner states in conversation (which chapters are in scope, where the class has reached);
+3. the named textbook's table of contents, **only if the learner supplied or confirmed the book**;
+4. public web search — last resort.
+
+Before searching the web for textbook contents, chapter structure, or scope:
+
+1. ask the learner directly whether they have any other materials (textbook TOC photo, syllabus, teacher's notice, slides) that would settle the question;
+2. wait for the answer or an explicit "no, nothing else";
+3. only then search, and label anything found as unverified inference unless the learner confirms it.
+
+A book's table of contents can never tell you which chapters the class has reached, nor which chapters the exam covers. Never infer exam scope or learner progress from a textbook's structure. Ask the learner, or read it from material they supplied.
+
+Do not claim to have confirmed the learner's textbook without an identifier they supplied (ISBN, title page, or TOC excerpt).
+
 ### 2. Classify evidence and choose coverage
 
 Read [references/path-generation.md](references/path-generation.md) before generating the path.
