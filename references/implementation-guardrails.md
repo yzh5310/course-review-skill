@@ -39,4 +39,5 @@
 - Search for legacy score-promise labels and document intentional compatibility uses.
 - Embed `#courseReviewContract` and keep it synchronized with the visible artifact.
 - Run `python scripts/validate_output.py <generated.html>` for every generated application.
+- Escape `<` and `>` inside inline math in the HTML source (`&lt;`, `&gt;`). A raw `<` followed by a letter is parsed as a tag opener and silently truncates the formula, so `$P(a<X<b)$` renders as the literal text `$P(a`. After rendering, assert that no visible text still contains a `$` delimiter and that no `.katex-error` nodes exist.
 - Do not deliver, publish, or describe an artifact as complete when output validation fails.

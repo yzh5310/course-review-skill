@@ -459,10 +459,10 @@ body.dark .ex-step-result { color: #a7f3d0; }
   background: var(--muted); color: transparent;
   position: relative;
 }
-.ex-step-result.hidden::after {
-  content: '先自己算算？点击查看'; position: absolute;
-  left: 50%; top: 50%; transform: translate(-50%, -50%);
-  color: #fff; font-size: 12px; filter: none; white-space: nowrap;
+.ex-step:has(.ex-step-result.hidden)::after {
+  content: '👁 点击灰色条查看答案'; display: inline-block; margin-left: 8px;
+  font-size: 12px; color: var(--muted); border: 1px dashed var(--border);
+  border-radius: 999px; padding: 1px 8px; vertical-align: middle;
 }
 .ex-knowledge {
   background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
@@ -1519,8 +1519,8 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
         <p><span class="term">极值</span>求解分两步：①找驻点（f_x=0且f_y=0）；②用二阶偏导判别法判定。</p>
         <div class="info-box formula">
           判别法：设 $A=f_{xx}, B=f_{xy}, C=f_{yy}$<br>
-          (1) $AC-B^2 > 0$：是极值，A<0极大，A>0极小<br>
-          (2) $AC-B^2 < 0$：不是极值（鞍点）<br>
+          (1) $AC-B^2 &gt; 0$：是极值，A<0极大，A>0极小<br>
+          (2) $AC-B^2 &lt; 0$：不是极值（鞍点）<br>
           (3) $AC-B^2 = 0$：无法判断，需另法讨论
         </div>
         <div class="example-card">
@@ -1793,7 +1793,7 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
     <div class="flip-card" data-id="f5" onclick="if(!event.target.closest('.flip-mark-btn'))this.classList.toggle('flipped')">
       <div class="flip-inner">
         <div class="flip-front"><div class="flip-q">二元极值判定</div></div>
-        <div class="flip-back"><div class="flip-a">驻点处 $A=f_{xx}, B=f_{xy}, C=f_{yy}$：<br>① $AC-B^2>0$：极值，A<0极大，A>0极小<br>② $AC-B^2<0$：鞍点（非极值）<br>③ $AC-B^2=0$：无法判断</div></div>
+        <div class="flip-back"><div class="flip-a">驻点处 $A=f_{xx}, B=f_{xy}, C=f_{yy}$：<br>① $AC-B^2&gt;0$：极值，A<0极大，A>0极小<br>② $AC-B^2&lt;0$：鞍点（非极值）<br>③ $AC-B^2=0$：无法判断</div></div>
       </div>
       <div class="flip-actions">
         <button class="flip-mark-btn" data-mark="known" onclick="event.stopPropagation();markFlip(this,'known')">✓</button>
