@@ -1237,6 +1237,14 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
 [hidden] { display:none !important; }
 .ai-panel select { color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px; }
 @media print { #feedbackMode, #aiFab, .section-check { display:none !important; } }
+
+/* 分布小图（配合 canvas.dist-plot 使用） */
+.dist-card canvas.dist-plot { width: 100%; height: 92px; display: block; margin: 8px 0 6px; background: #fff; border-radius: 8px; border: 1px solid var(--border); }
+.dist-card .dist-example { font-size: 12.5px; line-height: 1.65; color: var(--text-soft); margin: 8px 0 0; }
+.dist-card .dist-example b { color: var(--primary-dark); }
+.dist-card .dist-usage { font-size: 12px; line-height: 1.6; color: var(--muted); margin: 4px 0 0; }
+.dist-read { font-size: 13px; color: var(--text-soft); }
+.accordion-body .dist-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 </style>
 </head>
 
@@ -5095,6 +5103,90 @@ window.AIAssistant = AIAssistant;
   document.body.appendChild(badge);
 })();
 
+})();
+</script>
+
+<script>
+/* 分布小图：canvas.dist-plot[data-dist=binom|poisson|uniform|exponential|normal] */
+(function(){
+  var PURPLE = '#7c3aed', PURPLE_SOFT = 'rgba(124,58,237,0.35)', AXIS = '#94a3b8', LABEL = '#475569';
+  function setup(canvas, height){
+    canvas.style.width = '100%'; canvas.style.height = height + 'px';
+    var r = canvas.getBoundingClientRect();
+    var w = r.width || 240, dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(height * dpr);
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, height);
+    return { ctx: ctx, w: w, h: height };
+  }
+  function axis(ctx, pad, w, h){
+    ctx.strokeStyle = AXIS; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - 14); ctx.lineTo(w - pad, h - 14); ctx.stroke();
+  }
+  function bars(ctx, w, h, probs, meanIdx){
+    var pad = 26, pw = w - pad * 2, ph = h - 30;
+    var maxP = Math.max.apply(null, probs) || 1, bw = pw / probs.length;
+    for (var i = 0; i < probs.length; i++){
+      var bh = probs[i] / maxP * ph, x = pad + i * bw + bw * 0.18, y = h - 14 - bh;
+      ctx.fillStyle = PURPLE_SOFT; ctx.fillRect(x, y, bw * 0.64, bh);
+      ctx.strokeStyle = PURPLE; ctx.strokeRect(x, y, bw * 0.64, bh);
+    }
+    if (meanIdx !== undefined && meanIdx !== null){
+      var mx = pad + (meanIdx + 0.5) * bw;
+      ctx.strokeStyle = '#ef4444'; ctx.setLineDash([4, 3]); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(mx, 12); ctx.lineTo(mx, h - 14); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#ef4444'; ctx.font = '10px sans-serif'; ctx.textAlign = 'left'; ctx.fillText('E', mx + 3, 16);
+    }
+  }
+  function curve(ctx, w, h, xmin, xmax, fx, a, b){
+    var pad = 26, pw = w - pad * 2, ph = h - 30, maxY = 0, i, x;
+    for (i = 0; i <= 200; i++){ x = xmin + (xmax - xmin) * i / 200; if (fx(x) > maxY) maxY = fx(x); }
+    function px(v){ return pad + (v - xmin) / (xmax - xmin) * pw; }
+    function py(v){ return h - 14 - v / maxY * ph * 0.94; }
+    if (a !== undefined && b !== undefined){
+      ctx.fillStyle = 'rgba(124,58,237,0.22)'; ctx.beginPath(); ctx.moveTo(px(a), h - 14);
+      for (i = 0; i <= 120; i++){ var sx = a + (b - a) * i / 120; ctx.lineTo(px(sx), py(fx(sx))); }
+      ctx.lineTo(px(b), h - 14); ctx.closePath(); ctx.fill();
+    }
+    ctx.strokeStyle = PURPLE; ctx.lineWidth = 2; ctx.beginPath();
+    for (i = 0; i <= 200; i++){ x = xmin + (xmax - xmin) * i / 200; if (i === 0) ctx.moveTo(px(x), py(fx(x))); else ctx.lineTo(px(x), py(fx(x))); }
+    ctx.stroke();
+  }
+  function choose(n, k){ var r = 1; for (var i = 1; i <= k; i++) r = r * (n - k + i) / i; return r; }
+  function normalPdf(s){ return function(x){ return Math.exp(-x * x / (2 * s * s)) / (Math.sqrt(2 * Math.PI) * s); }; }
+  function drawOne(canvas, kind){
+    var s = setup(canvas, 92), ctx = s.ctx, w = s.w, h = s.h, pad = 26, i, probs = [];
+    axis(ctx, pad, w, h);
+    if (kind === 'binom'){
+      for (i = 0; i <= 10; i++) probs.push(choose(10, i) * Math.pow(0.4, i) * Math.pow(0.6, 10 - i));
+      bars(ctx, w, h, probs, 4);
+    } else if (kind === 'poisson'){
+      for (i = 0; i <= 10; i++){ var f = 1; for (var j = 2; j <= i; j++) f *= j; probs.push(Math.pow(3, i) * Math.exp(-3) / f); }
+      bars(ctx, w, h, probs, 3);
+    } else if (kind === 'uniform'){
+      var pw = w - pad * 2, ph = h - 30, top = h - 14 - (1 / 10) * ph * 6;
+      ctx.fillStyle = 'rgba(124,58,237,0.22)'; ctx.fillRect(pad, top, pw, h - 14 - top);
+      ctx.strokeStyle = PURPLE; ctx.lineWidth = 2; ctx.strokeRect(pad, top, pw, h - 14 - top);
+      ctx.fillStyle = LABEL; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('U[0,10]，面积 = 1', pad + pw / 2, top - 4);
+    } else if (kind === 'exponential'){
+      curve(ctx, w, h, 0, 5, function(x){ return Math.exp(-x); }, 2, 5);
+    } else if (kind === 'normal'){
+      curve(ctx, w, h, -4, 4, normalPdf(1), -1, 1);
+    }
+  }
+  function renderAll(){
+    var list = document.querySelectorAll('canvas.dist-plot');
+    for (var i = 0; i < list.length; i++){
+      if (list[i].getBoundingClientRect().width < 40) continue;
+      drawOne(list[i], list[i].getAttribute('data-dist'));
+    }
+  }
+  window.addEventListener('load', function(){ setTimeout(renderAll, 250); });
+  window.addEventListener('resize', renderAll);
+  document.addEventListener('click', function(e){
+    if (e.target.closest && e.target.closest('.accordion-header')) setTimeout(renderAll, 260);
+  });
+  renderAll();
 })();
 </script>
 </body>
