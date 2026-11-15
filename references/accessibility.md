@@ -15,6 +15,9 @@ Require:
 - no irreversible time limit;
 - errors associated with the relevant control and accompanied by a recovery action.
 
+Term explanations and any hover popover must be positioned with `position: fixed` and clamped to the viewport in script, not laid out with absolute positioning inside a card. An absolutely positioned tooltip is clipped by ancestor `overflow`, and a tooltip near an edge gets cut in half — it then looks like a rendering bug. Hide it on scroll and resize so a stale popover never covers content. Terms that have no explanation must not keep the hover affordance (dashed underline, help cursor); either supply a definition or render them as plain text.
+
+
 Default to quiet and expose a persistent, keyboard-usable selector for quiet, encouraging, and sprint. Quiet disables celebration particles, pulses, urgency effects, and forced smooth scrolling. Reduced-motion overrides every mode. Sprint may make task timing visible; it must not auto-open quizzes or impose irreversible time pressure.
 
 At the end of a short section, offer “check understanding”, “continue reading”, and “ask for help”. Checks start only on learner action and can be postponed or dismissed. Never interrupt reading after a fixed number of seconds. Restore the last local objective/section/question without erasing attempts. Next-action recommendations must update from the canonical profile; prerequisite hints are guidance, not hard locks. Small-screen users must be able to tap or keyboard-focus term explanations as well as hover them.

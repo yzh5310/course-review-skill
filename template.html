@@ -1245,6 +1245,14 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
 .dist-card .dist-usage { font-size: 12px; line-height: 1.6; color: var(--muted); margin: 4px 0 0; }
 .dist-read { font-size: 13px; color: var(--text-soft); }
 .accordion-body .dist-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+/* 没有解释内容的术语：不要伪装成可悬停 */
+.term.no-tip { border-bottom: none; color: inherit; font-weight: inherit; cursor: inherit; }
+
+/* 术语提示：固定定位 + JS 夹取，避免被 overflow 裁剪或贴边 */
+.term-tooltip { position: fixed; left: 0; top: 0; right: auto; bottom: auto; transform: none; max-width: min(320px, 86vw); z-index: 1300; }
+.term:hover .term-tooltip { opacity: 0; visibility: hidden; }
+.term-tooltip.show { opacity: 1 !important; visibility: visible !important; right: auto; bottom: auto; }
 </style>
 </head>
 
@@ -5187,6 +5195,57 @@ window.AIAssistant = AIAssistant;
     if (e.target.closest && e.target.closest('.accordion-header')) setTimeout(renderAll, 260);
   });
   renderAll();
+})();
+</script>
+
+<script>
+(function(){
+  function markPlainTerms(){
+    var list = document.querySelectorAll('.term');
+    for (var i = 0; i < list.length; i++){
+      if (!list[i].querySelector('.term-tooltip')) list[i].classList.add('no-tip');
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', markPlainTerms);
+  } else {
+    markPlainTerms();
+  }
+  window.addEventListener('load', markPlainTerms);
+})();
+</script>
+
+<script>
+/* TERM_TIP_POS 术语提示定位：跟随术语显示，始终夹在视口内 */
+(function(){
+  var activeTip = null;
+  function hideTip(){ if(activeTip){ activeTip.classList.remove('show'); activeTip = null; } }
+  function showTip(term){
+    var tip = term.querySelector('.term-tooltip');
+    if(!tip) return;
+    hideTip();
+    tip.classList.add('show');
+    var r = term.getBoundingClientRect();
+    var tw = tip.offsetWidth, th = tip.offsetHeight, m = 8;
+    var left = r.left + r.width / 2 - tw / 2;
+    left = Math.max(m, Math.min(left, window.innerWidth - tw - m));
+    var top = r.top - th - 10;
+    if(top < m) top = r.bottom + 10;
+    if(top + th > window.innerHeight - m) top = Math.max(m, window.innerHeight - th - m);
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    activeTip = tip;
+  }
+  document.addEventListener('mouseover', function(e){
+    var term = e.target.closest && e.target.closest('.term');
+    if(term && term.querySelector('.term-tooltip')) showTip(term);
+  });
+  document.addEventListener('mouseout', function(e){
+    var term = e.target.closest && e.target.closest('.term');
+    if(term) hideTip();
+  });
+  document.addEventListener('scroll', hideTip, true);
+  window.addEventListener('resize', hideTip);
 })();
 </script>
 </body>
