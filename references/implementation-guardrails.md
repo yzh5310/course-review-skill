@@ -27,6 +27,8 @@
 - Respect reduced motion and quiet mode.
 - Preserve attempt history when wrongbook items are resolved.
 - Allow users to export, import, and reset their profile.
+- Every state a control gains by script (`selected`, `pressed`, `active`, `flipped`, `known`, `correct`, marking a choice) must have a visibly distinct style. A control whose state changes with no visible difference reads as broken and users stop trying. Before delivery, diff the computed style of one control before and after clicking it, in light and dark mode, desktop and mobile.
+- For choices, also expose progress in words ("3 / 8 answered"), so state is legible even at a glance and for users who cannot rely on colour.
 
 ## Validation
 

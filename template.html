@@ -301,6 +301,14 @@ body.dark .info-box.tip { background: #064e3b; }
   text-align: left;
 }
 .diag-opt:hover { border-color: var(--primary); background: var(--primary-light); }
+.diag-opt.selected {
+  border-color: var(--primary); background: var(--primary-light);
+  color: var(--primary-dark); font-weight: 700;
+  box-shadow: 0 0 0 2px rgba(124,58,237,0.18);
+}
+.diag-opt.selected::after { content: '  ✓ 已选'; color: var(--primary); font-weight: 800; font-size: 13px; }
+body.dark .diag-opt.selected { background: rgba(124,58,237,0.28); color: #ede9fe; }
+.diag-opt:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 .diag-opt.correct { background: var(--success-light); border-color: var(--success); color: #065f46; }
 body.dark .diag-opt.correct { color: #a7f3d0; }
 .diag-opt.wrong { background: var(--danger-light); border-color: var(--danger); color: #991b1b; }
@@ -1344,6 +1352,7 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
   <h2><span class="emoji">🔍</span>知识盲区诊断</h2>
   <p class="card-desc">想知道从哪里补起，可以做个简短自测。也可以直接开始学习。</p>
   <div id="diagQuestions"></div>
+  <div id="diagProgress" role="status" aria-live="polite" style="text-align:center;margin-top:14px;font-size:13px;color:var(--muted);">已作答 0 题</div>
   <div style="text-align:center; margin-top:16px;">
     <button class="btn btn-primary" id="diagSubmit">提交诊断</button>
     <button class="btn btn-ghost" id="diagReset" style="display:none;">重新诊断</button>
@@ -2909,16 +2918,37 @@ document.querySelectorAll('.ex-step-result').forEach(function(step){
     html += '</div></div>';
     container.innerHTML += html;
   });
-  container.querySelectorAll('.diag-opt').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var qi = +btn.dataset.qi, oi = +btn.dataset.oi;
-      answers[qi] = oi;
-      var siblings = btn.parentElement.querySelectorAll('.diag-opt');
-      siblings.forEach(function(s){ s.classList.remove('selected'); });
-      btn.classList.add('selected');
+  var diagDone = false;
+  function renderDiagProgress(){
+    var el = document.getElementById('diagProgress');
+    if(!el) return;
+    var n = Object.keys(answers).length;
+    el.textContent = n + ' / ' + diagQuestions.length + ' 题已作答';
+    el.style.color = n === diagQuestions.length ? 'var(--success)' : 'var(--muted)';
+    el.style.fontWeight = n === diagQuestions.length ? '700' : '400';
+  }
+  // 事件委托：即使选项被重新渲染，点击也不会丢
+  container.addEventListener('click', function(e){
+    if(diagDone) return;
+    var btn = e.target.closest ? e.target.closest('.diag-opt') : null;
+    if(!btn || !container.contains(btn)) return;
+    var qi = +btn.dataset.qi, oi = +btn.dataset.oi;
+    answers[qi] = oi;
+    btn.parentElement.querySelectorAll('.diag-opt').forEach(function(s){ s.classList.remove('selected'); });
+    btn.classList.add('selected');
+    btn.setAttribute('aria-pressed', 'true');
+    btn.parentElement.querySelectorAll('.diag-opt').forEach(function(s){
+      if(s !== btn) s.removeAttribute('aria-pressed');
     });
+    renderDiagProgress();
   });
+  renderDiagProgress();
   document.getElementById('diagSubmit').addEventListener('click', function(){
+    diagDone = true;
+    var _unanswered = diagQuestions.length - Object.keys(answers).length;
+    if(_unanswered > 0 && typeof showToast === 'function'){
+      showToast('还有 ' + _unanswered + ' 题未作答，未作答按错处理', 2800);
+    }
     var correct = 0, blinds = [];
     diagQuestions.forEach(function(q, idx){
       var opts = container.querySelectorAll('[data-qi="'+idx+'"]');
@@ -2957,6 +2987,8 @@ document.querySelectorAll('.ex-step-result').forEach(function(step){
   });
   document.getElementById('diagReset').addEventListener('click', function(){
     answers = {};
+    diagDone = false;
+    renderDiagProgress();
     container.querySelectorAll('.diag-opt').forEach(function(b){
       b.classList.remove('correct','wrong','selected');
     });
