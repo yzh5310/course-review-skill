@@ -255,6 +255,26 @@ def _validate_contract(contract: dict[str, Any], report: ValidationReport) -> No
             report.fail(f"claims.{key} must be false")
 
 
+def _check_math_escaping(text: str, report: ValidationReport) -> None:
+    """A raw < inside $...$ starts an HTML tag and truncates the formula."""
+    stripped = re.sub(r"<(script|style)\b[^>]*>[\s\S]*?</\1>", " ", text, flags=re.I)
+    inline_tags = {"br", "b", "i", "em", "strong", "span", "sub", "sup", "code", "a", "p", "div", "wbr"}
+    bad: list[str] = []
+    for match in re.finditer(r"\$\$[\s\S]{1,2000}?\$\$|\$[^$\n]{1,400}?\$", stripped):
+        segment = match.group(0)
+        for angle in re.finditer(r"<([A-Za-z0-9/_=+\-]+)", segment):
+            name = re.match(r"[A-Za-z]+", angle.group(1))
+            if name and name.group(0).lower() in inline_tags:
+                continue
+            bad.append(segment[:70])
+            break
+    if bad:
+        report.fail(
+            "Math contains an unescaped '<' or '>' that the browser parses as a tag; escape them as &lt; and &gt;: "
+            + " | ".join(bad[:3])
+        )
+
+
 def _check_forbidden_claims(visible_text: str, evidence_level: str | None, report: ValidationReport) -> None:
     pass_patterns = {
         "pass guarantee": r"(?:稳过|保过|包过|必过|不挂科|及格绝对没问题|(?<!不)保证.{0,12}(?:及格|通过))",
@@ -358,6 +378,7 @@ def validate_output(path: Path) -> ValidationReport:
     evidence_level = contract.get("evidence", {}).get("level") if contract else None
     visible_text = " ".join(parser.visible_text)
     _check_forbidden_claims(visible_text, evidence_level, report)
+    _check_math_escaping(text, report)
 
     if contract:
         course = contract.get("course", {})

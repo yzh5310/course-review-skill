@@ -11,6 +11,7 @@ Load only the references required by the task:
 - UI and accessibility: `references/accessibility.md`
 - HTML/JavaScript implementation: `references/implementation-guardrails.md`
 - Generated artifact contract and release gate: `references/output-contract.md`
+- Visual, interaction, and source-fidelity checks before delivery: `references/visual-qa.md`
 
 Use `schemas/learning-profile.schema.json`, `schemas/question.schema.json`, and `schemas/review-plan.schema.json` as normative data contracts.
 
@@ -25,12 +26,15 @@ Mandatory boundaries:
 7. Preserve attempt history when a wrongbook item is resolved.
 8. Embed `#courseReviewContract` and keep it synchronized with visible evidence, coverage, and the next action.
 9. Do not deliver a generated artifact until its output validator passes.
+10. Verify claims about the learner's materials against those materials; never generalize about a problem set without enumerating it.
+11. Run the visual and interaction checks in `references/visual-qa.md`; structural validation alone does not prove a control responds or a formula rendered.
 
 Validate repository changes with:
 
 ```bash
 python scripts/validate_repo.py
 python scripts/validate_output.py path/to/generated-review.html
+python scripts/test_validate_output.py
 node scripts/test_runtime.cjs
 ```
 

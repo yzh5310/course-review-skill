@@ -34,6 +34,10 @@ class OutputValidatorTests(unittest.TestCase):
         broken = TEMPLATE.replace('id="courseReviewContract"', 'id="removedContract"', 1)
         self.assert_rejected(broken, "Missing #courseReviewContract")
 
+    def test_unescaped_angle_bracket_in_math_is_rejected(self) -> None:
+        broken = TEMPLATE.replace("</main>", "<p>$P(a<X<b)$</p></main>", 1)
+        self.assert_rejected(broken, "unescaped")
+
     def test_pass_guarantee_is_rejected(self) -> None:
         broken = TEMPLATE.replace("</main>", "<p>保证及格</p></main>", 1)
         self.assert_rejected(broken, "pass guarantee")

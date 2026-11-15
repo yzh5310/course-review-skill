@@ -166,6 +166,8 @@ Also open the template in a browser and verify:
 - imported AI questions remain practice-only;
 - keyboard, reduced-motion, dark, mobile, and print behavior work.
 
+Then run the visual and interaction checks in [references/visual-qa.md](references/visual-qa.md): a control's state must change visibly, nothing may cover an interactive control, no visible text may still contain a `$` delimiter or a `.katex-error`, every visible canvas must be painted at its CSS width, and every tooltip must stay inside the viewport. These are cheap to check and are the defects that actually reach learners.
+
 ## Mandatory rules
 
 1. Prefer time budget over target score.
@@ -181,6 +183,9 @@ Also open the template in a browser and verify:
 11. Embed the generated-output contract and keep it synchronized with visible behavior.
 12. Treat `validate_output.py` as a mandatory release gate.
 13. Treat Agent instructions as adapters, not enforcement; use the same contract and validator on every platform.
+14. Verify every claim about the learner's materials against the materials themselves. Enumerate a problem set before generalizing about it ("all ten are type X"), and never state a count you have not recounted. If the set splits into two patterns, give two templates.
+15. Run the visual and interaction checks in [references/visual-qa.md](references/visual-qa.md) on the final artifact. Passing `validate_output.py` does not prove that a control responds, a formula rendered, or a chart drew.
+16. For quantitative families (distributions, functions, transforms), give each one a plot and a concrete scenario, not a formula list alone.
 
 ## Acceptance criteria
 

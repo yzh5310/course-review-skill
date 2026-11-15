@@ -51,10 +51,11 @@
 - `references/question-generation.md`：外部 AI 出题与可信度隔离；
 - `references/course-profiles.md`：不同课程的学习循环；
 - `references/accessibility.md`：无障碍与低刺激体验；
+- `references/visual-qa.md`：交付前的可视与交互检查（控件状态、公式渲染、图表绘制、提示框边界、资料陈述核对）；
 - `schemas/learning-profile.schema.json`：学习档案 Schema；
 - `schemas/question.schema.json`：生成题目 Schema；
 - `schemas/review-plan.schema.json`：生成复习方案的强制输出契约；
-- `scripts/validate_output.py`：任意生成 HTML 的发布门校验器；
+- `scripts/validate_output.py`：任意生成 HTML 的发布门校验器（含公式里未转义 `<`/`>` 的静态检查）；
 - `template.html`：可运行参考模板。
 
 ## 外部 AI 学习接力
@@ -93,7 +94,7 @@ npx --package @playwright/cli playwright-cli --session review-check run-code --f
 
 其他 AI 生成新的 HTML 后，必须把第二条命令中的 `template.html` 替换为实际产物路径。产物校验失败时不得交付。然后在浏览器中检查状态迁移、答题记录、提示词预览、题目导入、键盘操作、移动端、深色模式和打印模式。
 
-还须按 `references/learner-intake.md` 核对实际内容是否适配用户情况。自动校验通过只证明其覆盖的结构与可信度边界，不能证明 AI 已完成询问或方案适合本人。“60 秒内开始学习”从打开生成的 HTML 起算，不用于跳过生成前的必要澄清。
+还须按 `references/learner-intake.md` 核对实际内容是否适配用户情况，并按 `references/visual-qa.md` 在真实浏览器里核对控件、公式、图表与提示框。自动校验通过只证明其覆盖的结构与可信度边界，不能证明 AI 已完成询问或方案适合本人。“60 秒内开始学习”从打开生成的 HTML 起算，不用于跳过生成前的必要澄清。
 
 ## License
 
