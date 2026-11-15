@@ -710,6 +710,9 @@ body.dark .flip-q { color: #c4b5fd; }
   border: 6px solid transparent; border-top-color: #1e293b;
 }
 .term:hover .term-tooltip { opacity: 1; }
+/* 深色/彩色标题栏里的术语必须继承文字颜色，否则会与背景同色看不见 */
+.example-header .term, .hero .term, .flip-front .term { color: inherit; border-bottom-color: currentColor; }
+
 body.dark .term-tooltip { background: #334155; }
 body.dark .term-tooltip::after { border-top-color: #334155; }
 
