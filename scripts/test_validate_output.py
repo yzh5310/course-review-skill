@@ -142,6 +142,19 @@ class OutputValidatorTests(unittest.TestCase):
         broken = TEMPLATE.replace('"externalActivityAutoSynced": false', '"externalActivityAutoSynced": true', 1)
         self.assert_rejected(broken, "externalAI.externalActivityAutoSynced")
 
+    def test_template_derives_default_depth_from_coverage_mode(self) -> None:
+        self.assertIn("COURSE_META.coverageMode", TEMPLATE)
+        self.assertNotIn("var saved = lsGet('depth', 'standard');", TEMPLATE)
+
+    def test_template_escapes_excerpts_and_exports_srs(self) -> None:
+        self.assertIn("escapeHTML(e.text)", TEMPLATE)
+        self.assertIn("'srs'", TEMPLATE)
+
+    def test_template_options_define_selected_and_dark_text_styles(self) -> None:
+        self.assertIn(".diag-opt.selected", TEMPLATE)
+        self.assertIn(".qb-opt.selected::after", TEMPLATE)
+        self.assertIn("background: var(--card); color: var(--text);", TEMPLATE)
+
 
 if __name__ == "__main__":
     unittest.main()

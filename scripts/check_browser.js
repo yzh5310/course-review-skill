@@ -107,6 +107,31 @@ async (page) => {
   await page.emulateMedia({media:'screen',reducedMotion:'no-preference'});
   await page.locator('#aiFab').click();await page.keyboard.press('Escape');
   check(!await page.locator('#aiPanelOverlay').evaluate(el=>el.classList.contains('show')),'Escape cannot close helper');
+  // Verify diagnostic selection changes computed style visibly and resets cleanly
+  const diagOpt = page.locator('#diagQuestions .diag-opt').first();
+  const diagBeforeBg = await diagOpt.evaluate(el=>getComputedStyle(el).backgroundColor);
+  await diagOpt.click();
+  await page.mouse.move(5, 5);
+  const diagAfterBg = await diagOpt.evaluate(el=>getComputedStyle(el).backgroundColor);
+  check(diagBeforeBg !== diagAfterBg, 'Diagnostic option selection produced no visible background change');
+  check(await diagOpt.getAttribute('aria-pressed') === 'true', 'Diagnostic option missing aria-pressed');
+  // Verify keyboard focus positions term tooltip inside viewport (not stuck at 0,0)
+  const firstTerm = page.locator('.term:not(.no-tip)').first();
+  if(await firstTerm.count() > 0){
+    await firstTerm.focus();
+    const tipRect = await firstTerm.locator('.term-tooltip').evaluate(el=>({shown:el.classList.contains('show'),r:el.getBoundingClientRect().toJSON()}));
+    check(tipRect.shown && tipRect.r.left >= 0 && tipRect.r.right <= innerWidth && (tipRect.r.left > 0 || tipRect.r.top > 0), 'Keyboard-focused term tooltip not positioned inside viewport');
+    await page.keyboard.press('Escape');
+  }
+  // Verify collapsed canvas draws once its accordion opens
+  await page.locator('#concept-advanced .accordion-header').click();
+  await page.waitForTimeout(350);
+  const canvasPainted = await page.locator('#canvasRiemann').evaluate(c=>{
+    const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;
+    let n=0; for(let i=3;i<d.length;i+=4) if(d[i]) n++;
+    return c.width > 0 && n > 0;
+  });
+  check(canvasPainted, 'Canvas inside collapsed accordion remained blank after opening');
   check(errors.length===0,'Browser errors: '+errors.join(';'));
-  return {passed:true,checks:['automatic current-question context','one-action copy/open','real clipboard matches preview','no prompt in URLs','copy failure recovery','popup blocking recovery','preferred AI remembered','remove current problem','no sharing checkbox','collapsed settings','mobile primary action','optional Agent JSON','manual-only micro-check','reading/question resume','dark/print/reduced motion','keyboard exit'],pageErrors:errors};
+  return {passed:true,checks:['automatic current-question context','one-action copy/open','real clipboard matches preview','no prompt in URLs','copy failure recovery','popup blocking recovery','preferred AI remembered','remove current problem','no sharing checkbox','collapsed settings','mobile primary action','optional Agent JSON','manual-only micro-check','reading/question resume','diagnostic visible selection','keyboard term tooltip positioning','collapsed canvas redraw','dark/print/reduced motion','keyboard exit'],pageErrors:errors};
 }

@@ -73,10 +73,15 @@ The same discipline applies to claims about the learner's materials:
 | Symptom | Cause | Fix |
 |---|---|---|
 | Clicking a choice does nothing | state class has no CSS rule | add a selected style with a checkmark, and a text counter |
+| Unselected options unreadable in dark mode | `<button>` missing explicit `color: var(--text)` | set `color: var(--text)` on `.diag-opt` and `.qb-opt` |
 | Formula shows `$P(a` | raw `<` inside math | escape to `&lt;` in the source |
+| LaTeX `\times`, `\bmod`, `\ne`, `\text` vanish | generator script used non-raw string literal | use raw strings (`r"""..."""`) in build scripts and verify in DOM |
 | Tooltip clipped at a card edge | absolute positioning inside `overflow` | `position: fixed` + clamp in script |
+| Tooltip stuck at `(0, 0)` on keyboard focus or tap | positioning script only listened to `mouseover` | bind `focusin`, `focusout`, `click`, and `Escape` in the same delegated handler |
 | Tooltip covers content after scroll | stale position | hide on scroll and resize |
-| Chart blank | canvas measured while collapsed | redraw on accordion open and resize |
+| `minimum-core` plan flips to `standard` on load | depth selector defaulted to hardcoded `'standard'` | derive default depth from `COURSE_META.coverageMode` |
+| Chart blank | canvas measured while collapsed | measure inside `draw()`, redraw on accordion open and resize |
 | Grey blurred block reads as broken | mask also blurred its hint | draw the hint outside the blurred element |
 | Annotated word disappears | term colour equals header background | inherit colour on coloured surfaces |
 | Layout jumps to 4+1 cards | grid `minmax` too small | raise the minimum so the row balances |
+| Student ID or email leaks into source list | raw lab filename or slide header copied verbatim | sanitize source labels to neutral titles before writing HTML |

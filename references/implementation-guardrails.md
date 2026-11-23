@@ -14,7 +14,8 @@
 - Never claim an inferred topic is high-frequency or guaranteed to appear.
 - Keep AI-imported questions practice-only until independently verified.
 - Escape imported text before inserting it into HTML.
-- Do not use `innerHTML` with untrusted question content.
+- Do not use `innerHTML` with untrusted question content or unescaped learner excerpts.
+- Strip student IDs, names, and teacher personal emails from learner-supplied filenames or slide headers before citing them in `evidence.sources`, visible basis summaries, or prompts (use neutral labels such as `Lab 3 实验代码`).
 
 ## Interaction
 
@@ -22,6 +23,8 @@
 - Let the learner start from that action on first open. Use inline guidance and keep settings optional.
 - Never schedule a micro-quiz popup on a reading timer.
 - Default to quiet feedback; expose all feedback modes and honor reduced motion.
+- Derive the initial UI depth selector from `COURSE_META.coverageMode` (never hardcode `standard` over a `minimum-core` or `extended-improvement` plan).
+- Keep export and reset key lists synchronized with every active `localStorage` module (including `srs`).
 - Default external help to one-question-at-a-time dialogue; structured import is opt-in.
 - Keep the first useful task under 10 minutes.
 - Respect reduced motion and quiet mode.
