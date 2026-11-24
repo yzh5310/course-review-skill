@@ -1248,6 +1248,17 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
 #aiContextSummary { overflow-wrap:anywhere; }
 [hidden] { display:none !important; }
 .ai-panel select { color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px; }
+.ai-progress-box { margin:12px 0 8px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:rgba(148,163,184,0.08); }
+.ai-progress-head { display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:8px; }
+.ai-progress-pills { display:flex;flex-wrap:wrap;gap:6px; }
+.ai-prog-pill { appearance:none;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;cursor:pointer;transition:border-color .15s,background .15s,color .15s;max-width:100%;text-align:left; }
+.ai-prog-pill:hover { border-color:var(--primary); }
+.ai-prog-pill.is-done { background:rgba(16,185,129,0.14);border-color:#10b981;color:#047857;font-weight:600; }
+.ai-prog-pill.is-current { background:rgba(99,102,241,0.14);border-color:var(--primary);color:var(--primary-dark, var(--primary));font-weight:600; }
+.ai-prog-pill.is-unseen { opacity:0.84; }
+body.dark .ai-progress-box { background:rgba(30,41,59,0.65); }
+body.dark .ai-prog-pill.is-done { background:rgba(16,185,129,0.22);color:#6ee7b7; }
+body.dark .ai-prog-pill.is-current { background:rgba(129,140,248,0.22);color:#c7d2fe; }
 @media print { #feedbackMode, #aiFab, .section-check { display:none !important; } }
 
 /* 分布小图（配合 canvas.dist-plot 使用） */
@@ -2083,6 +2094,13 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
           <button class="ai-config-opt" data-help-intent="prerequisite">补一下基础</button>
           <button class="ai-config-opt" data-help-intent="practice">再练几题</button>
         </div>
+        <div class="ai-progress-box" id="aiProgressBox">
+          <div class="ai-progress-head">
+            <span>📍 当前识别的复习进度（点胶囊 1 秒修正）</span>
+            <span>✓已学 · ●在学 · ○未开始</span>
+          </div>
+          <div class="ai-progress-pills" id="aiProgressPills" role="group" aria-label="复习进度快速修正"></div>
+        </div>
         <p id="aiContextSummary" style="font-size:14px;line-height:1.7;margin:14px 0 8px;" aria-live="polite"></p>
         <p id="aiShareNotice" style="font-size:12px;color:var(--muted);line-height:1.7;"></p>
         <button class="btn btn-ghost btn-sm" id="aiRemoveProblem" type="button" hidden>不带原题，只带知识点</button>
@@ -2812,8 +2830,33 @@ var LearningMemory = (function(){
     return { profile:profile, mastered:mastered, weak:weak, unseen:unseen, excluded:excluded };
   }
 
+  function markViewed(conceptId, sectionId){
+    var profile = get();
+    if(!conceptId || !profile.concepts[conceptId] || profile.concepts[conceptId].state === 'excluded') return;
+    profile.preferences = profile.preferences || {};
+    profile.preferences.viewedConcepts = profile.preferences.viewedConcepts || {};
+    profile.preferences.viewedConcepts[conceptId] = Date.now();
+    profile.preferences.resumeObjectiveId = conceptId;
+    if(sectionId) profile.preferences.resumeSection = sectionId;
+    save(profile);
+  }
+
+  function setSelfProgress(conceptId, status){
+    var profile = get();
+    if(!conceptId || !profile.concepts[conceptId] || profile.concepts[conceptId].state === 'excluded') return;
+    profile.preferences = profile.preferences || {};
+    profile.preferences.selfProgress = profile.preferences.selfProgress || {};
+    if(status === 'studied' || status === 'current' || status === 'unstarted'){
+      profile.preferences.selfProgress[conceptId] = status;
+    } else {
+      delete profile.preferences.selfProgress[conceptId];
+    }
+    save(profile);
+  }
+
   return { get:get, save:save, summary:summary, recordAttempt:recordAttempt,
-    confirmError:confirmError, recordMastery:recordMastery, conceptIdsFor:conceptIdsFor };
+    confirmError:confirmError, recordMastery:recordMastery, conceptIdsFor:conceptIdsFor,
+    markViewed:markViewed, setSelfProgress:setSelfProgress };
 })();
 
 (function renderEvidenceNotice(){
@@ -2913,6 +2956,14 @@ renderCoverageNotice(LearningMemory.get().coverageMode || COURSE_META.coverageMo
   });
 })();
 
+function markSectionViewedFromEl(el){
+  if(!el || !el.closest) return;
+  var sec = el.closest('[id^="concept-ch"]');
+  if(!sec) return;
+  var node = knowledgeGraph.find(function(n){ return 'concept-ch' + n.chapter === sec.id; });
+  if(node) LearningMemory.markViewed(node.id, sec.id);
+}
+
 // ==================== 手风琴 ====================
 (function(){
   document.querySelectorAll('.accordion-header').forEach(function(h){
@@ -2921,8 +2972,7 @@ renderCoverageNotice(LearningMemory.get().coverageMode || COURSE_META.coverageMo
       h.parentElement.classList.toggle('open'); h.setAttribute('aria-expanded',h.parentElement.classList.contains('open'));
       var node=knowledgeGraph.find(function(n){return 'concept-ch'+n.chapter===h.parentElement.id;});
       if(node && h.parentElement.classList.contains('open')){
-        var profile=LearningMemory.get();profile.preferences.resumeObjectiveId=node.id;
-        profile.preferences.resumeSection=h.parentElement.id;LearningMemory.save(profile);
+        LearningMemory.markViewed(node.id, h.parentElement.id);
       }
     });
     h.addEventListener('keydown',function(e){if(e.key==='Enter' || e.key===' '){e.preventDefault();h.click();}});
@@ -2934,6 +2984,7 @@ window.toggleExample = function(btn, type){
   var body = btn.nextElementSibling;
   if(!body) return;
   var isShow = body.classList.toggle('show');
+  if(isShow) markSectionViewedFromEl(btn);
   if(type === 'variant'){
     btn.textContent = isShow ? '收起变式练习' : '🔄 点击展开变式练习';
   }
@@ -2943,6 +2994,7 @@ window.toggleExample = function(btn, type){
 
 document.querySelectorAll('.ex-step-result').forEach(function(step){
   step.tabIndex=0;step.setAttribute('role','button');step.setAttribute('aria-label','显示或隐藏这一步的结果');
+  step.addEventListener('click', function(){ markSectionViewedFromEl(step); });
   step.addEventListener('keydown',function(e){if(e.key==='Enter' || e.key===' '){e.preventDefault();step.click();}});
 });
 
@@ -3085,10 +3137,7 @@ function renderKnowledgeMap(){
 window.startLearn = function(nodeId){
   var node = knowledgeGraph.find(function(n){return n.id===nodeId;});
   if(!node) return;
-  var profile = LearningMemory.get();
-  profile.preferences.resumeObjectiveId = node.id;
-  profile.preferences.resumeSection = 'concept-ch' + node.chapter;
-  LearningMemory.save(profile);
+  LearningMemory.markViewed(node.id, 'concept-ch' + node.chapter);
   scrollToSection('concept-ch' + node.chapter);
 };
 
@@ -3900,7 +3949,7 @@ var QuizSystem = (function(){
     }
     var help = document.createElement('button');
     help.className = 'btn btn-ghost btn-sm'; help.textContent = '这一步看不懂？';
-    help.onclick = function(){ AIAssistant.openHelp('explain', LearningMemory.conceptIdsFor(q)[0], q.question + '\n解析：' + (q.explanation || '')); };
+    help.onclick = function(){ AIAssistant.openHelp('explain', LearningMemory.conceptIdsFor(q)[0], q.question + '\n解析：' + (q.explanation || ''), { entryPoint: 'quiz-feedback', sectionId: 'quiz' }); };
     fb.appendChild(help);
     if(isCorrect === false){
       var classify=document.createElement('button');classify.className='btn btn-ghost btn-sm';
@@ -4449,6 +4498,8 @@ var PromptGeneratorV5 = {
       (opts.type === 'calc' ? 'calc 60%, choice 30%, short 10%' : 'choice 35%, tf 10%, calc 35%, short 20%');
 
     var prefs = profile.preferences || {};
+    var viewed = prefs.viewedConcepts || {};
+    var selfProg = prefs.selfProgress || {};
     var orderIndex = {};
     knowledgeGraph.forEach(function(n, idx){ orderIndex[n.id] = idx; });
     var byOrder = function(a, b){
@@ -4463,20 +4514,64 @@ var PromptGeneratorV5 = {
       checklist: '考前清单',
       wrongbook: '错题本'
     };
+    var entryLabels = {
+      'section-help': '从本节「先补基础／求助」进入',
+      'quiz-feedback': '从题库「这一步看不懂？」进入',
+      selection: '从划词求助进入'
+    };
     var currentSection = '';
-    if(prefs.resumeSection){
+    if(opts.entryPoint && entryLabels[opts.entryPoint]){
+      currentSection = entryLabels[opts.entryPoint];
+    } else if(prefs.resumeSection){
       currentSection = sectionLabels[prefs.resumeSection] ||
         (prefs.resumeSection.indexOf('concept-ch') === 0 ? '章节讲解' : '');
     }
-    var resumeId = prefs.resumeObjectiveId || opts.targetId || '';
-    var resumeConcept = activeRows.find(function(c){ return c.id === resumeId; });
+    var activeStopId = opts.targetId || prefs.resumeObjectiveId || '';
+    var resumeConcept = activeRows.find(function(c){ return c.id === activeStopId; });
+    var bucketOf = {};
+    var masteredNames = [], studiedNames = [], inProgressNames = [], notStartedNames = [];
+    activeRows.forEach(function(c){
+      var override = selfProg[c.id];
+      var bucket;
+      if(override === 'studied'){
+        bucket = (c.state === 'mastered' || c.state === 'provisional') ? 'mastered' : 'studied';
+      } else if(override === 'current'){
+        bucket = 'inProgress';
+      } else if(override === 'unstarted'){
+        bucket = 'notStarted';
+      } else if(c.state === 'mastered' || c.state === 'provisional'){
+        bucket = 'mastered';
+      } else if(c.state === 'learning' || c.state === 'unstable' || viewed[c.id] || c.id === activeStopId){
+        bucket = 'inProgress';
+      } else {
+        bucket = 'notStarted';
+      }
+      bucketOf[c.id] = bucket;
+      if(bucket === 'mastered') masteredNames.push(c.name);
+      else if(bucket === 'studied') studiedNames.push(c.name);
+      else if(bucket === 'inProgress') inProgressNames.push(c.name);
+      else notStartedNames.push(c.name);
+    });
+    var bucketLabel = { mastered:'已做题掌握', studied:'已自标学过', inProgress:'正在复习', notStarted:'尚未开始' };
+    var stopGraphNode = knowledgeGraph.find(function(n){ return n.id === activeStopId; });
+    var currentPrereqs = [];
+    if(stopGraphNode && Array.isArray(stopGraphNode.prereqs)){
+      stopGraphNode.prereqs.forEach(function(pid){
+        var pRow = activeRows.find(function(c){ return c.id === pid; });
+        if(pRow) currentPrereqs.push(pRow.name + '（' + (bucketLabel[bucketOf[pid]] || '未知') + '）');
+      });
+    }
     var progress = {
       currentConcept: resumeConcept ? resumeConcept.name : null,
+      currentConceptId: resumeConcept ? resumeConcept.id : null,
       currentSection: currentSection,
+      currentPrereqs: currentPrereqs,
       totalActive: activeRows.length,
-      mastered: activeRows.filter(function(c){ return c.state === 'mastered' || c.state === 'provisional'; }).map(function(c){ return c.name; }),
-      inProgress: activeRows.filter(function(c){ return c.state === 'learning' || c.state === 'unstable'; }).map(function(c){ return c.name; }),
-      notStarted: activeRows.filter(function(c){ return c.state === 'unseen' || c.state === 'insufficient-data'; }).map(function(c){ return c.name; })
+      bucketOf: bucketOf,
+      mastered: masteredNames,
+      studied: studiedNames,
+      inProgress: inProgressNames,
+      notStarted: notStartedNames
     };
 
     return {
@@ -4503,12 +4598,17 @@ var PromptGeneratorV5 = {
     if(p.currentConcept && p.currentSection) where = p.currentConcept + '（' + p.currentSection + '）';
     else if(p.currentConcept) where = p.currentConcept;
     else if(p.currentSection) where = p.currentSection;
-    return [
-      '- 当前停留：' + where,
-      '- 已掌握/初步掌握（' + p.mastered.length + '/' + p.totalActive + '）：' + (p.mastered.join('、') || '暂无'),
-      '- 正在复习（' + p.inProgress.length + '/' + p.totalActive + '）：' + (p.inProgress.join('、') || '暂无'),
-      '- 尚未在本页开始（' + p.notStarted.length + '/' + p.totalActive + '）：' + (p.notStarted.join('、') || '无')
-    ].join('\n');
+    var lines = ['- 当前停留：' + where];
+    if(p.currentPrereqs && p.currentPrereqs.length){
+      lines.push('- 当前知识点前置：' + p.currentPrereqs.join('、'));
+    }
+    lines.push('- 已做题掌握/初步掌握（' + p.mastered.length + '/' + p.totalActive + '）：' + (p.mastered.join('、') || '暂无'));
+    if(p.studied && p.studied.length){
+      lines.push('- 已自标学过（未在本页做题验证，' + p.studied.length + '/' + p.totalActive + '）：' + p.studied.join('、'));
+    }
+    lines.push('- 正在复习/已看讲义（' + p.inProgress.length + '/' + p.totalActive + '）：' + (p.inProgress.join('、') || '暂无'));
+    lines.push('- 尚未在本页开始（' + p.notStarted.length + '/' + p.totalActive + '）：' + (p.notStarted.join('、') || '无'));
+    return lines.join('\n');
   },
   targetText: function(targets){
     if(!targets.length) return '- No concept has enough evidence. Generate low-cost foundation checks and do not label any concept weak.';
@@ -4560,8 +4660,9 @@ var PromptGeneratorV5 = {
       '- coverage mode: ' + c.coverageMode,
       '- remaining study minutes: ' + (c.remainingMinutes === null ? 'unknown' : c.remainingMinutes),
       '- current local stop: ' + (c.progress.currentConcept || 'not selected') + (c.progress.currentSection ? ' [' + c.progress.currentSection + ']' : ''),
-      '- course progress snapshot (mastered/provisional): ' + (c.progress.mastered.join(', ') || 'none'),
-      '- course progress snapshot (in progress): ' + (c.progress.inProgress.join(', ') || 'none'),
+      '- course progress snapshot (verified mastered/provisional): ' + (c.progress.mastered.join(', ') || 'none'),
+      '- course progress snapshot (self-marked studied): ' + ((c.progress.studied && c.progress.studied.join(', ')) || 'none'),
+      '- course progress snapshot (in progress/viewed): ' + (c.progress.inProgress.join(', ') || 'none'),
       '- course progress snapshot (not started here; avoid assuming later unstarted topics): ' + (c.progress.notStarted.join(', ') || 'none'),
       '- concept-level evidence:',
       this.targetText(c.targets),
@@ -4710,11 +4811,11 @@ var AIAssistant = (function(){
     $('aiPlatform').value=preferredPlatform;
   }
   function open(){
-    config.intent='practice';config.output='dialogue';config.problemText='';config.shareProblem=false;config.targetId='';
+    config.intent='practice';config.output='dialogue';config.problemText='';config.shareProblem=false;config.targetId='';config.entryPoint='fab';
     var profile=LearningMemory.get(),prefs=profile.preferences;
     var question=QuizSystem.getCurrentQuestion();
     if(selectionText){
-      config.intent='explain';config.problemText=selectionText;config.shareProblem=true;
+      config.intent='explain';config.problemText=selectionText;config.shareProblem=true;config.entryPoint='selection';
       config.targetId=prefs.resumeObjectiveId || '';
     } else if(prefs.resumeSection === 'quiz' && question){
       config.intent='explain';config.problemText=question.question;
@@ -4750,6 +4851,44 @@ var AIAssistant = (function(){
     });
   }
 
+  function renderProgressPills(context){
+    var container = $('aiProgressPills');
+    var box = $('aiProgressBox');
+    if(!container || !box) return;
+    var profile = LearningMemory.get();
+    var bucketOf = (context && context.progress && context.progress.bucketOf) || {};
+    var activeNodes = knowledgeGraph.filter(function(n){
+      return !profile.concepts[n.id] || profile.concepts[n.id].state !== 'excluded';
+    });
+    box.hidden = !activeNodes.length;
+    container.replaceChildren();
+    activeNodes.forEach(function(node){
+      var bucket = bucketOf[node.id] || 'notStarted';
+      var isDone = bucket === 'mastered' || bucket === 'studied';
+      var isCurrent = bucket === 'inProgress';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ai-prog-pill ' + (isDone ? 'is-done' : (isCurrent ? 'is-current' : 'is-unseen'));
+      btn.dataset.conceptId = node.id;
+      btn.dataset.progressBucket = bucket;
+      var icon = isDone ? '✓ ' : (isCurrent ? '● ' : '○ ');
+      var stateText = isDone ? '已学' : (isCurrent ? '在学' : '未开始');
+      btn.textContent = icon + node.name;
+      btn.setAttribute('aria-label', node.name + '：当前为' + stateText + '，点击切换状态');
+      btn.title = '点击切换：未开始 → 已学 → 在学';
+      btn.addEventListener('click', function(){
+        // 1-click correction: unstarted -> studied -> current -> unstarted; current -> studied -> unstarted
+        var next = bucket === 'notStarted' ? 'studied' : (isDone ? 'current' : 'studied');
+        if(bucket === 'inProgress' && ((profile.preferences && profile.preferences.selfProgress && profile.preferences.selfProgress[node.id]) === 'current')){
+          next = 'unstarted';
+        }
+        LearningMemory.setSelfProgress(node.id, next);
+        invalidatePrompt();
+      });
+      container.appendChild(btn);
+    });
+  }
+
   function invalidatePrompt(){
     pendingPrompt=PromptGenerator.build(config);
     $('aiPromptPreview').value=pendingPrompt;
@@ -4758,6 +4897,7 @@ var AIAssistant = (function(){
     $('aiManualOpen').hidden=true;$('aiManualOpen').href=platforms[preferredPlatform].url;
     $('aiQuickLaunch').textContent='复制并打开'+platforms[preferredPlatform].name+' →';
     var context=PromptGenerator.collectContext(config);
+    renderProgressPills(context);
     var names=context.targets.map(function(c){return c.name;}).join('、');
     var labels={explain:'讲懂当前内容',prerequisite:'补上必要基础',practice:'再练几题，一次一道'};
     $('aiContextSummary').textContent=(names ? names+' · ' : '')+labels[config.intent];
@@ -4771,9 +4911,15 @@ var AIAssistant = (function(){
     document.querySelectorAll('[data-help-intent]').forEach(function(b){b.classList.toggle('selected',b.dataset.helpIntent===config.intent);});
     $('aiHandoffStatus').textContent='打开后粘贴发送，在那里继续学，无需返回。';
   }
-  function openHelp(intent, targetId, problem){
-    open();config.intent=intent || 'practice';config.targetId=targetId || '';
-    config.problemText=problem || '';config.shareProblem=!!config.problemText;
+  function openHelp(intent, targetId, problem, meta){
+    meta = meta || {};
+    if(targetId) LearningMemory.markViewed(targetId, meta.sectionId || '');
+    open();
+    config.intent=intent || 'practice';
+    config.targetId=targetId || '';
+    config.entryPoint=meta.entryPoint || 'contextual';
+    config.problemText=problem || '';
+    config.shareProblem=!!config.problemText;
     syncFields();invalidatePrompt();$('aiPanel').scrollTop=0;
   }
   function quickLaunch(){
@@ -5111,7 +5257,10 @@ var LearningFlow = {
     var check=document.createElement('button'); check.className='btn btn-ghost btn-sm'; check.textContent='学完这段，检测一下';
     check.onclick=function(){ showMicroQuiz(node); };
     var help=document.createElement('button'); help.className='btn btn-ghost btn-sm'; help.textContent='先补基础／求助';
-    help.onclick=function(){ AIAssistant.openHelp('prerequisite',node.id,''); };
+    help.onclick=function(){
+      LearningMemory.markViewed(node.id, 'concept-ch'+node.chapter);
+      AIAssistant.openHelp('prerequisite', node.id, '', { entryPoint: 'section-help', sectionId: 'concept-ch'+node.chapter });
+    };
     controls.append(check,help); (section.querySelector('.accordion-content') || section.querySelector('.accordion-body') || section).appendChild(controls);
   });
   document.addEventListener('learning-profile-change',function(){renderKnowledgeMap();LearningFlow.render();});

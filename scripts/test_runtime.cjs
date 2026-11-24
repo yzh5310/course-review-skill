@@ -71,23 +71,27 @@ test('local errors and hints change the next handoff, without erasing attempts',
   assert(after.includes('hint uses=1'));assert(after.includes('concept:1'));
   assert.equal(c.LearningMemory.get().attempts.length,1);
 });
-test('prompt includes compact local progress snapshot and excludes opted-out concepts',()=>{
+test('prompt includes compact local progress snapshot, intentional views, self-marked pills, and excludes opted-out concepts',()=>{
   const c=setup();let now=Date.now();c.Date={now:()=>now};
   attempt(c,'q1',true,false,'source','c1');now+=6*60*1000;attempt(c,'q2',true,false,'source','c1');
   c.LearningMemory.recordMastery('c3','excluded','not examined');
-  const profile=c.LearningMemory.get();
-  profile.preferences.resumeObjectiveId='c2';
-  profile.preferences.resumeSection='concept-ch2';
-  c.LearningMemory.save(profile);
-  const dialogue=c.PromptGenerator.build({targetId:'c2'});
-  assert(dialogue.includes('当前停留：Concept two（章节讲解）'));
-  assert(dialogue.includes('已掌握/初步掌握（1/2）：Concept one'));
-  assert(dialogue.includes('尚未在本页开始（1/2）：Concept two'));
+  c.LearningMemory.markViewed('c2','concept-ch2');
+  const dialogue=c.PromptGenerator.build({targetId:'c2',entryPoint:'section-help'});
+  assert(dialogue.includes('当前停留：Concept two（从本节「先补基础／求助」进入）'));
+  assert(dialogue.includes('当前知识点前置：Concept one（已做题掌握）'));
+  assert(dialogue.includes('已做题掌握/初步掌握（1/2）：Concept one'));
+  assert(dialogue.includes('正在复习/已看讲义（1/2）：Concept two'));
+  assert(dialogue.includes('尚未在本页开始（0/2）：无'));
   assert(!dialogue.split('不纳入的知识点：')[0].includes('Excluded concept'));
-  const agent=c.PromptGenerator.build({targetId:'c2',output:'agent-json'});
-  assert(agent.includes('current local stop: Concept two [章节讲解]'));
-  assert(agent.includes('course progress snapshot (mastered/provisional): Concept one'));
-  assert(agent.includes('course progress snapshot (not started here; avoid assuming later unstarted topics): Concept two'));
+  // Self-marking a concept studied updates the prompt snapshot without fabricating mastery state
+  c.LearningMemory.setSelfProgress('c2','studied');
+  assert.equal(c.LearningMemory.get().concepts.c2.state,'unseen');
+  const selfMarked=c.PromptGenerator.build({targetId:'c2'});
+  assert(selfMarked.includes('已自标学过（未在本页做题验证，1/2）：Concept two'));
+  const agent=c.PromptGenerator.build({targetId:'c2',output:'agent-json',entryPoint:'section-help'});
+  assert(agent.includes('current local stop: Concept two [从本节「先补基础／求助」进入]'));
+  assert(agent.includes('course progress snapshot (verified mastered/provisional): Concept one'));
+  assert(agent.includes('course progress snapshot (self-marked studied): Concept two'));
 });
 test('AI practice events and error selections cannot change concept evidence',()=>{
   const c=setup();attempt(c);const before=JSON.stringify(c.LearningMemory.get().concepts);

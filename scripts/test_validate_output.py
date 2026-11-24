@@ -196,6 +196,14 @@ class OutputValidatorTests(unittest.TestCase):
         self.assertIn("renderMath(fb);", TEMPLATE)
         self.assertIn("renderMath(list);", TEMPLATE)
 
+    def test_template_includes_progress_pills_and_intentional_view_hooks(self) -> None:
+        self.assertIn('id="aiProgressPills"', TEMPLATE)
+        self.assertIn(".ai-prog-pill.is-done", TEMPLATE)
+        self.assertIn(".ai-prog-pill.is-current", TEMPLATE)
+        self.assertIn("markViewed:markViewed", TEMPLATE)
+        self.assertIn("setSelfProgress:setSelfProgress", TEMPLATE)
+        self.assertIn("entryPoint: 'section-help'", TEMPLATE)
+
 
 if __name__ == "__main__":
     unittest.main()
