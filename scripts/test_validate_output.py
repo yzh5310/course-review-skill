@@ -56,7 +56,12 @@ class OutputValidatorTests(unittest.TestCase):
         self.assertNotIn("container.innerHTML = questions.map", TEMPLATE)
 
     def test_ai_explanation_uses_text_nodes(self) -> None:
-        self.assertIn("explanation.textContent = q.explanation", TEMPLATE)
+        self.assertIn("renderStructuredExplanation(explanation, q.explanation", TEMPLATE)
+        self.assertIn("document.createTextNode(part)", TEMPLATE)
+        self.assertIn("badge.textContent = badgeText;", TEMPLATE)
+        self.assertIn(".exp-row.exp-conclusion", TEMPLATE)
+        self.assertIn(".exp-row.exp-tip", TEMPLATE)
+        self.assertIn("wb-exp-slot", TEMPLATE)
         self.assertNotIn("(q.explanation || '查看解析') + '</div>'", TEMPLATE)
 
     def test_mobile_tooltips_are_viewport_bounded(self) -> None:

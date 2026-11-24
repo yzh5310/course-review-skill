@@ -32,6 +32,7 @@
 - Allow users to export, import, and reset their profile.
 - Every state a control gains by script (`selected`, `pressed`, `active`, `flipped`, `known`, `correct`, marking a choice) must have a visibly distinct style. A control whose state changes with no visible difference reads as broken and users stop trying. Before delivery, diff the computed style of one control before and after clicking it, in light and dark mode, desktop and mobile.
 - For choices, also expose progress in words ("3 / 8 answered"), so state is legible even at a glance and for users who cannot rely on colour.
+- Render quiz and wrongbook explanations as structured cards via safe DOM text nodes (`renderStructuredExplanation`, never `innerHTML`) using `\n`-separated `结论：` / `步骤1：` / `避坑：` (or `口诀：`) lines, and echo the correct option explicitly at the top of wrong-answer feedback. Never dump a flat multi-sentence wall of text or open explanations with source-item numbering clutter; keep every step plain-language and skip-free so a stressed learner can read it in under 15 seconds.
 
 ## Validation
 

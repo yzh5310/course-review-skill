@@ -78,6 +78,7 @@ The same discipline applies to claims about the learner's materials:
 | Unselected options unreadable in dark mode | `<button>` missing explicit `color: var(--text)` | set `color: var(--text)` on `.diag-opt` and `.qb-opt` |
 | Formula shows `$P(a` | raw `<` inside math | escape to `&lt;` in the source |
 | Quiz/micro-quiz/wrongbook shows raw `$A^{-1}$` | dynamic DOM updated after `window.load` without re-rendering KaTeX | call `renderMath(el)` after rendering quiz card, feedback, micro-quiz, and wrongbook |
+| Quiz/wrongbook explanation renders as one dense text wall or shows raw `**` | explanation lacked `\n` 3-layer structure or bypassed `renderStructuredExplanation` | format explanations as `结论：\n步骤1：\n避坑：`, render via `renderStructuredExplanation` (with `(?:(?!\*\*).)+` so `$A^*$` stays intact), and verify `.exp-row` count and zero raw `**` |
 | Matrix/subscript shows ASCII `A_(3×4)` or `[[1,2],[3,4]]` | author wrote plain-text shorthand instead of LaTeX | convert to textbook LaTeX (`$A_{3\times 4}$`, `\begin{pmatrix}...\end{pmatrix}`) with double-escaped backslashes in JS strings |
 | LaTeX `\times`, `\bmod`, `\ne`, `\text` vanish | generator script used non-raw string literal | use raw strings (`r"""..."""`) in build scripts and verify in DOM |
 | Dark mode `<select>` looks bright white | native `<select>` lacked dark-mode override | style `body.dark select` with `var(--card)` and `var(--text)` |

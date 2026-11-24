@@ -1259,6 +1259,20 @@ body[data-feedback-mode="quiet"] *, body[data-feedback-mode="quiet"] *::before, 
 body.dark .ai-progress-box { background:rgba(30,41,59,0.65); }
 body.dark .ai-prog-pill.is-done { background:rgba(16,185,129,0.22);color:#6ee7b7; }
 body.dark .ai-prog-pill.is-current { background:rgba(129,140,248,0.22);color:#c7d2fe; }
+.exp-box { display:flex;flex-direction:column;gap:8px;margin-top:10px;line-height:1.75; }
+.exp-row { display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.65);border:1px solid rgba(148,163,184,0.22); }
+.exp-row.exp-conclusion { background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.28);font-weight:600; }
+.exp-row.exp-tip { background:rgba(245,158,11,0.10);border:1px solid rgba(245,158,11,0.3);border-left:3px solid #f59e0b; }
+.exp-badge { flex-shrink:0;display:inline-block;padding:1px 8px;border-radius:999px;font-size:11.5px;font-weight:700;line-height:1.6;margin-top:2px;background:#e2e8f0;color:#334155; }
+.exp-conclusion .exp-badge { background:#10b981;color:#ffffff; }
+.exp-step .exp-badge { background:rgba(99,102,241,0.14);color:#4338ca; }
+.exp-tip .exp-badge { background:#f59e0b;color:#ffffff; }
+.exp-text { flex:1;min-width:0;font-size:13.5px;color:var(--text); }
+.qb-fb-head { font-weight:700;font-size:14.5px;line-height:1.6; }
+body.dark .exp-row { background:rgba(15,23,42,0.55);border-color:rgba(148,163,184,0.22); }
+body.dark .exp-row.exp-conclusion { background:rgba(16,185,129,0.16);border-color:rgba(16,185,129,0.35); }
+body.dark .exp-row.exp-tip { background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.35);border-left-color:#fbbf24; }
+body.dark .exp-step .exp-badge { background:rgba(129,140,248,0.24);color:#c7d2fe; }
 @media print { #feedbackMode, #aiFab, .section-check { display:none !important; } }
 
 /* 分布小图（配合 canvas.dist-plot 使用） */
@@ -2404,6 +2418,46 @@ function renderMath(el){
     });
   }
 }
+function renderStructuredExplanation(container, rawText){
+  container.replaceChildren();
+  container.className = 'exp-box';
+  var lines = String(rawText || '查看解析').split(/\r?\n/).map(function(s){ return s.trim(); }).filter(Boolean);
+  lines.forEach(function(line){
+    var row = document.createElement('div');
+    row.className = 'exp-row';
+    var badgeText = '', bodyText = line;
+    var m = line.match(/^(结论|答案|步骤\s*\d+|怎么算|避坑|口诀|为什么错|解析)[：:]\s*(.*)$/);
+    if(m){
+      badgeText = m[1].replace(/\s+/g, '');
+      bodyText = m[2];
+      if(badgeText === '结论' || badgeText === '答案') row.classList.add('exp-conclusion');
+      else if(badgeText === '避坑' || badgeText === '口诀' || badgeText === '为什么错') row.classList.add('exp-tip');
+      else row.classList.add('exp-step');
+    } else {
+      row.classList.add('exp-step');
+    }
+    if(badgeText){
+      var badge = document.createElement('span');
+      badge.className = 'exp-badge';
+      badge.textContent = badgeText;
+      row.appendChild(badge);
+    }
+    var textEl = document.createElement('div');
+    textEl.className = 'exp-text';
+    var parts = bodyText.split(/(\*\*(?:(?!\*\*).)+\*\*)/g);
+    parts.forEach(function(part){
+      if(part.length > 4 && part.slice(0,2) === '**' && part.slice(-2) === '**'){
+        var strong = document.createElement('strong');
+        strong.textContent = part.slice(2, -2);
+        textEl.appendChild(strong);
+      } else if(part){
+        textEl.appendChild(document.createTextNode(part));
+      }
+    });
+    row.appendChild(textEl);
+    container.appendChild(row);
+  });
+}
 window.renderMath = renderMath;
 
 /* === DEMO DATA START — AI替换此区域为真实课程数据 === */
@@ -2443,7 +2497,7 @@ var quizBank = [
     question: '二元函数极限与一元函数极限最大的区别是？',
     options: ['没有本质区别','二元要求沿任意路径趋近都相等','二元只需要沿坐标轴趋近','二元极限一定存在'],
     answer: 1,
-    explanation: '解析：一元极限只有左右两个方向，二元极限要求点(x,y)沿任意路径趋近(x₀,y₀)时函数值都趋于同一个数，否则极限不存在。',
+    explanation: '结论：选 B，二元函数极限要求沿**任意路径**趋近都得到同一个有限值。\n步骤1：一元函数只有左、右两条路能靠近一点；但平面上靠近 $(x_0, y_0)$ 可以沿直线、抛物线甚至螺旋线，有无数条路。\n步骤2：只要找出两条不同路径算出的极限不一样，极限就不存在。\n避坑：不能只看沿 $x$ 轴和 $y$ 轴（选 C）——很多经典反例沿坐标轴极限都是 $0$，但沿 $y=x$ 却不是 $0$。',
     hint: '提示：想想"路径"的数量——一元只有1条直线，二元有无数条路径。',
     errorCategory: 'concept' },
   { id: 'q2', type: 'tf', chapter: 2, difficulty: 'easy',
@@ -3916,10 +3970,22 @@ var QuizSystem = (function(){
     LearningMemory.save(submitProfile);
 
     fb.className = 'qb-feedback show ' + (isCorrect === false ? 'wrong' : 'correct');
-    fb.textContent = isCorrect === null ? '📘 已显示参考解析，请按实际完成情况自评：' : (isCorrect ? '✅ 回答正确！' : '❌ 答错了。');
+    fb.replaceChildren();
+    var fbHead = document.createElement('div');
+    fbHead.className = 'qb-fb-head';
+    if(isCorrect === null){
+      fbHead.textContent = '📘 已显示参考解析，请按实际完成情况自评：';
+    } else if(isCorrect){
+      fbHead.textContent = '✅ 回答正确！';
+    } else {
+      var ansLabel = q.type === 'choice' && Array.isArray(q.options) && q.options[q.answer] !== undefined
+        ? String.fromCharCode(65 + q.answer) + '（' + q.options[q.answer] + '）'
+        : (q.type === 'tf' ? (q.answer ? '正确' : '错误') : '');
+      fbHead.textContent = ansLabel ? ('❌ 答错了，正确答案是 ' + ansLabel) : '❌ 答错了。';
+    }
+    fb.appendChild(fbHead);
     var explanation = document.createElement('div');
-    explanation.style.marginTop = '8px';
-    explanation.textContent = q.explanation || '查看解析';
+    renderStructuredExplanation(explanation, q.explanation || '查看解析');
     fb.appendChild(explanation);
     renderMath(fb);
     if(isCorrect === null){
@@ -4238,13 +4304,17 @@ function renderWrongbook(){
           return '<span class="error-tag'+(w.category===c.key?' selected':'')+'" onclick="setErrorCategory('+i+',\''+c.key+'\')">'+getReasonEmoji(c.key)+c.label+'</span>';
         }).join('') +
       '</div>' +
-      '<div style="font-size:13px;color:var(--muted);margin-top:6px;">'+escapeHTML(w.explanation||'')+'</div>' +
+      '<div class="wb-exp-slot" data-wbi="'+i+'" style="margin-top:6px;"></div>' +
       '<div class="wb-actions">' +
         (w.chapter ? '<button class="btn btn-ghost btn-sm" onclick="scrollToSection(document.getElementById(\'concept-ch'+w.chapter+'\')?\'concept-ch'+w.chapter+'\':\'concepts\')">📚 回看第'+w.chapter+'章</button>' : '') +
         '<button class="btn btn-ghost btn-sm" onclick="removeWrongbook('+i+')">✅ 已掌握，移除</button>' +
       '</div>' +
     '</div>';
   }).join('');
+  list.querySelectorAll('.wb-exp-slot').forEach(function(slot){
+    var item = wb[+slot.dataset.wbi];
+    if(item && item.explanation) renderStructuredExplanation(slot, item.explanation);
+  });
   renderMath(list);
 }
 window.setErrorCategory = function(i, cat){
