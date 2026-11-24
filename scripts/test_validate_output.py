@@ -154,6 +154,47 @@ class OutputValidatorTests(unittest.TestCase):
         self.assertIn(".diag-opt.selected", TEMPLATE)
         self.assertIn(".qb-opt.selected::after", TEMPLATE)
         self.assertIn("background: var(--card); color: var(--text);", TEMPLATE)
+        self.assertIn("body.dark select", TEMPLATE)
+
+    def test_ascii_matrix_subscript_is_rejected_in_quantitative_course(self) -> None:
+        broken = TEMPLATE.replace("</main>", "<p>若矩阵 A_(3×4) 经过初等行变换</p></main>", 1)
+        self.assert_rejected(broken, "ASCII parenthesized subscript")
+
+    def test_nested_bracket_matrix_is_rejected_in_quantitative_course(self) -> None:
+        target = "hint: '提示：把y当常数，y³也是常数，导数为0的是常数项。'"
+        broken = TEMPLATE.replace(target, "hint: '矩阵 [[3, 2], [4, 3]] 的伴随矩阵'", 1)
+        self.assertNotEqual(broken, TEMPLATE)
+        self.assert_rejected(broken, "nested-bracket matrix literal")
+
+    def test_ascii_parenthesized_exponent_is_rejected_in_quantitative_course(self) -> None:
+        target = "hint: '提示：把y当常数，y³也是常数，导数为0的是常数项。'"
+        broken = TEMPLATE.replace(target, "hint: '系数为 (-1)^(n(n-1)/2) 与 k^(n-1)'", 1)
+        self.assertNotEqual(broken, TEMPLATE)
+        self.assert_rejected(broken, "ASCII parenthesized exponent")
+
+    def test_non_quantitative_course_allows_nested_arrays(self) -> None:
+        adapted = TEMPLATE.replace("courseType: 'quantitative'", "courseType: 'programming'", 1).replace(
+            "</main>", "<p>二维数组示例 [[1, 2], [3, 4]]</p></main>", 1
+        )
+        report = self.validate_text(adapted)
+        self.assertTrue(report.ok, report.errors)
+
+    def test_quantitative_dynamic_math_requires_quiz_katex_hook(self) -> None:
+        target = "hint: '提示：把y当常数，y³也是常数，导数为0的是常数项。'"
+        broken = TEMPLATE.replace(
+            target,
+            "hint: '计算 $A_{3\\\\times 4}$ 的秩'",
+            1,
+        ).replace("renderMath(document.getElementById('qbCard'));", "", 1)
+        self.assertNotEqual(broken, TEMPLATE)
+        self.assert_rejected(broken, "re-rendering KaTeX in QuizSystem.renderQuestion")
+
+    def test_template_wires_dynamic_katex_rendering(self) -> None:
+        self.assertIn("function renderMath(el)", TEMPLATE)
+        self.assertIn("renderMath(box);", TEMPLATE)
+        self.assertIn("renderMath(document.getElementById('qbCard'));", TEMPLATE)
+        self.assertIn("renderMath(fb);", TEMPLATE)
+        self.assertIn("renderMath(list);", TEMPLATE)
 
 
 if __name__ == "__main__":

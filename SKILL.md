@@ -186,6 +186,7 @@ Then run the visual and interaction checks in [references/visual-qa.md](referenc
 14. Verify every claim about the learner's materials against the materials themselves. Enumerate a problem set before generalizing about it ("all ten are type X"), and never state a count you have not recounted. If the set splits into two patterns, give two templates.
 15. Run the visual and interaction checks in [references/visual-qa.md](references/visual-qa.md) on the final artifact. Passing `validate_output.py` does not prove that a control responds, a formula rendered, or a chart drew.
 16. For quantitative families (distributions, functions, transforms), give each one a plot and a concrete scenario, not a formula list alone.
+17. For quantitative courses, typeset every formula, subscript, exponent, matrix, and determinant in textbook LaTeX (`$...$` / `$$...$$`, matching the course slides/textbook delimiters such as `\begin{pmatrix}` vs `\begin{bmatrix}` and `\begin{vmatrix}`) across **all** surfaces—including dynamic JS data (`diagQuestions`, `quizBank`, `knowledgeGraph` micro-quizzes, checklists, wrongbook) and Canvas labels/brackets. Never write ASCII shorthands like `A_(3×4)`, `[[1,2],[3,4]]`, `k^(n-1)`, or `(-1)^(n(n-1)/2)`; always re-run `renderMath(el)` after dynamic quiz/micro-quiz/wrongbook DOM updates.
 
 ## Acceptance criteria
 

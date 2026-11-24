@@ -275,6 +275,49 @@ def _check_math_escaping(text: str, report: ValidationReport) -> None:
         )
 
 
+def _check_textbook_math_notation(text: str, visible_text: str, report: ValidationReport) -> None:
+    """Reject ASCII math shorthands and missing dynamic KaTeX hooks in quantitative courses."""
+    course_type_match = re.search(r"courseType:\s*['\"]([^'\"]+)", text)
+    if not course_type_match or course_type_match.group(1) != "quantitative":
+        return
+
+    js_strings: list[str] = []
+    for block_name in ("diagQuestions", "quizBank", "knowledgeGraph", "checklistData"):
+        block_match = re.search(rf"(?:var|let|const)\s+{block_name}\s*=\s*\[(.*?)\n\];", text, re.S)
+        if block_match:
+            js_strings.extend(re.findall(r"'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"", block_match.group(1)))
+
+    joined_js = " ".join(js_strings)
+    learner_text = visible_text + "\n" + joined_js
+
+    patterns = [
+        (
+            "ASCII parenthesized subscript (use LaTeX like $A_{3\\times 4}$)",
+            r"(?<![A-Za-z0-9_])[A-Za-z]_\([^()\r\n]{1,24}\)",
+        ),
+        (
+            "nested-bracket matrix literal (use LaTeX \\begin{pmatrix}...\\end{pmatrix})",
+            r"\[\[\s*[^\[\]\r\n]{1,40}\]\s*,\s*\[",
+        ),
+        (
+            "ASCII parenthesized exponent (use LaTeX braces like $k^{n-1}$)",
+            r"(?<![\\])[A-Za-z0-9\)]\^\((?:[^()\r\n]|\([^()\r\n]{1,16}\)){1,28}\)",
+        ),
+    ]
+    for label, pattern in patterns:
+        matches = re.findall(pattern, learner_text)
+        if matches:
+            sample = " | ".join(dict.fromkeys(m.strip()[:40] for m in matches[:3]))
+            report.fail(f"Quantitative artifact uses non-textbook {label}: {sample}")
+
+    if re.search(r"\$[^$\n]{1,300}\$", joined_js):
+        rq_match = re.search(r"function\s+renderQuestion\s*\([\s\S]*?\n\s*function\s+submit\s*\(", text)
+        if not rq_match or not re.search(r"\b(?:renderMath|renderMathInElement)\s*\(", rq_match.group(0)):
+            report.fail(
+                "Quantitative artifact uses $...$ math in quiz/micro-quiz data without re-rendering KaTeX in QuizSystem.renderQuestion"
+            )
+
+
 def _check_forbidden_claims(visible_text: str, evidence_level: str | None, report: ValidationReport) -> None:
     pass_patterns = {
         "pass guarantee": r"(?:稳过|保过|包过|必过|不挂科|及格绝对没问题|(?<!不)保证.{0,12}(?:及格|通过))",
@@ -379,6 +422,7 @@ def validate_output(path: Path) -> ValidationReport:
     visible_text = " ".join(parser.visible_text)
     _check_forbidden_claims(visible_text, evidence_level, report)
     _check_math_escaping(text, report)
+    _check_textbook_math_notation(text, visible_text, report)
 
     if contract:
         course = contract.get("course", {})

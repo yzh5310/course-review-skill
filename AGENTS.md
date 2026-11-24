@@ -28,6 +28,7 @@ Mandatory boundaries:
 9. Do not deliver a generated artifact until its output validator passes.
 10. Verify claims about the learner's materials against those materials; never generalize about a problem set without enumerating it.
 11. Run the visual and interaction checks in `references/visual-qa.md`; structural validation alone does not prove a control responds or a formula rendered.
+12. For quantitative courses, use textbook LaTeX (`$...$` / `$$...$$`) matching the course's notation across static HTML and dynamic JS quiz/micro-quiz/wrongbook strings, call `renderMath(el)` on dynamic updates, and never leak ASCII shorthands such as `A_(3×4)`, `[[1,2],[3,4]]`, or `k^(n-1)`.
 
 Validate repository changes with:
 

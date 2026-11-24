@@ -28,15 +28,17 @@ return top === el || el.contains(top);
 
 Run it on choices, submit buttons, accordion headers, flip cards, nav links, and checkboxes. A transformed 3D card or an unpositioned popover is the usual culprit; `overflow: hidden` on the card fixes the former.
 
-**3. No formula is left unrendered.**
+**3. No formula is left unrendered or downgraded to ASCII shorthand.**
 
 ```js
 // visible text still holding a delimiter means KaTeX never matched it
 [...document.querySelectorAll('.katex-error')].length === 0
 && !/\$/.test(document.body.innerText)
+// quantitative courses should also have no ASCII shorthands like A_(3×4), [[1,2],[3,4]], or k^(n-1)
+&& !/(?<![A-Za-z0-9_])[A-Za-z]_\([^)\r\n]{1,24}\)|\[\[\s*[^\[\]\r\n]{1,40}\]\s*,\s*\[|[A-Za-z0-9\)]\^\([^)\r\n]{1,24}\)/.test(document.body.innerText)
 ```
 
-A raw `<` inside `$...$` is parsed as a tag and silently truncates the formula, leaving `$P(a` on the page. Escape `<` and `>` as `&lt;` and `&gt;` inside math spans in the HTML source.
+Check this not only on initial load, but also after stepping through dynamic quiz questions, submitting to inspect explanations/wrongbook entries, and opening a micro-quiz modal. A raw `<` inside `$...$` is parsed as a tag and silently truncates the formula, leaving `$P(a` on the page. Escape `<` and `>` as `&lt;` and `&gt;` inside math spans in the HTML source, and call `renderMath(el)` after every dynamic DOM insert.
 
 **4. A canvas is actually drawn and correctly sized.**
 
@@ -75,7 +77,10 @@ The same discipline applies to claims about the learner's materials:
 | Clicking a choice does nothing | state class has no CSS rule | add a selected style with a checkmark, and a text counter |
 | Unselected options unreadable in dark mode | `<button>` missing explicit `color: var(--text)` | set `color: var(--text)` on `.diag-opt` and `.qb-opt` |
 | Formula shows `$P(a` | raw `<` inside math | escape to `&lt;` in the source |
+| Quiz/micro-quiz/wrongbook shows raw `$A^{-1}$` | dynamic DOM updated after `window.load` without re-rendering KaTeX | call `renderMath(el)` after rendering quiz card, feedback, micro-quiz, and wrongbook |
+| Matrix/subscript shows ASCII `A_(3×4)` or `[[1,2],[3,4]]` | author wrote plain-text shorthand instead of LaTeX | convert to textbook LaTeX (`$A_{3\times 4}$`, `\begin{pmatrix}...\end{pmatrix}`) with double-escaped backslashes in JS strings |
 | LaTeX `\times`, `\bmod`, `\ne`, `\text` vanish | generator script used non-raw string literal | use raw strings (`r"""..."""`) in build scripts and verify in DOM |
+| Dark mode `<select>` looks bright white | native `<select>` lacked dark-mode override | style `body.dark select` with `var(--card)` and `var(--text)` |
 | Tooltip clipped at a card edge | absolute positioning inside `overflow` | `position: fixed` + clamp in script |
 | Tooltip stuck at `(0, 0)` on keyboard focus or tap | positioning script only listened to `mouseover` | bind `focusin`, `focusout`, `click`, and `Escape` in the same delegated handler |
 | Tooltip covers content after scroll | stale position | hide on scroll and resize |

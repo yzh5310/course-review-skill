@@ -726,6 +726,7 @@ body.dark .qb-opt.wrong { color: #fecaca; }
 
 body.dark .term-tooltip { background: #334155; }
 body.dark .term-tooltip::after { border-top-color: #334155; }
+body.dark select { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); }
 
 /* Canvas可视化 */
 .canvas-viz {
@@ -2373,6 +2374,19 @@ var COURSE_META = {
 };
 var SLUG = COURSE_META.courseSlug;
 var LS = function(key){ return SLUG + '_' + key; };
+function renderMath(el){
+  if(typeof renderMathInElement === 'function' && el){
+    renderMathInElement(el, {
+      strict: false,
+      delimiters: [
+        {left:'$$',right:'$$',display:true},
+        {left:'$',right:'$',display:false}
+      ],
+      throwOnError: false
+    });
+  }
+}
+window.renderMath = renderMath;
 
 /* === DEMO DATA START — AI替换此区域为真实课程数据 === */
 // 知识图谱（自适应路径）
@@ -2924,9 +2938,7 @@ window.toggleExample = function(btn, type){
     btn.textContent = isShow ? '收起变式练习' : '🔄 点击展开变式练习';
   }
   // KaTeX重渲染
-  if(typeof renderMathInElement === 'function'){
-    setTimeout(function(){ renderMathInElement(body, { strict:false }); }, 50);
-  }
+  setTimeout(function(){ renderMath(body); }, 50);
 };
 
 document.querySelectorAll('.ex-step-result').forEach(function(step){
@@ -3092,6 +3104,7 @@ function showMicroQuiz(node){
   });
   html += '</div>';
   box.innerHTML = html;
+  renderMath(box);
   overlay.classList.add('show');
   box.querySelectorAll('[data-mqi]').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -3768,6 +3781,7 @@ var QuizSystem = (function(){
         (q.type==='calc' ? '请自行计算，然后点击提交查看参考答案。' : '请尝试作答后查看参考答案。') + '</div>';
       content.appendChild(input);
     }
+    renderMath(document.getElementById('qbCard'));
   }
 
   function submit(){
@@ -3852,6 +3866,7 @@ var QuizSystem = (function(){
     explanation.style.marginTop = '8px';
     explanation.textContent = q.explanation || '查看解析';
     fb.appendChild(explanation);
+    renderMath(fb);
     if(isCorrect === null){
       var selfRow = document.createElement('div');
       selfRow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;';
@@ -4175,6 +4190,7 @@ function renderWrongbook(){
       '</div>' +
     '</div>';
   }).join('');
+  renderMath(list);
 }
 window.setErrorCategory = function(i, cat){
   var wb = lsGet('wrongbook', []);
